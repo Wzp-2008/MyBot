@@ -1,0 +1,225 @@
+package cn.wzpmc.mybot;
+
+
+import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.utils.PluginClassLoader;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Properties;
+
+/**
+ * @author 33572
+ * @date 2022 03 29 20:54
+ */
+@Slf4j
+public class Main {
+    public static Bot bot;
+    public static URL http;
+    public static Runtime runtime = Runtime.getRuntime();
+    public static ArrayList<MyBotPlugin> plugins = new ArrayList<>();
+    public static void nettyStart(String ws){
+        EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+        try{
+            URI uri = new URI(ws);
+            Bootstrap bootstrap = new Bootstrap();
+            WebSocketClientHandshaker webSocketClientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders());
+            WebSocketMessageHandler handler = new WebSocketMessageHandler(webSocketClientHandshaker);
+            bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class)
+                    .handler(new Initializer(handler));
+            log.info("启动成功！");
+            Channel channel = bootstrap.connect(uri.getHost(),uri.getPort()).sync().channel();
+            channel.closeFuture().sync();
+        } catch (URISyntaxException e) {
+            log.error("URI转换失败，请确认你的websocket连接uri有效");
+        } catch (InterruptedException e) {
+            log.info("检测到Ctrl+C，退出");
+        }finally {
+            eventLoopGroup.shutdownGracefully();
+            ArrayList<Long> ops = Bot.getOps();
+            String s = JSON.toJSONString(ops);
+            File opsFile = new File("ops.json");
+            try {
+                FileWriter fileWriter = new FileWriter(opsFile);
+                fileWriter.write(s);
+            }catch (IOException e){
+                log.error("写入OP表时出错！");
+            }
+        }
+    }
+    @SneakyThrows
+    public static void loadPlugins(Bot bot){
+        File pluginsFile = new File("plugins");
+        if (!pluginsFile.exists()) {
+            boolean isSuccess = pluginsFile.mkdir();
+            if (!isSuccess){
+                log.error("创建插件文件夹失败！");
+                runtime.exit(1);
+            }else{
+                log.info("插件文件夹创建成功");
+            }
+        }
+        HashMap<MyBotPlugin, String> pluginName;
+        for (File file : Objects.requireNonNull(pluginsFile.listFiles())) {
+            if(!file.isFile() || !file.getName().contains(".jar")){
+                continue;
+            }
+            pluginName = loadPlugin(file,bot);
+            if (pluginName == null){
+                log.error("插件 {} 加载失败",file.getName());
+            }else{
+                for (MyBotPlugin myBotPlugin : pluginName.keySet()) {
+                    String name = pluginName.get(myBotPlugin);
+                    try {
+                        boolean b = myBotPlugin.onLoad();
+                        if (b) {
+                            plugins.add(myBotPlugin);
+                            log.info("插件 {} 成功加载！", name);
+                        } else {
+                            log.error("插件 {} 加载失败！", name);
+                        }
+                    }catch (Throwable e){
+                        e.printStackTrace();
+                        log.error("插件 {} 加载失败！", name);
+                    }
+                }
+            }
+        }
+    }
+    @SneakyThrows
+    public static ArrayList<Long> getOps(){
+        File ops = new File("ops.json");
+        if(!ops.exists()){
+            boolean isSuccess = ops.createNewFile();
+            if(!isSuccess){
+                log.error("创建OP表失败，哈哈");
+                runtime.exit(1);
+            }else {
+                JSONArray objects = new JSONArray();
+                String s = objects.toJSONString();
+                FileWriter fileWriter = new FileWriter(ops);
+                fileWriter.write(s);
+                fileWriter.close();
+                log.info("彳亍");
+            }
+        }
+        FileReader opsFileReader = new FileReader(ops);
+        StringBuilder opStr = new StringBuilder();
+        int b = opsFileReader.read();
+        while(b!=-1){
+            opStr.append((char) b);
+            b = opsFileReader.read();
+        }
+        String opStrContent = opStr.toString();
+        JSONArray opsObjects = JSON.parseArray(opStrContent);
+        opsFileReader.close();
+        ArrayList<Long> result = new ArrayList<>();
+        for (int i = 0; i < opsObjects.size(); i++) {
+            Long aLong = opsObjects.getLong(i);
+            result.add(aLong);
+        }
+        return result;
+    }
+    @SneakyThrows
+    public static Properties getConfig(){
+        File config = new File("config.properties");
+        if(!config.exists()){
+            boolean isSuccess = config.createNewFile();
+            if(!isSuccess){
+                log.error("创建默认配置文件失败！");
+                runtime.exit(1);
+            }else{
+                log.info("配置文件创建成功！");
+            }
+        }
+        FileReader configFileReader = new FileReader(config);
+        Properties botProperties = new Properties();
+        botProperties.load(configFileReader);
+        boolean empty = botProperties.isEmpty();
+        String notFoundCommandMessage = botProperties.getProperty("not_found_command_message");
+        String failedRunMessage = botProperties.getProperty("failed_run_message");
+        String ws = botProperties.getProperty("ws");
+        String http = botProperties.getProperty("http");
+        if(empty || notFoundCommandMessage == null || failedRunMessage == null || ws == null || http == null){
+            log.info("检测到配置文件为空，开始生成！");
+            botProperties.setProperty("not_found_command_message","不正确的指令");
+            botProperties.setProperty("failed_run_message","指令执行失败");
+            botProperties.setProperty("ws","此处为你的ws连接地址");
+            botProperties.setProperty("http","此处为你的http连接地址");
+            FileWriter configFileWriter = new FileWriter(config);
+            botProperties.store(configFileWriter,null);
+            log.info("默认配置文件生成完成，保存在config.properties，请确认修改完成后再重启此服务端！");
+            runtime.exit(0);
+        }
+        return botProperties;
+    }
+    public static HashMap<MyBotPlugin,String> loadPlugin(File file, Bot bot){
+        try {
+            String absolutePath = file.getAbsolutePath();
+            URL url = new URL("file:///" + absolutePath);
+            URL[] urls = {url};
+            PluginClassLoader pluginClassLoader = new PluginClassLoader(urls);
+            InputStream pluginMetaDataInputStream = pluginClassLoader.getResourceAsStream("plugin.properties");
+            Properties metadata = new Properties();
+            metadata.load(pluginMetaDataInputStream);
+            assert pluginMetaDataInputStream != null;
+            pluginMetaDataInputStream.close();
+            HashMap<MyBotPlugin, String> plugin = new HashMap<>(1);
+            String pluginName = metadata.getProperty("pluginName");
+            String pluginMainClassPath = metadata.getProperty("pluginMainClass");
+            Class<?> pluginMainClass;
+            try {
+                pluginMainClass = pluginClassLoader.loadClass(pluginMainClassPath);
+            } catch (ClassNotFoundException e) {
+                log.error("未找到插件 {} 的主类 {}", pluginName, pluginMainClassPath);
+                return null;
+            }
+            boolean isMyBotPlugin = MyBotPlugin.class.isAssignableFrom(pluginMainClass);
+            if (!isMyBotPlugin) {
+                log.error("插件 {} 的主类 {} 未继承 MyBotPlugin", pluginName, pluginMainClassPath);
+                return null;
+            }
+            MyBotPlugin o = (MyBotPlugin) pluginMainClass.getDeclaredConstructor().newInstance();
+            pluginClassLoader.plugin = o;
+            pluginClassLoader.bot = bot;
+            pluginClassLoader.pluginName = pluginName;
+            plugin.put(o, pluginName);
+            return plugin;
+        }catch (Throwable e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static void start(){
+        Properties properties = getConfig();
+        try {
+            http = new URL(properties.getProperty("http"));
+        } catch (MalformedURLException e) {
+            log.error("url转换失败，请确认你的配置文件中url参数是否错误！");
+        }
+        ArrayList<Long> ops = getOps();
+        bot = new Bot(log,http,ops);
+        loadPlugins(bot);
+        nettyStart(properties.getProperty("ws"));
+    }
+
+    public static void main(String[] args) {
+        start();
+    }
+}

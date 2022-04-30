@@ -1,0 +1,580 @@
+package cn.wzpmc.mybot.api;
+
+import cn.hutool.http.HttpRequest;
+import cn.wzpmc.mybot.Bot;
+import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
+import cn.wzpmc.mybot.pojo.*;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
+
+import java.net.URL;
+
+/**
+ * @author wzp
+ * @version 1.0.0
+ * @date 2022/4/2
+ */
+@Slf4j
+public class MyBotApi {
+    private final String host;
+    private final String port;
+    private final String protocol;
+    private final Bot bot;
+    public MyBotApi(Bot bot){
+        this.bot = bot;
+        URL http = bot.getHttpUrl();
+        this.host = http.getHost();
+        this.port = String.valueOf(http.getPort());
+        this.protocol = http.getProtocol();
+    }
+    public Bot getBot(){
+        return this.bot;
+    }
+    private String getUrl(String function) {
+        char slash = '/';
+        if (function.charAt(0) != slash) {
+            return protocol + "://" + host + ":" + port + "/" + function;
+        }
+        return protocol + "://" + host + ":" + port + function;
+    }
+
+    private JSONObject doGet(String function) {
+        String url = this.getUrl(function);
+        String body = HttpRequest.get(url).execute().body();
+        JSONObject jsonObject = JSON.parseObject(body);
+        return jsonObject.getJSONObject("data");
+    }
+
+    private JSONObject doPost(String function, JSONObject args) {
+        String url = this.getUrl(function);
+        String s = JSON.toJSONString(args);
+        String body = HttpRequest.post(url).body(s).execute().body();
+        JSONObject jsonObject = JSON.parseObject(body);
+        JSONObject data = jsonObject.getJSONObject("data");
+        if (data == null) {
+            return jsonObject;
+        }
+        return data;
+    }
+
+    /**
+     * 发送私聊消息
+     *
+     * @param userId     对方 QQ 号
+     * @param groupId    主动发起临时会话群号(机器人本身必须是管理员/群主)
+     * @param message    要发送的内容
+     * @param autoEscape 消息内容是否作为纯文本发送 ( 即不解析 CQ 码 ) , 只在 message 字段是字符串时有效
+     * @return 消息ID
+     */
+    public Integer sendPrivateMessage(Long userId, Long groupId, String message, boolean autoEscape) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("user_id", userId);
+        jsonObject.put("group_id", groupId);
+        jsonObject.put("message", message);
+        jsonObject.put("auto_escape", autoEscape);
+        JSONObject r = doPost("/send_private_msg", jsonObject);
+        return r.getInteger("message_id");
+    }
+
+    /**
+     * 发送私聊消息
+     *
+     * @param userId  对方 QQ 号
+     * @param groupId 主动发起临时会话群号(机器人本身必须是管理员/群主)
+     * @param message 要发送的内容
+     * @return 消息ID
+     */
+    public Integer sendPrivateMessage(Long userId, Long groupId, String message) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("user_id", userId);
+        jsonObject.put("group_id", groupId);
+        jsonObject.put("message", message);
+        JSONObject r = doPost("/send_private_msg", jsonObject);
+        return r.getInteger("message_id");
+    }
+
+    /**
+     * 获取登录号信息
+     *
+     * @return 机器人用户
+     */
+    public GroupUser getGroupBotInfo() {
+        JSONObject data = doGet("/get_login_info");
+        return new GroupUser(data.getInteger("user_id"), data.getString("nickname"));
+    }
+
+    /**
+     * 获取频道系统内BOT的资料
+     *
+     * @return 频道系统内BOT的资料
+     */
+    public ChannelUser getChannelBotInfo() {
+        JSONObject data = doGet("/get_guild_service_profile");
+        return new ChannelUser(data.getLong("tiny_id"), data.getString("nickname"));
+    }
+    /**
+     * 发送群消息
+     *
+     * @param groupId    群号
+     * @param message    要发送的内容
+     * @return 消息 ID
+     */
+    public Integer sendGroupMessage(Long groupId, String message) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id", groupId);
+        jsonObject.put("message", message);
+        JSONObject r = doPost("/send_group_msg", jsonObject);
+        return r.getInteger("message_id");
+    }
+    /**
+     * 发送群消息
+     * @param groupId    群号
+     * @param message    要发送的内容
+     * @param autoEscape 消息内容是否作为纯文本发送 ( 即不解析 CQ 码) , 只在 message 字段是字符串时有效
+     * @return 消息 ID
+     */
+    public Integer sendGroupMessage(Long groupId, String message, boolean autoEscape) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id", groupId);
+        jsonObject.put("message", message);
+        jsonObject.put("auto_escape", autoEscape);
+        JSONObject r = doPost("/send_group_msg", jsonObject);
+        return r.getInteger("message_id");
+    }
+
+    /**
+     * 撤回消息
+     *
+     * @param messageId 消息 ID
+     */
+    public void deleteMessage(Integer messageId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("message_id", messageId);
+        doPost("/delete_msg", jsonObject);
+    }
+
+    /**
+     * 获取消息
+     *
+     * @param messageId 消息ID
+     * @return 消息
+     */
+    public GroupMessage getMsg(Integer messageId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("message_id", messageId);
+        JSONObject r = doPost("/get_msg", jsonObject);
+        return new GroupMessage(r,this.bot);
+    }
+
+    /**
+     * 获取合并转发内容
+     * @param messageId 消息ID
+     * @return 响应数据
+     */
+    public JSONObject getForwardMsg(Integer messageId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("message_id", messageId);
+        return doPost("/get_forward_msg", jsonObject);
+    }
+
+    /**
+     * 获取图片信息
+     *
+     * @param file 图片缓存文件名
+     * @return 图片缓存信息
+     */
+    public ImageInfo getImage(String file) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("file", file);
+        JSONObject r = doPost("/get_image", jsonObject);
+        return r.toJavaObject(ImageInfo.class);
+    }
+
+    /**
+     * 群组踢人
+     * @param groupId 群号
+     * @param userId 要踢的QQ号
+     * @param rejectAddRequest 拒绝此人的加群请求
+     */
+    public void groupKick(Long groupId, Long userId,boolean rejectAddRequest) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id", groupId);
+        jsonObject.put("user_id", userId);
+        jsonObject.put("reject_add_request",rejectAddRequest);
+        doPost("/set_group_kick", jsonObject);
+    }
+
+    /**
+     * 群组单人禁言
+     * @param groupId 群号
+     * @param userId 要踢的QQ号
+     */
+    public void groupKick(Long groupId, Long userId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id", groupId);
+        jsonObject.put("user_id", userId);
+        doPost("/set_group_kick",jsonObject);
+    }
+
+    /**
+     * 群组单人禁言
+     * @param groupId 群号
+     * @param userId 要禁言的QQ号
+     */
+    public void groupBan(Long groupId, Long userId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        doPost("/set_group_ban",jsonObject);
+    }
+    /**
+     * 群组单人禁言
+     * @param groupId 群号
+     * @param userId 要禁言的QQ号
+     * @param duration 禁言时长, 单位秒, 0 表示取消禁言
+     */
+    public void groupBan(Long groupId, Long userId, int duration){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        jsonObject.put("duration",duration);
+        doPost("/set_group_ban",jsonObject);
+    }
+
+    /**
+     * 群组匿名用户禁言
+     * @param groupId 群号
+     * @param anonymous 可选, 要禁言的匿名用户对象（群消息上报的 anonymous 字段）
+     * @param flag 可选, 要禁言的匿名用户的 flag（需从群消息上报的数据中获得）
+     */
+    public void groupAnonymousBan(Long groupId, Anonymous anonymous, String flag){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("anonymous",anonymous);
+        jsonObject.put("flag",flag);
+        doPost("/set_group_anonymous_ban",jsonObject);
+    }
+
+    /**
+     * 群组匿名用户禁言
+     * @param groupId 群号
+     * @param anonymous 可选, 要禁言的匿名用户对象（群消息上报的 anonymous 字段）
+     */
+    public void groupAnonymousBan(Long groupId, Anonymous anonymous){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("anonymous",anonymous);
+        doPost("/set_group_anonymous_ban",jsonObject);
+    }
+
+    /**
+     * 群组匿名用户禁言
+     * @param groupId 群号
+     * @param flag 可选, 要禁言的匿名用户的 flag（需从群消息上报的数据中获得）
+     */
+    public void groupAnonymousBan(Long groupId, String flag){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("flag",flag);
+        doPost("/set_group_anonymous_ban",jsonObject);
+    }
+
+    /**
+     * 群组匿名用户禁言
+     * @param groupId 群号
+     * @param anonymous 可选, 要禁言的匿名用户对象（群消息上报的 anonymous 字段）
+     * @param flag 可选, 要禁言的匿名用户的 flag（需从群消息上报的数据中获得）
+     * @param duration 禁言时长, 单位秒, 无法取消匿名用户禁言
+     */
+    public void groupAnonymousBan(Long groupId, Anonymous anonymous, String flag, int duration){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("anonymous",anonymous);
+        jsonObject.put("flag",flag);
+        jsonObject.put("duration",duration);
+        doPost("/set_group_anonymous_ban",jsonObject);
+    }
+
+    /**
+     * 群组匿名用户禁言
+     * @param groupId 群号
+     * @param anonymous 可选, 要禁言的匿名用户对象（群消息上报的 anonymous 字段）
+     * @param duration 禁言时长, 单位秒, 无法取消匿名用户禁言
+     */
+    public void groupAnonymousBan(Long groupId, Anonymous anonymous, int duration){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("anonymous",anonymous);
+        jsonObject.put("duration",duration);
+        doPost("/set_group_anonymous_ban",jsonObject);
+    }
+
+    /**
+     * 群组匿名用户禁言
+     * @param groupId 群号
+     * @param flag 可选, 要禁言的匿名用户的 flag（需从群消息上报的数据中获得）
+     * @param duration 禁言时长, 单位秒, 无法取消匿名用户禁言
+     */
+    public void groupAnonymousBan(Long groupId, String flag, int duration){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("flag",flag);
+        jsonObject.put("duration",duration);
+        doPost("/set_group_anonymous_ban",jsonObject);
+    }
+
+    /**
+     * 群组匿名用户禁言
+     * @param groupId 群号
+     * @param duration 禁言时长, 单位秒, 无法取消匿名用户禁言
+     */
+    public void groupAnonymousBan(Long groupId, int duration){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("duration",duration);
+        doPost("/set_group_anonymous_ban",jsonObject);
+            }
+
+    /**
+     * 群组全员禁言
+     * @param groupId 群号
+     */
+    public void groupWholeBan(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        doPost("set_group_whole_ban",jsonObject);
+    }
+
+    /**
+     * 群组全员禁言
+     * @param groupId 群号
+     * @param enable 是否禁言
+     */
+    public void groupWholeBan(Long groupId, boolean enable){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("enable",enable);
+        doPost("/set_group_whole_ban",jsonObject);
+    }
+
+    /**
+     * 群组设置管理员
+     * @param groupId 群号
+     * @param userId 要设置管理员的 QQ 号
+     */
+    public void setGroupAdmin(Long groupId, Long userId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        doPost("/set_group_admin",jsonObject);
+    }
+
+    /**
+     * 群组设置管理员
+     * @param groupId 群号
+     * @param userId 要设置管理员的 QQ 号
+     * @param enable true 为设置, false 为取消
+     */
+    public void setGroupAdmin(Long groupId, Long userId, boolean enable){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        jsonObject.put("enable",enable);
+        doPost("/set_group_admin",jsonObject);
+    }
+
+    /**
+     * 设置群名片 ( 群备注 )
+     * @param groupId 群号
+     * @param userId 要设置的 QQ 号
+     */
+    public void setGroupCard(Long groupId, Long userId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        doPost("/set_group_card",jsonObject);
+    }
+
+    /**
+     * 设置群名片 ( 群备注 )
+     * @param groupId 群号
+     * @param userId 要设置的 QQ 号
+     * @param card 群名片内容, 不填或空字符串表示删除群名片
+     */
+    public void setGroupCard(Long groupId, Long userId, String card){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        jsonObject.put("card",card);
+        doPost("/set_group_card",jsonObject);
+    }
+
+    /**
+     * 设置群名
+     * @param groupId 群号
+     * @param groupName 新群名
+     */
+    public void setGroupName(Long groupId, String groupName){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("group_name",groupId);
+        doPost("/set_group_name",jsonObject);
+    }
+
+    /**
+     * 退出群组
+     * @param groupId 群号
+     */
+    public void setGroupLeave(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        doPost("/set_group_leave",jsonObject);
+    }
+
+    /**
+     * 退出群组
+     * @param groupId 群号
+     * @param isDismiss 是否解散, 如果登录号是群主, 则仅在此项为 true 时能够解散
+     */
+    public void setGroupLeave(Long groupId, boolean isDismiss){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("is_dismiss",isDismiss);
+        doPost("/set_group_leave",jsonObject);
+    }
+
+    /**
+     * 设置群组专属头衔
+     * @param groupId 群号
+     * @param userId 要设置的QQ号
+     */
+    public void setGroupSpecialTitle(Long groupId, Long userId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        doPost("/set_group_special_title",jsonObject);
+    }
+
+    /**
+     * 设置群组专属头衔
+     * @param groupId 群号
+     * @param userId 要设置的QQ号
+     * @param specialTitle 专属头衔, 不填或空字符串表示删除专属头衔
+     * @param duration 专属头衔有效期, 单位秒, -1 表示永久, 不过此项似乎没有效果, 可能是只有某些特殊的时间长度有效, 有待测试
+     */
+    public void setGroupSpecialTitle(Long groupId, Long userId, String specialTitle, int duration){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        jsonObject.put("special_title",specialTitle);
+        jsonObject.put("duration",duration);
+        doPost("/set_group_special_title",jsonObject);
+    }
+
+    /**
+     * 设置群组专属头衔
+     * @param groupId 群号
+     * @param userId 要设置的QQ号
+     * @param specialTitle 专属头衔, 不填或空字符串表示删除专属头衔
+     */
+    public void setGroupSpecialTitle(Long groupId, Long userId, String specialTitle){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        jsonObject.put("special_title",specialTitle);
+        doPost("/set_group_special_title",jsonObject);
+    }
+
+    /**
+     * 设置群组专属头衔
+     * @param groupId 群号
+     * @param userId 要设置的QQ号
+     * @param duration 专属头衔有效期, 单位秒, -1 表示永久, 不过此项似乎没有效果, 可能是只有某些特殊的时间长度有效, 有待测试
+     */
+    public void setGroupSpecialTitle(Long groupId, Long userId, int duration){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("group_id",groupId);
+        jsonObject.put("user_id",userId);
+        jsonObject.put("duration",duration);
+        doPost("/set_group_special_title",jsonObject);
+    }
+
+    /**
+     * 处理加好友请求
+     * @param flag 加好友请求的 flag（需从上报的数据中获得）
+     */
+    public void setFriendAddRequest(String flag){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flag",flag);
+        doPost("/set_friend_add_request",jsonObject);
+    }
+
+    /**
+     * 处理加好友请求
+     * @param flag 加好友请求的 flag（需从上报的数据中获得）
+     * @param approve 是否同意请求
+     * @param remark 添加后的好友备注（仅在同意时有效）
+     */
+    public void setFriendAddRequest(String flag, boolean approve, String remark){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flag",flag);
+        jsonObject.put("approve",approve);
+        jsonObject.put("remark",remark);
+        doPost("/set_friend_add_request",jsonObject);
+    }
+
+    /**
+     * 处理加好友请求
+     * @param flag 加好友请求的 flag（需从上报的数据中获得）
+     * @param approve 是否同意请求
+     */
+    public void setFriendAddRequest(String flag, boolean approve){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flag",flag);
+        jsonObject.put("approve",approve);
+        doPost("/set_friend_add_request",jsonObject);
+    }
+
+    /**
+     * 处理加群请求
+     * @param flag 加群请求的 flag（需从上报的数据中获得）
+     * @param type add 或 invite, 请求类型（需要和上报消息中的 sub_type 字段相符）
+     */
+    public void setGroupAddRequest(String flag,String type){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flag",flag);
+        jsonObject.put("type",type);
+        doPost("set_group_add_request",jsonObject);
+    }
+
+    /**
+     * 处理加群请求/邀请
+     * @param flag 加群请求的 flag（需从上报的数据中获得）
+     * @param type add 或 invite, 请求类型（需要和上报消息中的 sub_type 字段相符）
+     * @param approve 是否同意请求／邀请
+     * @param reason 拒绝理由（仅在拒绝时有效）
+     */
+    public void setGroupAddRequest(String flag,String type, boolean approve, String reason){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flag",flag);
+        jsonObject.put("type",type);
+        jsonObject.put("approve",approve);
+        jsonObject.put("reason",reason);
+        doPost("/set_group_add_request",jsonObject);
+    }
+
+    /**
+     * 处理加群请求／邀请
+     * @param flag 加群请求的 flag（需从上报的数据中获得）
+     * @param type add 或 invite, 请求类型（需要和上报消息中的 sub_type 字段相符
+     * @param approve 是否同意请求／邀请
+     */
+    public void setGroupAddRequest(String flag, String type, boolean approve){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("flag",flag);
+        jsonObject.put("type",type);
+        jsonObject.put("approve",approve);
+        doPost("/set_group_add_request",jsonObject);
+    }
+}
