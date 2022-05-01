@@ -5,10 +5,12 @@ import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
 import cn.wzpmc.mybot.pojo.*;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * @author wzp
@@ -44,6 +46,12 @@ public class MyBotApi {
         String body = HttpRequest.get(url).execute().body();
         JSONObject jsonObject = JSON.parseObject(body);
         return jsonObject.getJSONObject("data");
+    }
+    private JSONArray doGetWithArray(String function) {
+        String url = this.getUrl(function);
+        String body = HttpRequest.get(url).execute().body();
+        JSONObject jsonObject = JSON.parseObject(body);
+        return jsonObject.getJSONArray("data");
     }
 
     private JSONObject doPost(String function, JSONObject args) {
@@ -576,5 +584,53 @@ public class MyBotApi {
         jsonObject.put("type",type);
         jsonObject.put("approve",approve);
         doPost("/set_group_add_request",jsonObject);
+    }
+
+    /**
+     * 获取企点账号信息
+     * 该API只有企点协议可用
+     * @return 企点账号信息
+     */
+    public QiDianAccount qiDianGetAccountInfo(){
+        JSONObject jsonObject = doGet("/qidian_get_account_info");
+        return QiDianAccount.getQiDianAccount(jsonObject);
+    }
+
+    /**
+     * 获取陌生人信息
+     * @param userId QQ 号
+     * @param noCache 是否不使用缓存（使用缓存可能更新不及时, 但响应更快）
+     * @return 陌生人信息
+     */
+    public GroupUser getStrangerInfo(Long userId,Boolean noCache){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("user_id",userId);
+        jsonObject.put("no_cache",noCache);
+        JSONObject result = doPost("/get_stranger_info",jsonObject);
+        return GroupUser.getGroupUser(result);
+    }
+
+    /**
+     * 获取好友列表
+     * @return 所有的好友
+     */
+    public ArrayList<FriendUser> getFriendList(){
+        ArrayList<FriendUser> users = new ArrayList<>();
+        JSONArray objects = doGetWithArray("/get_friend_list");
+        for (int i = 0; i < objects.size(); i++) {
+            JSONObject jsonObject1 = objects.getJSONObject(i);
+            users.add(FriendUser.getFriendUser(jsonObject1));
+        }
+        return users;
+    }
+
+    /**
+     * 删除好友
+     * @param friendId 好友 QQ 号
+     */
+    public void deleteFriend(Long friendId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("friend_id",friendId);
+        doPost("/delete_friend",jsonObject);
     }
 }
