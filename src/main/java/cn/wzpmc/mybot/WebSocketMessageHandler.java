@@ -132,7 +132,7 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                         Map<Command, CommandExecutor> commands = bot.getCommands();
                         CommandExecutor commandExecutor = commands.get(command);
                         if (commandExecutor != null) {
-                            boolean execute = commandExecutor.execute(command);
+                            boolean execute = commandExecutor.execute(command,gMessage.getSender());
                             if(!execute){
                                 gMessage.reply(config.getProperty("failed_run_message"));
                             }

@@ -7,6 +7,7 @@ import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
@@ -14,10 +15,11 @@ import lombok.ToString;
  * @version 1.0.0
  * @date 2022/4/10
  */
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @Data
 @ToString
-public class GroupMessage {
+public class GroupMessage extends Message {
     private Integer id;
     private GroupUser sender;
     private Anonymous anonymous;

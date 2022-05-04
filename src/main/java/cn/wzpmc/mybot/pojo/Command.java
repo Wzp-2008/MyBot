@@ -22,8 +22,8 @@ public class Command{
     private final String head;
     private final ArrayList<String> body;
     private final MyBotPlugin plugin;
-    private final GroupMessage rawMessage;
-    public Command(String command,GroupMessage message){
+    private final Message rawMessage;
+    public Command(String command,Message message){
         String[] s = command.split(" ");
         int len = s.length;
         this.head = s[0];

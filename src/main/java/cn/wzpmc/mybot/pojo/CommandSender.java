@@ -11,7 +11,14 @@ import lombok.Data;
 @Data
 public class CommandSender {
     private final CommandSenderType type;
-    public CommandSender(CommandSenderType type){
+    private final long id;
+    private final String nickname;
+    public CommandSender(CommandSenderType type,long id,String nickname){
         this.type = type;
+        this.id = id;
+        this.nickname = nickname;
+    }
+    public boolean isConsole(){
+        return CommandSenderType.console.equals(this.type);
     }
 }

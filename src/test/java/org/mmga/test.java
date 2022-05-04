@@ -2,6 +2,11 @@ package org.mmga;
 
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.api.MyBotApi;
+import cn.wzpmc.mybot.interfaces.CommandExecutor;
+import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.pojo.Command;
+import cn.wzpmc.mybot.pojo.CommandSender;
+import cn.wzpmc.mybot.pojo.User;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,11 +18,21 @@ import java.util.ArrayList;
  * @version 1.0.0
  * @date 2022/4/30
  */
-@Slf4j
-public class test {
-    @SneakyThrows
-    public static void main(String[] args) {
-        MyBotApi myBotApi = new MyBotApi(new Bot(log, new URL("http://192.168.123.3:20000"),new ArrayList<Long>()));
-        System.out.println(myBotApi.getFriendList());
+public class test extends MyBotPlugin {
+    @Override
+    public boolean onLoad() {
+        CommandExecutor executor = (command, commandSender) -> {
+            if(commandSender.isConsole()){
+                System.out.println("console");
+            }else{
+                User user = (User) commandSender;
+                System.out.println(user);
+            }
+            return true;
+        };
+        Bot bot = this.getBot();
+        bot.registerCommandWithConsole(getCommand("test"),executor);
+        return true;
+
     }
 }

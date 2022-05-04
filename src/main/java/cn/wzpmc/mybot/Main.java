@@ -1,7 +1,10 @@
 package cn.wzpmc.mybot;
 
 
+import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.pojo.Command;
+import cn.wzpmc.mybot.pojo.Console;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -214,6 +217,7 @@ public class Main {
         Runtime runtime = Runtime.getRuntime();
         runtime.addShutdownHook(new StopThread());
         Scanner scanner = new Scanner(System.in);
+        Console console = new Console();
         while (running){
             String command = scanner.nextLine();
             String[] s = command.split(" ");
@@ -222,7 +226,21 @@ public class Main {
                 log.error("错误的命令！");
             }else{
                 String a0 = s[0];
-                if(STOP.equals(a0)){
+                CommandExecutor runCommand = null;
+                Map<Command, CommandExecutor> consoleCommands = bot.getConsoleCommands();
+                Set<Command> commands = consoleCommands.keySet();
+                String head = "";
+                for (Command command1 : commands) {
+                    head = command1.getHead();
+                    if(a0.equals(head)){
+                        runCommand = consoleCommands.get(command1);
+                        break;
+                    }
+                }
+                Command run = new Command(head,new ArrayList<>(Arrays.asList(s)),null);
+                if(runCommand != null){
+                    runCommand.execute(run,console);
+                }else if(STOP.equals(a0)){
                     running = false;
                     nettyThread.stopNetty();
                 }else if(OP.equals(a0)){

@@ -1,8 +1,10 @@
 cn/wzpmc/mybot/pojo/Command.class
 cn/wzpmc/mybot/pojo/Message.class
+cn/wzpmc/mybot/pojo/CommandSender.class
 cn/wzpmc/mybot/utils/PluginClassLoader.class
 cn/wzpmc/mybot/Bot.class
 cn/wzpmc/mybot/interfaces/CommandExecutor.class
+cn/wzpmc/mybot/pojo/Console.class
 cn/wzpmc/mybot/pojo/User.class
 cn/wzpmc/mybot/interfaces/MyBotPlugin.class
 cn/wzpmc/mybot/UIListener/OnStopClicked.class
@@ -14,6 +16,7 @@ cn/wzpmc/mybot/cq/At.class
 cn/wzpmc/mybot/constants/StringConstants.class
 cn/wzpmc/mybot/UIListener/OnStartClicked.class
 cn/wzpmc/mybot/UIListener/OnReloadClicked.class
+cn/wzpmc/mybot/enums/CommandSenderType.class
 cn/wzpmc/mybot/api/MyBotApi.class
 cn/wzpmc/mybot/annotations/EventHandler.class
 cn/wzpmc/mybot/pojo/ImageInfo.class
