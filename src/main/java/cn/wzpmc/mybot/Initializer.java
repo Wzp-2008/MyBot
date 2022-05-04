@@ -14,6 +14,9 @@ import io.netty.handler.logging.LoggingHandler;
 
 /**
  * @author 33572
+ * @date 2022/03/29 20:54
+ * @version 1.0.0
+ * netty连接初始化
  */
 public class Initializer extends ChannelInitializer<SocketChannel> {
     private final WebSocketMessageHandler handler;

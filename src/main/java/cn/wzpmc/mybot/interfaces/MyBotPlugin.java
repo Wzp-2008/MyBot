@@ -24,6 +24,11 @@ public abstract class MyBotPlugin {
      * @return 此插件是否加载成功
      */
     public abstract boolean onLoad();
+
+    /**
+     * 获取Bot
+     * @return Bot
+     */
     public Bot getBot(){
         ClassLoader classLoader = this.getClass().getClassLoader();
         if(classLoader instanceof PluginClassLoader pluginClassLoader){
@@ -32,6 +37,13 @@ public abstract class MyBotPlugin {
             return null;
         }
     }
+
+    /**
+     * 获取插件
+     * @param clazz 插件主类
+     * @param <T> 插件主类的类型
+     * @return 插件
+     */
     public static <T extends MyBotPlugin> T getPlugin(Class<T> clazz) {
         if(!MyBotPlugin.class.isAssignableFrom(clazz)){
             throw new IllegalArgumentException(clazz + " does not extend " + MyBotPlugin.class);
@@ -43,9 +55,18 @@ public abstract class MyBotPlugin {
         MyBotPlugin plugin = pluginClassLoader.plugin;
         return clazz.cast(plugin);
     }
+    /**
+     * 获取一个指令
+     * @param head 指令的指令头
+     * @return 指令
+     */
     public Command getCommand(String head){
         return new Command(head,this);
     }
+
+    /**
+     * 获取默认配置文件，若配置文件不存在则创建它
+     */
     public void getDefaultConfig(){
         File pluginFolder = this.getPluginFolder();
         PluginClassLoader classLoader = this.getClassLoader();
@@ -80,12 +101,26 @@ public abstract class MyBotPlugin {
         }
         this.config = yaml;
     }
+
+    /**
+     * 从磁盘重新加载配置文件到内存
+     */
     public void reloadConfig(){
         getDefaultConfig();
     }
+
+    /**
+     * 从内存中获取配置文件
+     * @return Yaml配置文件
+     */
     public Yaml getConfig(){
         return this.config;
     }
+
+    /**
+     * 获取配置文件文件夹
+     * @return 配置文件文件夹
+     */
     public File getPluginFolder(){
         File plugins = new File("plugins");
         String name = this.getClassLoader().pluginName;
@@ -95,10 +130,20 @@ public abstract class MyBotPlugin {
         }
         return folder;
     }
+
+    /**
+     * 获取插件的类加载器
+     * @return 插件的类加载器
+     */
     public PluginClassLoader getClassLoader(){
         return (PluginClassLoader) this.getClass().getClassLoader();
     }
+
+    /**
+     * 获取日志器
+     * @return 日志器
+     */
     public Logger getLogger(){
-        return LoggerFactory.getLogger(this.getClass());
+        return this.getClassLoader().logger;
     }
 }

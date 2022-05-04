@@ -9,7 +9,9 @@ cn/wzpmc/mybot/UIListener/OnStopClicked.class
 cn/wzpmc/mybot/enums/GroupMessageSubTypes.class
 cn/wzpmc/mybot/pojo/GroupUser.class
 cn/wzpmc/mybot/utils/BytesUtils.class
+cn/wzpmc/mybot/Event/ServerHeartbeatEvent.class
 cn/wzpmc/mybot/cq/At.class
+cn/wzpmc/mybot/constants/StringConstants.class
 cn/wzpmc/mybot/UIListener/OnStartClicked.class
 cn/wzpmc/mybot/UIListener/OnReloadClicked.class
 cn/wzpmc/mybot/api/MyBotApi.class
@@ -24,5 +26,7 @@ cn/wzpmc/mybot/cq/CqCode.class
 cn/wzpmc/mybot/Initializer.class
 cn/wzpmc/mybot/Event/Event.class
 cn/wzpmc/mybot/pojo/ChannelUser.class
+cn/wzpmc/mybot/utils/EventUtils.class
 cn/wzpmc/mybot/pojo/Anonymous.class
 cn/wzpmc/mybot/WebSocketMessageHandler.class
+cn/wzpmc/mybot/Event/BotGetConnectEvent.class

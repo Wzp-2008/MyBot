@@ -12,6 +12,7 @@ import cn.wzpmc.mybot.pojo.GroupUser;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,8 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author wzp
  * @version 1.0.0
  * @date 2022/3/31
+ * 机器人主类
  */
-@Slf4j
 public class Bot{
     private final ConcurrentHashMap<MyBotPlugin,ConcurrentHashMap<Class<?>,Method>> events = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Command, CommandExecutor> commands = new ConcurrentHashMap<>();
@@ -42,6 +43,7 @@ public class Bot{
     private final URL http;
     private static ArrayList<Long> ops;
     public At at;
+    private static final Logger log = LoggerFactory.getLogger("MyBot");
     public Bot(Logger logger, URL http,ArrayList<Long> opsIn){
         this.logger = logger;
         this.http = http;
@@ -51,12 +53,28 @@ public class Bot{
         this.at = new At(groupBot.getId());
         ops = opsIn;
     }
+
+    /**
+     * 获取连接到服务器的http连接地址
+     * @return URL地址
+     */
     public URL getHttpUrl(){
         return this.http;
     }
+
+    /**
+     * 获取可供机器人调用的api
+     * @return api
+     */
     public MyBotApi getApi(){
         return this.api;
     }
+
+    /**
+     * 注册一个事件
+     * @param plugin 插件
+     * @param executor 指令执行器
+     */
     public void registerEvent(MyBotPlugin plugin, EventExecutor executor){
         ConcurrentHashMap<Class<?>, Method> eventsThis = events.getOrDefault(plugin, new ConcurrentHashMap<>(1));
         Class<? extends EventExecutor> eventClass = executor.getClass();
@@ -85,21 +103,53 @@ public class Bot{
             logger.error("插件{}中的类{}中没有被EventHandler注解修饰的方法",plugin.getClassLoader().pluginName,eventClass);
         }
     }
+
+    /**
+     * 注册一个命令
+     * @param command 命令
+     * @param executor 命令执行器
+     */
     public void registerCommand(Command command,CommandExecutor executor){
         commands.put(command,executor);
     }
+
+    /**
+     * 获取所有注册的事件
+     * @return 所有的事件
+     */
     public ConcurrentHashMap<MyBotPlugin, ConcurrentHashMap<Class<?>, Method>> getEvents(){
         return events;
     }
+
+    /**
+     * 获取所有注册的命令
+     * @return 所有的命令
+     */
     public Map<Command, CommandExecutor> getCommands(){
         return commands;
     }
+
+    /**
+     * 获取群中的机器人用户
+     * @return 机器人用户
+     */
     public GroupUser getGroupBot(){
         return this.groupBot;
     }
+
+    /**
+     * 获取频道中的机器人用户
+     * @return 机器人用户
+     */
     public ChannelUser getChannelBot(){
         return this.channelBot;
     }
+
+    /**
+     * 判断一个用户是否为op
+     * @param qq 这个用户的qq号
+     * @return 这个用户是否为qq
+     */
     public static boolean isOp(Long qq){
         for (Long op : ops) {
             if(Objects.equals(op, qq)){
@@ -108,17 +158,36 @@ public class Bot{
         }
         return false;
     }
+
+    /**
+     * 获取op列表
+     * @return 所有的op的qq号
+     */
     public static ArrayList<Long> getOps(){
         return ops;
     }
+
+    /**
+     * 将用户添加到op列表
+     * @param qq 要添加op的用户qq号
+     */
     public static void addOp(Long qq){
         ops.add(qq);
         writeOpIntoFile();
     }
+
+    /**
+     * 移除一个用户的op
+     * @param qq 要移除op的用户的qq号
+     */
     public static void removeOp(Long qq){
         ops.remove(qq);
         writeOpIntoFile();
     }
+
+    /**
+     * 将内存中的op列表写入到文件中
+     */
     private static void writeOpIntoFile(){
         ArrayList<Long> ops = getOps();
         String s = JSON.toJSONString(ops);

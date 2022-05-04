@@ -5,64 +5,35 @@ import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
-import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
+
+import static cn.wzpmc.mybot.constants.StringConstants.*;
 
 /**
  * @author 33572
- * @date 2022 03 29 20:54
+ * @date 2022/03/29 20:54
+ * @version 1.0.0
+ * 启动器
  */
-@Slf4j
 public class Main {
     public static Bot bot;
     public static URL http;
     public static Runtime runtime = Runtime.getRuntime();
     public static ArrayList<MyBotPlugin> plugins = new ArrayList<>();
-    public static void nettyStart(String ws){
-        EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
-        try{
-            URI uri = new URI(ws);
-            Bootstrap bootstrap = new Bootstrap();
-            WebSocketClientHandshaker webSocketClientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders());
-            WebSocketMessageHandler handler = new WebSocketMessageHandler(webSocketClientHandshaker);
-            bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class)
-                    .handler(new Initializer(handler));
-            log.info("启动成功！");
-            Channel channel = bootstrap.connect(uri.getHost(),uri.getPort()).sync().channel();
-            channel.closeFuture().sync();
-        } catch (URISyntaxException e) {
-            log.error("URI转换失败，请确认你的websocket连接uri有效");
-        } catch (InterruptedException e) {
-            log.info("检测到Ctrl+C，退出");
-        }finally {
-            eventLoopGroup.shutdownGracefully();
-            ArrayList<Long> ops = Bot.getOps();
-            String s = JSON.toJSONString(ops);
-            File opsFile = new File("ops.json");
-            try {
-                FileWriter fileWriter = new FileWriter(opsFile);
-                fileWriter.write(s);
-            }catch (IOException e){
-                log.error("写入OP表时出错！");
-            }
-        }
-    }
+    public static NettyThread nettyThread;
+    private static final Logger log = LoggerFactory.getLogger("MyBot");
+    public static boolean running = true;
+
+    /**
+     * 加载所有在插件文件夹中的jar插件
+     * @param bot 机器人对象
+     */
     @SneakyThrows
     public static void loadPlugins(Bot bot){
         File pluginsFile = new File("plugins");
@@ -102,6 +73,11 @@ public class Main {
             }
         }
     }
+
+    /**
+     * 获取op列表
+     * @return op列表
+     */
     @SneakyThrows
     public static ArrayList<Long> getOps(){
         File ops = new File("ops.json");
@@ -136,6 +112,11 @@ public class Main {
         }
         return result;
     }
+
+    /**
+     * 获取配置文件
+     * @return 配置文件
+     */
     @SneakyThrows
     public static Properties getConfig(){
         File config = new File("config.properties");
@@ -169,6 +150,13 @@ public class Main {
         }
         return botProperties;
     }
+
+    /**
+     * 加载一个插件
+     * @param file 插件文件
+     * @param bot 机器人对象
+     * @return 这个插件
+     */
     public static HashMap<MyBotPlugin,String> loadPlugin(File file, Bot bot){
         try {
             String absolutePath = file.getAbsolutePath();
@@ -199,6 +187,7 @@ public class Main {
             pluginClassLoader.plugin = o;
             pluginClassLoader.bot = bot;
             pluginClassLoader.pluginName = pluginName;
+            pluginClassLoader.logger = LoggerFactory.getLogger(pluginName);
             plugin.put(o, pluginName);
             return plugin;
         }catch (Throwable e){
@@ -206,6 +195,10 @@ public class Main {
             return null;
         }
     }
+
+    /**
+     * 启动
+     */
     public static void start(){
         Properties properties = getConfig();
         try {
@@ -216,7 +209,56 @@ public class Main {
         ArrayList<Long> ops = getOps();
         bot = new Bot(log,http,ops);
         loadPlugins(bot);
-        nettyStart(properties.getProperty("ws"));
+        nettyThread = new NettyThread(properties.getProperty("ws"));
+        nettyThread.start();
+        Runtime runtime = Runtime.getRuntime();
+        runtime.addShutdownHook(new StopThread());
+        Scanner scanner = new Scanner(System.in);
+        while (running){
+            String command = scanner.nextLine();
+            String[] s = command.split(" ");
+            int len = s.length;
+            if(len == 0){
+                log.error("错误的命令！");
+            }else{
+                String a0 = s[0];
+                if(STOP.equals(a0)){
+                    running = false;
+                    nettyThread.stopNetty();
+                }else if(OP.equals(a0)){
+                    if(len == 2){
+                        try {
+                            Long qq = Long.valueOf(s[1]);
+                            Bot.addOp(qq);
+                            log.info("成功将用户" + qq + "添加至op列表");
+                        }catch (NumberFormatException e){
+                            log.error("错误的参数！");
+                        }
+                    }else{
+                        log.info("错误的命令");
+                    }
+                }else if(DEOP.equals(a0)){
+                    if(len == 2){
+                        try {
+                            Long qq = Long.valueOf(s[1]);
+                            Bot.removeOp(qq);
+                            log.info("成功将用户" + qq + "移除op");
+                        }catch (NumberFormatException e){
+                            log.error("错误的参数！");
+                        }
+                    }else{
+                        log.info("错误的命令");
+                    }
+                }else if(OPS.equals(a0)){
+                    log.info("OP列表：");
+                    for (Long op : Bot.getOps()) {
+                        log.info(String.valueOf(op));
+                    }
+                }else{
+                    log.info("错误的命令！");
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {

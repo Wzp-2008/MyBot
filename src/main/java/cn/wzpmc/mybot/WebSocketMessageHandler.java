@@ -1,12 +1,14 @@
 package cn.wzpmc.mybot;
 
+import cn.wzpmc.mybot.Event.BotGetConnectEvent;
 import cn.wzpmc.mybot.Event.GroupMessageEvent;
 import cn.wzpmc.mybot.Event.PrivateMessageEvent;
+import cn.wzpmc.mybot.Event.ServerHeartbeatEvent;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
-import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import cn.wzpmc.mybot.pojo.Command;
 import cn.wzpmc.mybot.pojo.GroupMessage;
 import cn.wzpmc.mybot.utils.BytesUtils;
+import cn.wzpmc.mybot.utils.EventUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
@@ -15,17 +17,21 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+
+import static cn.wzpmc.mybot.constants.StringConstants.*;
+import static cn.wzpmc.mybot.Main.bot;
 
 /**
  * @author 33572
+ * @date 2022/03/29 20:54
+ * @version 1.0.0
+ * websocket消息处理类
  */
-@Slf4j
 public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object> {
     private final WebSocketClientHandshaker handshaker;
     private boolean unclosed;
@@ -33,27 +39,57 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
     public  WebSocketMessageHandler(WebSocketClientHandshaker handshaker) {
         this.handshaker = handshaker;
     }
+    private static final Logger log = LoggerFactory.getLogger("MyBot-Thread-Network");
+
+    /**
+     * 当websocket连接激活时调用
+     * @param channelHandlerContext 通道
+     */
     @Override
     public void channelActive(ChannelHandlerContext channelHandlerContext){
         log.info("开始建立websocket连接");
+        //获取连接通道
         Channel channel = channelHandlerContext.channel();
+        //进行websocket握手
         this.handshaker.handshake(channel);
         log.info("成功建立websocket连接");
     }
+
+    /**
+     * 当websocket连接出现错误时调用
+     * @param context 通道
+     * @param cause 错误
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext context,Throwable cause){
         log.error(cause.getLocalizedMessage());
         cause.printStackTrace();
     }
+
+    /**
+     * 当websocket连接断开时调用
+     * @param context 通道
+     */
     @Override
     public void handlerRemoved(ChannelHandlerContext context){
         log.error("和websocket服务器断开连接");
     }
+
+    /**
+     * 当通道数据处理完成时调用
+     * @param context 通道
+     */
     @Override
     public void channelReadComplete(ChannelHandlerContext context){
         context.flush();
     }
 
+    /**
+     * 当通道收到数据时调用
+     * @param ctx 通道
+     * @param msg 消息内容
+     * @throws Exception 当通道出现错误时抛出
+     */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof ByteBuf){
@@ -76,17 +112,15 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                 buffer.append(fullJson);
                 return;
             }
-            String type = data.getString("post_type");
-            String messageType = data.getString("message_type");
-            String group = "group";
-            String privateMessage = "private";
-            String message = "message";
-            Bot bot = Main.bot;
+            //事件类型
+            String postType = data.getString("post_type");
             Properties config = Main.getConfig();
-            ConcurrentHashMap<MyBotPlugin, ConcurrentHashMap<Class<?>, Method>> events = bot.getEvents();
-            ConcurrentHashMap.KeySetView<MyBotPlugin, ConcurrentHashMap<Class<?>, Method>> myBotPlugins = events.keySet();
-            if(message.equals(type)){
-                if(group.equals(messageType)){
+            if(MESSAGE.equals(postType)){
+                //消息类型
+                String messageType = data.getString("message_type");
+                //群组消息
+                if(GROUP.equals(messageType)){
+                    //获取event
                     GroupMessageEvent groupMessageEvent = new GroupMessageEvent(data,bot);
                     GroupMessage gMessage = groupMessageEvent.getMessage();
                     String content = gMessage.getContent();
@@ -105,26 +139,27 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                             gMessage.reply(config.getProperty("not_found_command_message"));
                         }
                     }else{
-                        for (MyBotPlugin myBotPlugin : myBotPlugins) {
-                            ConcurrentHashMap<Class<?>, Method> eventWithMethod = events.get(myBotPlugin);
-                            Method method = eventWithMethod.get(GroupMessageEvent.class);
-                            method.invoke(null,groupMessageEvent);
-                        }
+                        EventUtils.runEvent(groupMessageEvent);
                     }
-                }else if(privateMessage.equals(messageType)){
+                }else if(PRIVATE.equals(messageType)){
                     PrivateMessageEvent event = new PrivateMessageEvent(data,bot);
-                    for (MyBotPlugin myBotPlugin : myBotPlugins) {
-                        ConcurrentHashMap<Class<?>, Method> eventWithMethod = events.get(myBotPlugin);
-                        Method method = eventWithMethod.get(PrivateMessageEvent.class);
-                        method.invoke(null,event);
+                    EventUtils.runEvent(event);
+                }
+            }else if(META_EVENT.equals(postType)){
+                String metaEventType = data.getString("meta_event_type");
+                if(LIFECYCLE.equals(metaEventType)){
+                    String subType = data.getString("sub_type");
+                    if(CONNECT.equals(subType)){
+                        BotGetConnectEvent botGetConnectEvent = new BotGetConnectEvent(data);
+                        EventUtils.runEvent(botGetConnectEvent);
                     }
                 }
+                if(HEARTBEAT.equals(metaEventType)){
+                    ServerHeartbeatEvent event = new ServerHeartbeatEvent(data);
+                    EventUtils.runEvent(event);
+                }
             }
-            log.info("recv JsonData = {}",data);
+            log.info("get JsonData = {}",data);
         }
-    }
-
-    public WebSocketClientHandshaker getHandshaker() {
-        return handshaker;
     }
 }
