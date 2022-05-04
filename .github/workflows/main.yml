@@ -14,7 +14,7 @@ on:
   #   types: [opened, reopened, synchronize]
 
 jobs:
-  buildMaven:
+  CI:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -32,8 +32,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       with:
-        tag_name: alpha${{github.run_number}}
-        release_name: alpha${{github.run_number}}
+        tag_name: alpha0.0.${{github.run_number}}
+        release_name: alpha0.0.${{github.run_number}}
     - name: Upload main file to release
       uses: actions/upload-release-asset@v1
       env:
@@ -41,7 +41,7 @@ jobs:
       with:
         upload_url: ${{steps.cr.outputs.upload_url}}
         asset_path: ./target/mybot-jar-with-dependencies.jar
-        asset_name: mybot-alpha${{github.run_number}}.jar
+        asset_name: mybot-alpha0.0.${{github.run_number}}.jar
         asset_content_type: application/jar
     - name: Upload javadoc file to release
       uses: actions/upload-release-asset@v1
@@ -50,7 +50,7 @@ jobs:
       with:
         upload_url: ${{steps.cr.outputs.upload_url}}
         asset_path: ./target/mybot-javadoc.jar
-        asset_name: mybot-alpha${{github.run_number}}-javadoc.jar
+        asset_name: mybot-alpha0.0.${{github.run_number}}-javadoc.jar
         asset_content_type: application/jar
     - name: Upload source file to release
       uses: actions/upload-release-asset@v1
@@ -59,5 +59,5 @@ jobs:
       with:
         upload_url: ${{steps.cr.outputs.upload_url}}
         asset_path: ./target/mybot-sources.jar
-        asset_name: mybot-alpha${{github.run_number}}-sources.jar
+        asset_name: mybot-alpha0.0.${{github.run_number}}-sources.jar
         asset_content_type: application/jar
