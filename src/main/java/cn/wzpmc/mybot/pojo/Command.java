@@ -18,7 +18,7 @@ import java.util.Objects;
 @ToString
 @Getter
 @Setter
-public class Command {
+public class Command{
     private final String head;
     private final ArrayList<String> body;
     private final MyBotPlugin plugin;

@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Bot{
     private final ConcurrentHashMap<MyBotPlugin,ConcurrentHashMap<Class<?>,Method>> events = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Command, CommandExecutor> commands = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Command, CommandExecutor> consoleCommands = new ConcurrentHashMap<>();
     private final Logger logger;
     private final GroupUser groupBot;
     private final ChannelUser channelBot;
@@ -114,6 +115,25 @@ public class Bot{
     }
 
     /**
+     * 注册一个控制台命令
+     * @param command 命令
+     * @param executor 命令执行器
+     */
+    public void registerConsoleCommand(Command command,CommandExecutor executor){
+        consoleCommands.put(command,executor);
+    }
+
+    /**
+     * 在注册命令的同时注册控制台命令
+     * @param command 命令
+     * @param executor 命令执行器
+     */
+    public void registerCommandWithConsole(Command command,CommandExecutor executor){
+        commands.put(command,executor);
+        consoleCommands.put(command,executor);
+    }
+
+    /**
      * 获取所有注册的事件
      * @return 所有的事件
      */
@@ -129,6 +149,13 @@ public class Bot{
         return commands;
     }
 
+    /**
+     * 获取所有注册的控制台命令
+     * @return 所有控制台命令
+     */
+    public Map<Command,CommandExecutor> getConsoleCommands() {
+        return consoleCommands;
+    }
     /**
      * 获取群中的机器人用户
      * @return 机器人用户
