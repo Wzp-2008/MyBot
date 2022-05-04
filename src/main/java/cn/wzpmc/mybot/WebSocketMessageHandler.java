@@ -128,6 +128,7 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                     boolean matches = content.contains(s);
                     if(matches){
                         Command command = new Command(content.replace(s, ""),gMessage);
+                        log.info("用户" + gMessage.getSender().getId() + "运行了命令：" + content.replace(bot.at.toString(),""));
                         Map<Command, CommandExecutor> commands = bot.getCommands();
                         CommandExecutor commandExecutor = commands.get(command);
                         if (commandExecutor != null) {
