@@ -1,7 +1,6 @@
 package cn.wzpmc.mybot.pojo;
 
-import com.alibaba.fastjson.JSONObject;
-import lombok.EqualsAndHashCode;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.ToString;
 
 /**

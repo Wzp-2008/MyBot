@@ -1,7 +1,6 @@
 package cn.wzpmc.mybot.pojo;
 
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

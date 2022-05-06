@@ -2,7 +2,7 @@ package cn.wzpmc.mybot.Event;
 
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.pojo.GroupMessage;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.*;
 
 /**

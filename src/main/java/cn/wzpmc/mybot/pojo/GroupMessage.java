@@ -4,7 +4,7 @@ import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.api.MyBotApi;
 import cn.wzpmc.mybot.cq.At;
 import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

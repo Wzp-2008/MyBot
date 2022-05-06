@@ -1,0 +1,6 @@
+.idea
+logs
+plugins
+target
+config.properties
+ops.json

@@ -3,7 +3,6 @@ package cn.wzpmc.mybot.utils;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 /**
  * @author 33572

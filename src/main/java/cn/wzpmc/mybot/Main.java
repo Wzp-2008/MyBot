@@ -6,8 +6,8 @@ import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import cn.wzpmc.mybot.pojo.Command;
 import cn.wzpmc.mybot.pojo.Console;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,10 +90,8 @@ public class Main {
                 log.error("创建OP表失败，哈哈");
                 runtime.exit(1);
             }else {
-                JSONArray objects = new JSONArray();
-                String s = objects.toJSONString();
                 FileWriter fileWriter = new FileWriter(ops);
-                fileWriter.write(s);
+                fileWriter.write(new JSONArray().toString());
                 fileWriter.close();
                 log.info("彳亍");
             }
@@ -110,7 +108,7 @@ public class Main {
         opsFileReader.close();
         ArrayList<Long> result = new ArrayList<>();
         for (int i = 0; i < opsObjects.size(); i++) {
-            Long aLong = opsObjects.getLong(i);
+            Long aLong = Long.valueOf(opsObjects.getString(i));
             result.add(aLong);
         }
         return result;
@@ -219,7 +217,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Console console = new Console();
         while (running){
-            String command = scanner.nextLine();
+            String command = scanner.next();
             String[] s = command.split(" ");
             int len = s.length;
             if(len == 0){

@@ -5,7 +5,6 @@ import cn.wzpmc.mybot.pojo.Command;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import lombok.EqualsAndHashCode;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;

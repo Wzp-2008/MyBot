@@ -1,12 +1,12 @@
 package cn.wzpmc.mybot.api;
 
 import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.wzpmc.mybot.Bot;
-import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
 import cn.wzpmc.mybot.pojo.*;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
@@ -43,13 +43,21 @@ public class MyBotApi {
 
     private JSONObject doGet(String function) {
         String url = this.getUrl(function);
-        String body = HttpRequest.get(url).execute().body();
+        HttpRequest httpRequest = HttpRequest.get(url);
+        String body;
+        try(HttpResponse execute = httpRequest.execute()){
+            body = execute.body();
+        }
         JSONObject jsonObject = JSON.parseObject(body);
         return jsonObject.getJSONObject("data");
     }
     private JSONArray doGetWithArray(String function) {
         String url = this.getUrl(function);
-        String body = HttpRequest.get(url).execute().body();
+        HttpRequest httpRequest = HttpRequest.get(url);
+        String body;
+        try(HttpResponse execute = httpRequest.execute()){
+            body = execute.body();
+        }
         JSONObject jsonObject = JSON.parseObject(body);
         return jsonObject.getJSONArray("data");
     }
@@ -57,7 +65,11 @@ public class MyBotApi {
     private JSONObject doPost(String function, JSONObject args) {
         String url = this.getUrl(function);
         String s = JSON.toJSONString(args);
-        String body = HttpRequest.post(url).body(s).execute().body();
+        HttpRequest request = HttpRequest.post(url).body(s);
+        String body;
+        try(HttpResponse response = request.execute()){
+            body = response.body();
+        }
         JSONObject jsonObject = JSON.parseObject(body);
         JSONObject data = jsonObject.getJSONObject("data");
         if (data == null) {
@@ -77,10 +89,11 @@ public class MyBotApi {
      */
     public Integer sendPrivateMessage(Long userId, Long groupId, String message, boolean autoEscape) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user_id", userId);
-        jsonObject.put("group_id", groupId);
-        jsonObject.put("message", message);
-        jsonObject.put("auto_escape", autoEscape);
+        jsonObject.
+                fluentPut("user_id",userId).
+                fluentPut("group_id",groupId).
+                fluentPut("message",message).
+                fluentPut("auto_escape",autoEscape);
         JSONObject r = doPost("/send_private_msg", jsonObject);
         return r.getInteger("message_id");
     }
@@ -95,9 +108,9 @@ public class MyBotApi {
      */
     public Integer sendPrivateMessage(Long userId, Long groupId, String message) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user_id", userId);
-        jsonObject.put("group_id", groupId);
-        jsonObject.put("message", message);
+        jsonObject.fluentPut("user_id", userId);
+        jsonObject.fluentPut("group_id", groupId);
+        jsonObject.fluentPut("message", message);
         JSONObject r = doPost("/send_private_msg", jsonObject);
         return r.getInteger("message_id");
     }
@@ -130,8 +143,8 @@ public class MyBotApi {
      */
     public Integer sendGroupMessage(Long groupId, String message) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id", groupId);
-        jsonObject.put("message", message);
+        jsonObject.fluentPut("group_id", groupId);
+        jsonObject.fluentPut("message", message);
         JSONObject r = doPost("/send_group_msg", jsonObject);
         return r.getInteger("message_id");
     }
@@ -144,9 +157,9 @@ public class MyBotApi {
      */
     public Integer sendGroupMessage(Long groupId, String message, boolean autoEscape) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id", groupId);
-        jsonObject.put("message", message);
-        jsonObject.put("auto_escape", autoEscape);
+        jsonObject.fluentPut("group_id", groupId);
+        jsonObject.fluentPut("message", message);
+        jsonObject.fluentPut("auto_escape", autoEscape);
         JSONObject r = doPost("/send_group_msg", jsonObject);
         return r.getInteger("message_id");
     }
@@ -158,7 +171,7 @@ public class MyBotApi {
      */
     public void deleteMessage(Integer messageId) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("message_id", messageId);
+        jsonObject.fluentPut("message_id", messageId);
         doPost("/delete_msg", jsonObject);
     }
 
@@ -170,7 +183,7 @@ public class MyBotApi {
      */
     public GroupMessage getMsg(Integer messageId) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("message_id", messageId);
+        jsonObject.fluentPut("message_id", messageId);
         JSONObject r = doPost("/get_msg", jsonObject);
         return new GroupMessage(r,this.bot);
     }
@@ -182,7 +195,7 @@ public class MyBotApi {
      */
     public JSONObject getForwardMsg(Integer messageId) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("message_id", messageId);
+        jsonObject.fluentPut("message_id", messageId);
         return doPost("/get_forward_msg", jsonObject);
     }
 
@@ -194,7 +207,7 @@ public class MyBotApi {
      */
     public ImageInfo getImage(String file) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("file", file);
+        jsonObject.fluentPut("file", file);
         JSONObject r = doPost("/get_image", jsonObject);
         return r.toJavaObject(ImageInfo.class);
     }
@@ -207,9 +220,9 @@ public class MyBotApi {
      */
     public void groupKick(Long groupId, Long userId,boolean rejectAddRequest) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id", groupId);
-        jsonObject.put("user_id", userId);
-        jsonObject.put("reject_add_request",rejectAddRequest);
+        jsonObject.fluentPut("group_id", groupId);
+        jsonObject.fluentPut("user_id", userId);
+        jsonObject.fluentPut("reject_add_request",rejectAddRequest);
         doPost("/set_group_kick", jsonObject);
     }
 
@@ -220,8 +233,8 @@ public class MyBotApi {
      */
     public void groupKick(Long groupId, Long userId) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id", groupId);
-        jsonObject.put("user_id", userId);
+        jsonObject.fluentPut("group_id", groupId);
+        jsonObject.fluentPut("user_id", userId);
         doPost("/set_group_kick",jsonObject);
     }
 
@@ -232,8 +245,8 @@ public class MyBotApi {
      */
     public void groupBan(Long groupId, Long userId){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
         doPost("/set_group_ban",jsonObject);
     }
     /**
@@ -244,9 +257,9 @@ public class MyBotApi {
      */
     public void groupBan(Long groupId, Long userId, int duration){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
-        jsonObject.put("duration",duration);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
+        jsonObject.fluentPut("duration",duration);
         doPost("/set_group_ban",jsonObject);
     }
 
@@ -258,9 +271,9 @@ public class MyBotApi {
      */
     public void groupAnonymousBan(Long groupId, Anonymous anonymous, String flag){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("anonymous",anonymous);
-        jsonObject.put("flag",flag);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("anonymous",anonymous);
+        jsonObject.fluentPut("flag",flag);
         doPost("/set_group_anonymous_ban",jsonObject);
     }
 
@@ -271,8 +284,8 @@ public class MyBotApi {
      */
     public void groupAnonymousBan(Long groupId, Anonymous anonymous){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("anonymous",anonymous);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("anonymous",anonymous);
         doPost("/set_group_anonymous_ban",jsonObject);
     }
 
@@ -283,8 +296,8 @@ public class MyBotApi {
      */
     public void groupAnonymousBan(Long groupId, String flag){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("flag",flag);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("flag",flag);
         doPost("/set_group_anonymous_ban",jsonObject);
     }
 
@@ -297,10 +310,10 @@ public class MyBotApi {
      */
     public void groupAnonymousBan(Long groupId, Anonymous anonymous, String flag, int duration){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("anonymous",anonymous);
-        jsonObject.put("flag",flag);
-        jsonObject.put("duration",duration);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("anonymous",anonymous);
+        jsonObject.fluentPut("flag",flag);
+        jsonObject.fluentPut("duration",duration);
         doPost("/set_group_anonymous_ban",jsonObject);
     }
 
@@ -312,9 +325,9 @@ public class MyBotApi {
      */
     public void groupAnonymousBan(Long groupId, Anonymous anonymous, int duration){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("anonymous",anonymous);
-        jsonObject.put("duration",duration);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("anonymous",anonymous);
+        jsonObject.fluentPut("duration",duration);
         doPost("/set_group_anonymous_ban",jsonObject);
     }
 
@@ -326,9 +339,9 @@ public class MyBotApi {
      */
     public void groupAnonymousBan(Long groupId, String flag, int duration){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("flag",flag);
-        jsonObject.put("duration",duration);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("flag",flag);
+        jsonObject.fluentPut("duration",duration);
         doPost("/set_group_anonymous_ban",jsonObject);
     }
 
@@ -339,8 +352,8 @@ public class MyBotApi {
      */
     public void groupAnonymousBan(Long groupId, int duration){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("duration",duration);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("duration",duration);
         doPost("/set_group_anonymous_ban",jsonObject);
             }
 
@@ -350,7 +363,7 @@ public class MyBotApi {
      */
     public void groupWholeBan(Long groupId){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
+        jsonObject.fluentPut("group_id",groupId);
         doPost("set_group_whole_ban",jsonObject);
     }
 
@@ -361,8 +374,8 @@ public class MyBotApi {
      */
     public void groupWholeBan(Long groupId, boolean enable){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("enable",enable);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("enable",enable);
         doPost("/set_group_whole_ban",jsonObject);
     }
 
@@ -373,8 +386,8 @@ public class MyBotApi {
      */
     public void setGroupAdmin(Long groupId, Long userId){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
         doPost("/set_group_admin",jsonObject);
     }
 
@@ -386,9 +399,9 @@ public class MyBotApi {
      */
     public void setGroupAdmin(Long groupId, Long userId, boolean enable){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
-        jsonObject.put("enable",enable);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
+        jsonObject.fluentPut("enable",enable);
         doPost("/set_group_admin",jsonObject);
     }
 
@@ -399,8 +412,8 @@ public class MyBotApi {
      */
     public void setGroupCard(Long groupId, Long userId){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
         doPost("/set_group_card",jsonObject);
     }
 
@@ -412,9 +425,9 @@ public class MyBotApi {
      */
     public void setGroupCard(Long groupId, Long userId, String card){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
-        jsonObject.put("card",card);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
+        jsonObject.fluentPut("card",card);
         doPost("/set_group_card",jsonObject);
     }
 
@@ -425,8 +438,8 @@ public class MyBotApi {
      */
     public void setGroupName(Long groupId, String groupName){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("group_name",groupId);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("group_name",groupId);
         doPost("/set_group_name",jsonObject);
     }
 
@@ -436,7 +449,7 @@ public class MyBotApi {
      */
     public void setGroupLeave(Long groupId){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
+        jsonObject.fluentPut("group_id",groupId);
         doPost("/set_group_leave",jsonObject);
     }
 
@@ -447,8 +460,8 @@ public class MyBotApi {
      */
     public void setGroupLeave(Long groupId, boolean isDismiss){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("is_dismiss",isDismiss);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("is_dismiss",isDismiss);
         doPost("/set_group_leave",jsonObject);
     }
 
@@ -459,8 +472,8 @@ public class MyBotApi {
      */
     public void setGroupSpecialTitle(Long groupId, Long userId){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
         doPost("/set_group_special_title",jsonObject);
     }
 
@@ -473,10 +486,10 @@ public class MyBotApi {
      */
     public void setGroupSpecialTitle(Long groupId, Long userId, String specialTitle, int duration){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
-        jsonObject.put("special_title",specialTitle);
-        jsonObject.put("duration",duration);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
+        jsonObject.fluentPut("special_title",specialTitle);
+        jsonObject.fluentPut("duration",duration);
         doPost("/set_group_special_title",jsonObject);
     }
 
@@ -488,9 +501,9 @@ public class MyBotApi {
      */
     public void setGroupSpecialTitle(Long groupId, Long userId, String specialTitle){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
-        jsonObject.put("special_title",specialTitle);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
+        jsonObject.fluentPut("special_title",specialTitle);
         doPost("/set_group_special_title",jsonObject);
     }
 
@@ -502,9 +515,9 @@ public class MyBotApi {
      */
     public void setGroupSpecialTitle(Long groupId, Long userId, int duration){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("group_id",groupId);
-        jsonObject.put("user_id",userId);
-        jsonObject.put("duration",duration);
+        jsonObject.fluentPut("group_id",groupId);
+        jsonObject.fluentPut("user_id",userId);
+        jsonObject.fluentPut("duration",duration);
         doPost("/set_group_special_title",jsonObject);
     }
 
@@ -514,7 +527,7 @@ public class MyBotApi {
      */
     public void setFriendAddRequest(String flag){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flag",flag);
+        jsonObject.fluentPut("flag",flag);
         doPost("/set_friend_add_request",jsonObject);
     }
 
@@ -526,9 +539,9 @@ public class MyBotApi {
      */
     public void setFriendAddRequest(String flag, boolean approve, String remark){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flag",flag);
-        jsonObject.put("approve",approve);
-        jsonObject.put("remark",remark);
+        jsonObject.fluentPut("flag",flag);
+        jsonObject.fluentPut("approve",approve);
+        jsonObject.fluentPut("remark",remark);
         doPost("/set_friend_add_request",jsonObject);
     }
 
@@ -539,8 +552,8 @@ public class MyBotApi {
      */
     public void setFriendAddRequest(String flag, boolean approve){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flag",flag);
-        jsonObject.put("approve",approve);
+        jsonObject.fluentPut("flag",flag);
+        jsonObject.fluentPut("approve",approve);
         doPost("/set_friend_add_request",jsonObject);
     }
 
@@ -551,8 +564,8 @@ public class MyBotApi {
      */
     public void setGroupAddRequest(String flag,String type){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flag",flag);
-        jsonObject.put("type",type);
+        jsonObject.fluentPut("flag",flag);
+        jsonObject.fluentPut("type",type);
         doPost("set_group_add_request",jsonObject);
     }
 
@@ -565,10 +578,10 @@ public class MyBotApi {
      */
     public void setGroupAddRequest(String flag,String type, boolean approve, String reason){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flag",flag);
-        jsonObject.put("type",type);
-        jsonObject.put("approve",approve);
-        jsonObject.put("reason",reason);
+        jsonObject.fluentPut("flag",flag);
+        jsonObject.fluentPut("type",type);
+        jsonObject.fluentPut("approve",approve);
+        jsonObject.fluentPut("reason",reason);
         doPost("/set_group_add_request",jsonObject);
     }
 
@@ -580,9 +593,9 @@ public class MyBotApi {
      */
     public void setGroupAddRequest(String flag, String type, boolean approve){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("flag",flag);
-        jsonObject.put("type",type);
-        jsonObject.put("approve",approve);
+        jsonObject.fluentPut("flag",flag);
+        jsonObject.fluentPut("type",type);
+        jsonObject.fluentPut("approve",approve);
         doPost("/set_group_add_request",jsonObject);
     }
 
@@ -604,8 +617,8 @@ public class MyBotApi {
      */
     public GroupUser getStrangerInfo(Long userId,Boolean noCache){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user_id",userId);
-        jsonObject.put("no_cache",noCache);
+        jsonObject.fluentPut("user_id",userId);
+        jsonObject.fluentPut("no_cache",noCache);
         JSONObject result = doPost("/get_stranger_info",jsonObject);
         return GroupUser.getGroupUser(result);
     }
@@ -630,7 +643,7 @@ public class MyBotApi {
      */
     public void deleteFriend(Long friendId){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("friend_id",friendId);
+        jsonObject.fluentPut("friend_id",friendId);
         doPost("/delete_friend",jsonObject);
     }
 }
