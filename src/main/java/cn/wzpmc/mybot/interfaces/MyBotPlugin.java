@@ -3,6 +3,7 @@ package cn.wzpmc.mybot.interfaces;
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.pojo.Command;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.EqualsAndHashCode;
 import org.slf4j.Logger;
 import org.yaml.snakeyaml.Yaml;
@@ -17,7 +18,7 @@ import java.nio.charset.StandardCharsets;
  */
 @EqualsAndHashCode
 public abstract class MyBotPlugin {
-    private Yaml config = new Yaml();
+    private JSONObject config = new JSONObject();
     /**
      * 当插件被加载时运行
      * @return 此插件是否加载成功
@@ -72,6 +73,7 @@ public abstract class MyBotPlugin {
         InputStream resourceAsStream = classLoader.getResourceAsStream("config.yml");
         Logger logger = this.getLogger();
         Yaml yaml = new Yaml();
+        JSONObject object;
         if (resourceAsStream == null) {
             logger.error("没有找到默认配置文件！");
             return;
@@ -91,14 +93,14 @@ public abstract class MyBotPlugin {
             }
             resourceAsStream.close();
             fileWriter.write(builder.toString());
-            yaml.load(new FileReader(configFile, StandardCharsets.UTF_8));
+            object = yaml.loadAs(new FileReader(configFile, StandardCharsets.UTF_8), JSONObject.class);
             fileWriter.close();
 
         } catch (IOException e) {
             logger.error("创建默认配置文件失败！");
             return;
         }
-        this.config = yaml;
+        this.config = object;
     }
 
     /**
@@ -110,9 +112,10 @@ public abstract class MyBotPlugin {
 
     /**
      * 从内存中获取配置文件
+     *
      * @return Yaml配置文件
      */
-    public Yaml getConfig(){
+    public JSONObject getConfig(){
         return this.config;
     }
 
