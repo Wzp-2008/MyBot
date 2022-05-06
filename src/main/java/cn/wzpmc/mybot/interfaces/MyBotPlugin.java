@@ -95,8 +95,8 @@ public abstract class MyBotPlugin {
             fileWriter.write(builder.toString());
             object = yaml.loadAs(new FileReader(configFile, StandardCharsets.UTF_8), JSONObject.class);
             fileWriter.close();
-
         } catch (IOException e) {
+            e.printStackTrace();
             logger.error("创建默认配置文件失败！");
             return;
         }
