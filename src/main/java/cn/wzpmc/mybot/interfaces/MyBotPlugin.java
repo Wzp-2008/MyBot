@@ -80,21 +80,23 @@ public abstract class MyBotPlugin {
         }
         File configFile = new File(pluginFolder, "config.yml");
         try {
-            boolean newFile = configFile.createNewFile();
-            if(!newFile){
-                logger.error("创建默认配置文件失败！");
-                return;
-            }
-            FileWriter fileWriter = new FileWriter(configFile);
-            StringBuilder builder = new StringBuilder();
-            byte[] bytes = resourceAsStream.readAllBytes();
-            for (byte aByte : bytes) {
-                builder.append((char) aByte);
+            if(!configFile.exists()){
+                boolean newFile = configFile.createNewFile();
+                if(!newFile){
+                    logger.error("创建默认配置文件失败！");
+                    return;
+                }
+                FileWriter fileWriter = new FileWriter(configFile);
+                StringBuilder builder = new StringBuilder();
+                byte[] bytes = resourceAsStream.readAllBytes();
+                for (byte aByte : bytes) {
+                    builder.append((char) aByte);
+                }
+                fileWriter.write(builder.toString());
+                fileWriter.close();
             }
             resourceAsStream.close();
-            fileWriter.write(builder.toString());
             object = yaml.loadAs(new FileReader(configFile, StandardCharsets.UTF_8), JSONObject.class);
-            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("创建默认配置文件失败！");
