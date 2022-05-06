@@ -21,7 +21,9 @@ public class EventUtils {
         for (MyBotPlugin myBotPlugin : myBotPlugins) {
             ConcurrentHashMap<Class<?>, Method> eventWithMethod = events.get(myBotPlugin);
             Method method = eventWithMethod.get(event.getClass());
-            method.invoke(null,event);
+            if(method != null){
+                method.invoke(null,event);
+            }
         }
     }
 }
