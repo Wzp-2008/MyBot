@@ -1,5 +1,7 @@
 package cn.wzpmc.mybot;
 
+import java.util.Map;
+
 import static cn.wzpmc.mybot.Main.*;
 
 /**
@@ -12,5 +14,9 @@ public class StopThread extends Thread{
     public void run() {
         running = false;
         nettyThread.stopNetty();
+        Map<Thread, StackTraceElement[]> allStackTraces = Thread.getAllStackTraces();
+        for (Thread thread : allStackTraces.keySet()) {
+            thread.interrupt();
+        }
     }
 }
