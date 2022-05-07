@@ -213,7 +213,8 @@ public class Main {
         nettyThread = new NettyThread(properties.getProperty("ws"));
         nettyThread.start();
         Runtime runtime = Runtime.getRuntime();
-        runtime.addShutdownHook(new StopThread());
+        StopThread stopThread = new StopThread();
+        runtime.addShutdownHook(stopThread);
         Scanner scanner = new Scanner(System.in);
         Console console = new Console();
         while (running){
@@ -240,7 +241,14 @@ public class Main {
                     runCommand.execute(run,console);
                 }else if(STOP.equals(a0)){
                     running = false;
-                    nettyThread.stopNetty();
+                    log.info("停止线程开始执行");
+                    stopThread.start();
+                    try {
+                        stopThread.join();
+                    } catch (InterruptedException e) {
+                        log.info("检测到Ctrl+C，强制退出！");
+                        Runtime.getRuntime().exit(1);
+                    }
                 }else if(OP.equals(a0)){
                     if(len == 2){
                         try {
