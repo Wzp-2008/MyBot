@@ -742,6 +742,7 @@ public class MyBotApi {
      * @param domain 需要获取 cookies 的域名
      * @return Cookies
      */
+    @Deprecated
     public String getCookies(String domain){
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("domain",domain);
@@ -753,6 +754,7 @@ public class MyBotApi {
      * @deprecated 该 API 暂未被 go-cqhttp 支持
      * @return CSRF Token
      */
+    @Deprecated
     public Integer getCsrfToken(){
         return doGet("/get_csrf_token").getInteger("token");
     }
@@ -763,6 +765,7 @@ public class MyBotApi {
      * @param domain 需要获取 cookies 的域名
      * @return QQ 相关接口凭证
      */
+    @Deprecated
     public Credentials getCredentials(String domain){
         String cookies = getCookies(domain);
         Integer csrfToken = getCsrfToken();
@@ -776,6 +779,7 @@ public class MyBotApi {
      * @param outFormant 要转换到的格式, 目前支持 mp3、amr、wma、m4a、spx、ogg、wav、flac
      * @return 语音
      */
+    @Deprecated
     public String getRecord(String file,String outFormant){
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("file",file).fluentPut("out_format",outFormant);
@@ -804,5 +808,92 @@ public class MyBotApi {
      */
     public VersionInfo getVersionInfo(){
         return doGet("/get_version_info").toJavaObject(VersionInfo.class);
+    }
+
+    /**
+     * 重启go-cqhttp
+     * @param delay 要延迟的毫秒数, 如果默认情况下无法重启, 可以尝试设置延迟为 2000 左右
+     */
+    public void setRestart(Integer delay){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("delay",delay);
+        doPost("/set_restart",jsonObject);
+    }
+
+    /**
+     * 重启go-cqhttp
+     */
+    public void setRestart(){
+        doPost("/set_restart",new JSONObject());
+    }
+
+    /**
+     * 清理缓存
+     * @deprecated 该 API 暂未被 go-cqhttp 支持
+     */
+    @Deprecated
+    public void cleanCache(){
+        doGet("/clean_cache");
+    }
+
+    /**
+     * 设置群头像
+     * 目前这个API在登录一段时间后因cookie失效而失效, 请考虑后使用
+     * @param groupId 群号
+     * @param file 图片文件名
+     * file 参数支持以下几种格式：
+     * 绝对路径,格式使用 <a href="https://datatracker.ietf.org/doc/html/rfc8089">file URI</a>
+     * 网络 URL
+     * Base64 编码
+     * @param cache 表示是否使用已缓存的文件
+     * cache参数: 通过网络 URL 发送时有效, 1表示使用缓存, 0关闭关闭缓存, 默认 为1
+     */
+    public void setGroupPortrait(Long groupId,String file,Integer cache){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("file",file).fluentPut("cache",cache);
+        doPost("/set_group_portrait",jsonObject);
+    }
+
+    /**
+     * 设置群头像
+     * 目前这个API在登录一段时间后因cookie失效而失效, 请考虑后使用
+     * @param groupId 群号
+     * @param file 图片文件名
+     * file 参数支持以下几种格式：
+     * 绝对路径,格式使用 <a href="https://datatracker.ietf.org/doc/html/rfc8089">file URI</a>
+     * 网络 URL
+     * Base64 编码
+     */
+    public void setGroupPortrait(Long groupId,String file){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("file",file);
+        doPost("/set_group_portrait",jsonObject);
+    }
+
+    /**
+     * 图片 OCR
+     * 目前图片OCR接口仅支持接受的图片
+     * @param image 图片ID
+     * @return OCR结果
+     */
+    public OcrImageResult ocrImage(String image){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("image",image);
+        JSONObject result = doPost("/ocr_image", jsonObject);
+        JSONArray texts = result.getJSONArray("texts");
+        String language = result.getString("language");
+        ArrayList<TextDetection> textDetections = new ArrayList<>();
+        for (int i = 0; i < texts.size(); i++) {
+            JSONObject textDetectionObject = texts.getJSONObject(i);
+            String text = textDetectionObject.getString("text");
+            Integer confidence = textDetectionObject.getInteger("confidence");
+            JSONArray coordinatesObject= textDetectionObject.getJSONArray("coordinates");
+            Pos pos1 = coordinatesObject.getJSONObject(0).toJavaObject(Pos.class);
+            Pos pos2 = coordinatesObject.getJSONObject(1).toJavaObject(Pos.class);
+            Vec2 coordinates = new Vec2(pos1, pos2);
+            TextDetection textDetection = new TextDetection(text, confidence, coordinates);
+            textDetections.add(textDetection);
+        }
+        return new OcrImageResult(textDetections, language);
     }
 }
