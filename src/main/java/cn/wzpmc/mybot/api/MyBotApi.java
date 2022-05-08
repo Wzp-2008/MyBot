@@ -929,4 +929,37 @@ public class MyBotApi {
         jsonObject.fluentPut("group_id",groupId).fluentPut("file",file).fluentPut("name",name).fluentPut("folder",folder);
         doPost("/upload_group_file",jsonObject);
     }
+
+    /**
+     * 获取群文件系统信息
+     * @param groupId 群号
+     * @return 群文件系统信息
+     */
+    public GroupFileSystemInfo getGroupFileSystemInfo(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId);
+        return doPost("/get_group_file_system_info", jsonObject).toJavaObject(GroupFileSystemInfo.class);
+    }
+
+    /**
+     * 获取群根目录文件列表
+     * @param groupId 群号
+     * @return 文件列表
+     */
+    public GroupFileList getGroupRootFiles(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId);
+        JSONObject result = doPost("/get_group_file_system_info", jsonObject);
+        JSONArray filesObject = result.getJSONArray("files");
+        JSONArray foldersObject = result.getJSONArray("folders");
+        ArrayList<GroupFileObject> files = new ArrayList<>();
+        ArrayList<GroupFolderObject> folder = new ArrayList<>();
+        for (int i = 0; i < filesObject.size(); i++) {
+            files.add(filesObject.getJSONObject(i).toJavaObject(GroupFileObject.class));
+        }
+        for (int i = 0; i < foldersObject.size(); i++) {
+            folder.add(foldersObject.getJSONObject(i).toJavaObject(GroupFolderObject.class));
+        }
+        return new GroupFileList(files,folder);
+    }
 }
