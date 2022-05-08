@@ -198,23 +198,9 @@ public class Main {
     }
 
     /**
-     * 启动
+     * 启动控制台
      */
-    public static void start(){
-        Properties properties = getConfig();
-        try {
-            http = new URL(properties.getProperty("http"));
-        } catch (MalformedURLException e) {
-            log.error("url转换失败，请确认你的配置文件中url参数是否错误！");
-        }
-        ArrayList<Long> ops = getOps();
-        bot = new Bot(log,http,ops);
-        loadPlugins(bot);
-        nettyThread = new NettyThread(properties.getProperty("ws"));
-        nettyThread.start();
-        Runtime runtime = Runtime.getRuntime();
-        StopThread stopThread = new StopThread();
-        runtime.addShutdownHook(stopThread);
+    public static void consoleRun(){
         Scanner scanner = new Scanner(System.in);
         Console console = new Console();
         while (running){
@@ -241,14 +227,8 @@ public class Main {
                     runCommand.execute(run,console);
                 }else if(STOP.equals(a0)){
                     running = false;
-                    log.info("停止线程开始执行");
-                    stopThread.start();
-                    try {
-                        stopThread.join();
-                    } catch (InterruptedException e) {
-                        log.info("检测到Ctrl+C，强制退出！");
-                        Runtime.getRuntime().exit(1);
-                    }
+                    log.info("停止");
+                    Runtime.getRuntime().exit(0);
                 }else if(OP.equals(a0)){
                     if(len == 2){
                         try {
@@ -283,6 +263,26 @@ public class Main {
                 }
             }
         }
+    }
+    /**
+     * 启动
+     */
+    public static void start(){
+        Properties properties = getConfig();
+        try {
+            http = new URL(properties.getProperty("http"));
+        } catch (MalformedURLException e) {
+            log.error("url转换失败，请确认你的配置文件中url参数是否错误！");
+        }
+        ArrayList<Long> ops = getOps();
+        bot = new Bot(log,http,ops);
+        loadPlugins(bot);
+        nettyThread = new NettyThread(properties.getProperty("ws"));
+        nettyThread.start();
+        Runtime runtime = Runtime.getRuntime();
+        StopThread stopThread = new StopThread();
+        runtime.addShutdownHook(stopThread);
+        consoleRun();
     }
 
     public static void main(String[] args) {

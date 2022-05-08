@@ -3,12 +3,14 @@ package cn.wzpmc.mybot.api;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.wzpmc.mybot.Bot;
+import cn.wzpmc.mybot.enums.GroupHonorType;
 import cn.wzpmc.mybot.pojo.*;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -61,8 +63,7 @@ public class MyBotApi {
         JSONObject jsonObject = JSON.parseObject(body);
         return jsonObject.getJSONArray("data");
     }
-
-    private JSONObject doPost(String function, JSONObject args) {
+    private JSONObject post(String function,JSONObject args){
         String url = this.getUrl(function);
         String s = JSON.toJSONString(args);
         HttpRequest request = HttpRequest.post(url).body(s);
@@ -70,7 +71,14 @@ public class MyBotApi {
         try(HttpResponse response = request.execute()){
             body = response.body();
         }
-        JSONObject jsonObject = JSON.parseObject(body);
+        return JSON.parseObject(body);
+    }
+    private JSONArray doPostWithArray(String function, JSONObject args) {
+        JSONObject post = post(function, args);
+        return post.getJSONArray("data");
+    }
+    private JSONObject doPost(String function, JSONObject args) {
+        JSONObject jsonObject = post(function,args);
         JSONObject data = jsonObject.getJSONObject("data");
         if (data == null) {
             return jsonObject;
@@ -645,5 +653,156 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("friend_id",friendId);
         doPost("/delete_friend",jsonObject);
+    }
+
+    /**
+     * 获取群信息
+     * @param groupId 群号
+     * @return 群信息
+     */
+    public GroupInfo getGroupInfo(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId);
+        JSONObject jsonObject1 = doPost("/get_group_info", jsonObject);
+        return jsonObject1.toJavaObject(GroupInfo.class);
+    }
+
+    /**
+     * 获取群信息
+     * @param groupId 群号
+     * @param noCache 是否不使用缓存（使用缓存可能更新不及时, 但响应更快）
+     * @return 群信息
+     */
+    public GroupInfo getGroupInfo(Long groupId,Boolean noCache){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId)
+                .fluentPut("no_cache",noCache);
+        JSONObject jsonObject1 = doPost("/get_group_info", jsonObject);
+        return jsonObject1.toJavaObject(GroupInfo.class);
+    }
+
+    /**
+     * 获取群成员信息
+     * @param groupId 群号
+     * @param userId QQ 号
+     * @return 群成员信息
+     */
+    public GroupMemberInfo getGroupMemberInfo(Long groupId,Long userId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("user_id",userId);
+        JSONObject jsonObject1 = doPost("/get_group_member_info", jsonObject);
+        return jsonObject1.toJavaObject(GroupMemberInfo.class);
+    }
+
+    /**
+     * 获取群成员信息
+     * @param groupId 群号
+     * @param userId QQ 号
+     * @param noCache 是否不使用缓存（使用缓存可能更新不及时, 但响应更快）
+     * @return 群成员信息
+     */
+    public GroupMemberInfo getGroupMemberInfo(Long groupId,Long userId,Boolean noCache){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("user_id",userId).fluentPut("no_cache",noCache);
+        JSONObject jsonObject1 = doPost("/get_group_member_info", jsonObject);
+        return jsonObject1.toJavaObject(GroupMemberInfo.class);
+    }
+
+    /**
+     * 获取群成员列表
+     * @param groupId 群号
+     * @return 群成员列表
+     */
+    public ArrayList<GroupMemberInfo> getGroupMemberList(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId);
+        JSONArray objects = doPostWithArray("/get_group_member_list", jsonObject);
+        ArrayList<GroupMemberInfo> R = new ArrayList<>();
+        for (int i = 0; i < objects.size(); i++) {
+            R.add(objects.getJSONObject(i).toJavaObject(GroupMemberInfo.class));
+        }
+        return R;
+    }
+
+    /**
+     * 获取群荣誉信息
+     * @param groupId 群号
+     * @param type 要获取的群荣誉类型
+     * @return 群荣誉信息
+     */
+    public JSONObject getGroupHonorInfo(Long groupId, GroupHonorType type){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("type",type.name());
+        return doPost("/get_group_honor_info", jsonObject);
+    }
+
+    /**
+     * 获取 Cookies
+     * @deprecated 该 API 暂未被 go-cqhttp 支持
+     * @param domain 需要获取 cookies 的域名
+     * @return Cookies
+     */
+    public String getCookies(String domain){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("domain",domain);
+        return doPost("/get_cookies",jsonObject).getString("cookies");
+    }
+
+    /**
+     * 获取 CSRF Token
+     * @deprecated 该 API 暂未被 go-cqhttp 支持
+     * @return CSRF Token
+     */
+    public Integer getCsrfToken(){
+        return doGet("/get_csrf_token").getInteger("token");
+    }
+
+    /**
+     * 获取 QQ 相关接口凭证
+     * @deprecated 该 API 暂未被 go-cqhttp 支持
+     * @param domain 需要获取 cookies 的域名
+     * @return QQ 相关接口凭证
+     */
+    public Credentials getCredentials(String domain){
+        String cookies = getCookies(domain);
+        Integer csrfToken = getCsrfToken();
+        return new Credentials(cookies,csrfToken);
+    }
+
+    /**
+     * 获取语音
+     * @deprecated 该 API 暂未被 go-cqhttp 支持
+     * @param file 收到的语音文件名（消息段的 file 参数）
+     * @param outFormant 要转换到的格式, 目前支持 mp3、amr、wma、m4a、spx、ogg、wav、flac
+     * @return 语音
+     */
+    public String getRecord(String file,String outFormant){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("file",file).fluentPut("out_format",outFormant);
+        return doPost("/get_record", jsonObject).getString("file");
+    }
+
+    /**
+     * 检查是否可以发送图片
+     * @return 是否可以发送图片
+     */
+    public Boolean canSendImage(){
+        return doGet("/can_send_image").getBoolean("yes");
+    }
+
+    /**
+     * 检查是否可以发送语音
+     * @return 是否可以发送语音
+     */
+    public Boolean canSendRecord(){
+        return doGet("/can_send_record").getBoolean("yes");
+    }
+
+    /**
+     * 获取版本信息
+     * @return 版本信息
+     */
+    public VersionInfo getVersionInfo(){
+        return doGet("/get_version_info").toJavaObject(VersionInfo.class);
     }
 }

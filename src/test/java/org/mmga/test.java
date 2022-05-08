@@ -2,14 +2,15 @@ package org.mmga;
 
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.api.MyBotApi;
+import cn.wzpmc.mybot.enums.GroupHonorType;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import cn.wzpmc.mybot.pojo.Command;
-import cn.wzpmc.mybot.pojo.CommandSender;
-import cn.wzpmc.mybot.pojo.User;
+import cn.wzpmc.mybot.pojo.*;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -25,9 +26,11 @@ import java.util.ArrayList;
  */
 public class test{
     public static void main(String[] args) throws Throwable {
-        Yaml yaml = new Yaml();
-        JSONObject jsonObject = yaml.loadAs(new FileInputStream(new File("src/test/resources/test.yml")), JSONObject.class);
-        String a = jsonObject.getString("a");
-        System.out.println(a);
+        Logger bot1 = LoggerFactory.getLogger("bot");
+        MyBotApi bot = new MyBotApi(new Bot(bot1, new URL("http://192.168.123.3:20000"), new ArrayList<Long>()));
+        ArrayList<GroupMemberInfo> groupMemberList = bot.getGroupMemberList(870691845L);
+        bot1.info("{}",groupMemberList);
+        JSONObject groupHonorInfo = bot.getGroupHonorInfo(870691845L, GroupHonorType.all);
+        bot1.info("{}",groupHonorInfo);
     }
 }
