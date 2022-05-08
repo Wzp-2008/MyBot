@@ -32,5 +32,6 @@ public class test{
         bot1.info("{}",groupMemberList);
         JSONObject groupHonorInfo = bot.getGroupHonorInfo(870691845L, GroupHonorType.all);
         bot1.info("{}",groupHonorInfo);
+        ///
     }
 }
