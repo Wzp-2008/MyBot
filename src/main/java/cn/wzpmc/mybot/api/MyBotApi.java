@@ -942,14 +942,11 @@ public class MyBotApi {
     }
 
     /**
-     * 获取群根目录文件列表
-     * @param groupId 群号
-     * @return 文件列表
+     * 处理群文件列表
+     * @param result JSON结果
+     * @return 群文件列表
      */
-    public GroupFileList getGroupRootFiles(Long groupId){
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.fluentPut("group_id",groupId);
-        JSONObject result = doPost("/get_group_file_system_info", jsonObject);
+    private GroupFileList handlerGroupFiles(JSONObject result){
         JSONArray filesObject = result.getJSONArray("files");
         JSONArray foldersObject = result.getJSONArray("folders");
         ArrayList<GroupFileObject> files = new ArrayList<>();
@@ -961,5 +958,42 @@ public class MyBotApi {
             folder.add(foldersObject.getJSONObject(i).toJavaObject(GroupFolderObject.class));
         }
         return new GroupFileList(files,folder);
+    }
+    /**
+     * 获取群根目录文件列表
+     * @param groupId 群号
+     * @return 文件列表
+     */
+    public GroupFileList getGroupRootFiles(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId);
+        JSONObject result = doPost("/get_group_file_system_info", jsonObject);
+        return handlerGroupFiles(result);
+    }
+
+    /**
+     * 获取群子目录文件列表
+     * @param groupId 群号
+     * @param folderId 文件夹ID 参考 Folder 对象
+     * @return 群子目录文件列表
+     */
+    public GroupFileList getGroupFilesByFolder(Long groupId,String folderId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("folder_id",folderId);
+        JSONObject result = doPost("/get_group_files_by_folder", jsonObject);
+        return handlerGroupFiles(result);
+    }
+
+    /**
+     * 获取群文件资源链接
+     * @param groupId 群号
+     * @param fileId 文件ID 参考 File 对象
+     * @param busid 文件类型 参考 File 对象
+     * @return 群文件资源链接
+     */
+    public String getGroupFileUrl(Long groupId,String fileId,Integer busid){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("file_id",fileId).fluentPut("busid",busid);
+        return doPost("/get_group_file_url", jsonObject).getString("url");
     }
 }
