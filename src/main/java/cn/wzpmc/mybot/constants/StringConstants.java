@@ -18,4 +18,9 @@ public class StringConstants {
     public static final String OP = "op";
     public static final String DEOP = "deop";
     public static final String OPS = "ops";
+    public static final String NOTICE = "notice";
+    public static final String GROUP_UPLOAD = "group_upload";
+    public static final String GROUP_ADMIN = "group_admin";
+    public static final String SET = "set";
+    public static final String UNSET = "unset";
 }

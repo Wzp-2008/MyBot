@@ -1,9 +1,6 @@
 package cn.wzpmc.mybot;
 
-import cn.wzpmc.mybot.Event.BotGetConnectEvent;
-import cn.wzpmc.mybot.Event.GroupMessageEvent;
-import cn.wzpmc.mybot.Event.PrivateMessageEvent;
-import cn.wzpmc.mybot.Event.ServerHeartbeatEvent;
+import cn.wzpmc.mybot.Event.*;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.pojo.Command;
 import cn.wzpmc.mybot.pojo.GroupMessage;
@@ -158,6 +155,21 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                 if(HEARTBEAT.equals(metaEventType)){
                     ServerHeartbeatEvent event = new ServerHeartbeatEvent(data);
                     EventUtils.runEvent(event);
+                }
+            } else if (NOTICE.equals(postType)) {
+                String noticeType = data.getString("notice_type");
+                if(GROUP_UPLOAD.equals(noticeType)){
+                    GroupFileUploadEvent groupFileUploadEvent = new GroupFileUploadEvent(data);
+                    EventUtils.runEvent(groupFileUploadEvent);
+                } else if (GROUP_ADMIN.equals(noticeType)) {
+                    String subType = data.getString("sub_type");
+                    if (SET.equals(subType)){
+                        GroupAdminSetEvent groupAdminSetEvent = new GroupAdminSetEvent(data);
+                        EventUtils.runEvent(groupAdminSetEvent);
+                    }else if (UNSET.equals(subType)){
+                        GroupAdminUnSetEvent groupAdminUnSetEvent = new GroupAdminUnSetEvent(data);
+                        EventUtils.runEvent(groupAdminUnSetEvent);
+                    }
                 }
             }
             log.info("get JsonData = {}",data);

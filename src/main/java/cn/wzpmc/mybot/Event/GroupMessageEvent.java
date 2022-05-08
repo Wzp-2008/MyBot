@@ -11,7 +11,6 @@ import lombok.*;
  * @date 2022/4/2
  */
 @EqualsAndHashCode(callSuper = true)
-@ToString
 @Data
 public class GroupMessageEvent extends Event{
     private GroupMessage message;
