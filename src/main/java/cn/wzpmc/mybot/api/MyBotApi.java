@@ -896,4 +896,37 @@ public class MyBotApi {
         }
         return new OcrImageResult(textDetections, language);
     }
+
+    /**
+     * 获取群系统消息
+     * @return 所有群系统消息
+     * 如果列表没有消息, 将返回 null
+     */
+    public GroupSystemMsg getGroupSystemMsg(){
+        JSONObject jsonObject = doGet("/get_group_system_msg");
+        JSONArray invitedRequestsObject = jsonObject.getJSONArray("invited_requests");
+        JSONArray joinRequestsObject = jsonObject.getJSONArray("join_requests");
+        ArrayList<InvitedRequest> invitedRequests = new ArrayList<>();
+        ArrayList<JoinRequest> joinRequests = new ArrayList<>();
+        for (int i = 0; i < invitedRequestsObject.size(); i++) {
+            invitedRequests.add(invitedRequestsObject.getJSONObject(i).toJavaObject(InvitedRequest.class));
+        }
+        for (int i = 0; i < joinRequestsObject.size(); i++) {
+            joinRequests.add(joinRequestsObject.getJSONObject(i).toJavaObject(JoinRequest.class));
+        }
+        return new GroupSystemMsg(invitedRequests,joinRequests);
+    }
+
+    /**
+     * 上传群文件
+     * @param groupId 群号
+     * @param file 本地文件路径
+     * @param name 储存名称
+     * @param folder 父目录ID
+     */
+    public void uploadGroupFile(Long groupId,String file,String name,String folder){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId).fluentPut("file",file).fluentPut("name",name).fluentPut("folder",folder);
+        doPost("/upload_group_file",jsonObject);
+    }
 }

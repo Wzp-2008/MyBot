@@ -1,6 +1,6 @@
 package cn.wzpmc.mybot.Event;
 
-import cn.wzpmc.mybot.pojo.FileObject;
+import cn.wzpmc.mybot.pojo.GroupFileObject;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,13 +17,13 @@ public class GroupFileUploadEvent extends Event{
     private Long selfId;
     private Long groupId;
     private Long userId;
-    private FileObject file;
+    private GroupFileObject file;
     public GroupFileUploadEvent(JSONObject data){
         super("GroupFileUploadEvent");
         this.time = data.getLong("time");
         this.selfId = data.getLong("self_id");
         this.groupId = data.getLong("group_id");
         this.userId = data.getLong("user_id");
-        this.file = data.getJSONObject("file").toJavaObject(FileObject.class);
+        this.file = data.getJSONObject("file").toJavaObject(GroupFileObject.class);
     }
 }
