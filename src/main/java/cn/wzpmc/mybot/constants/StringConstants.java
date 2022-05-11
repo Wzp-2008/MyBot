@@ -23,4 +23,8 @@ public class StringConstants {
     public static final String GROUP_ADMIN = "group_admin";
     public static final String SET = "set";
     public static final String UNSET = "unset";
+    public static final String GROUP_DECREASE = "group_decrease";
+    public static final String LEAVE = "leave";
+    public static final String KICK = "kick";
+    public static final String KICK_ME = "kick_me";
 }

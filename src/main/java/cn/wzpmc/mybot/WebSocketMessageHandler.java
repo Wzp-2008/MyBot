@@ -170,6 +170,18 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                         GroupAdminUnSetEvent groupAdminUnSetEvent = new GroupAdminUnSetEvent(data);
                         EventUtils.runEvent(groupAdminUnSetEvent);
                     }
+                } else if (GROUP_DECREASE.equals(noticeType)) {
+                    String subType = data.getString("sub_type");
+                    if(LEAVE.equals(subType)){
+                        GroupMemberDecreasesLeaveEvent groupMemberDecreasesLeaveEvent = new GroupMemberDecreasesLeaveEvent(data);
+                        EventUtils.runEvent(groupMemberDecreasesLeaveEvent);
+                    } else if (KICK.equals(subType)) {
+                        GroupMemberDeceasesKickEvent groupMemberDeceasesKickEvent = new GroupMemberDeceasesKickEvent(data);
+                        EventUtils.runEvent(groupMemberDeceasesKickEvent);
+                    } else if (KICK_ME.equals(subType)) {
+                        GroupMemberDeceasesKickMeEvent groupMemberDeceasesKickMeEvent = new GroupMemberDeceasesKickMeEvent(data);
+                        EventUtils.runEvent(groupMemberDeceasesKickMeEvent);
+                    }
                 }
             }
             log.info("get JsonData = {}",data);
