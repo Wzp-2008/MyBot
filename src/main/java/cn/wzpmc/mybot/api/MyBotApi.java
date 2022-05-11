@@ -962,4 +962,15 @@ public class MyBotApi {
         }
         return new GroupFileList(files,folder);
     }
+
+    /**
+     * 获取状态
+     * 所有统计信息都将在重启后重置
+     * @return 机器人状态
+     */
+    public BotStatus getStatus(){
+        JSONObject result = doGet("/get_status");
+        return result.toJavaObject(BotStatus.class);
+    }
+
 }

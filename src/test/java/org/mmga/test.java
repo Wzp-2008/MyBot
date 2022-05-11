@@ -28,12 +28,10 @@ public class test{
     public static void main(String[] args) throws Throwable {
         Logger bot1 = LoggerFactory.getLogger("bot");
         MyBotApi bot = new MyBotApi(new Bot(bot1, new URL("http://192.168.123.3:20000"), new ArrayList<Long>()));
-        OcrImageResult ocrImageResult = bot.ocrImage("1dca3e7ef3d187d2ae298ca13a2cd9c2.image");
-        bot1.info("{}",ocrImageResult);
-        for (TextDetection text : ocrImageResult.getTexts()) {
-            String text1 = text.getText();
-            bot1.info(text1);
-        }
+        BotStatus status = bot.getStatus();
+        bot1.info("{}",status);
+        Statistics stat = status.getStat();
+        bot1.info("{}",stat);
         ///
     }
 }

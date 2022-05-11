@@ -13,8 +13,8 @@ import java.util.ArrayList;
  * @date 2022/5/8
  */
 @Data
-@AllArgsConstructor
 @EqualsAndHashCode
+@AllArgsConstructor
 public class GroupFileList {
     @JSONField(name="files")
     private ArrayList<GroupFileObject> files;
