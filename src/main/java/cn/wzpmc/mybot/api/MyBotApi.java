@@ -973,4 +973,15 @@ public class MyBotApi {
         return result.toJavaObject(BotStatus.class);
     }
 
+    /**
+     * 获取群 @全体成员 剩余次数
+     * @param groupId 群号
+     * @return @全体成员 剩余次数
+     */
+    public GroupAtAllRemain getGroupAtAllRemain(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId);
+        JSONObject result = doPost("/get_group_at_all_remain", jsonObject);
+        return result.toJavaObject(GroupAtAllRemain.class);
+    }
 }
