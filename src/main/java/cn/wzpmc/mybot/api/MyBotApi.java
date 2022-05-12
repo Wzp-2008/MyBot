@@ -984,4 +984,16 @@ public class MyBotApi {
         JSONObject result = doPost("/get_group_at_all_remain", jsonObject);
         return result.toJavaObject(GroupAtAllRemain.class);
     }
+
+    /**
+     * 获取VIP信息
+     * @param userId QQ 号
+     * @return VIP信息
+     */
+    public VipInfo getVipInfo(Long userId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("user_id",userId);
+        JSONObject result = doPost("/_get_vip_info", jsonObject);
+        return result.toJavaObject(VipInfo.class);
+    }
 }
