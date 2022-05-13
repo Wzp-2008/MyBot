@@ -200,9 +200,9 @@ public class Main {
     /**
      * 启动控制台
      */
-    public static void consoleRun(){
+    public static void consoleRun(Logger logger){
         Scanner scanner = new Scanner(System.in);
-        Console console = new Console();
+        Console console = new Console(logger);
         while (running){
             String command = scanner.next();
             String[] s = command.split(" ");
@@ -282,7 +282,7 @@ public class Main {
         Runtime runtime = Runtime.getRuntime();
         StopThread stopThread = new StopThread();
         runtime.addShutdownHook(stopThread);
-        consoleRun();
+        consoleRun(log);
     }
 
     public static void main(String[] args) {
