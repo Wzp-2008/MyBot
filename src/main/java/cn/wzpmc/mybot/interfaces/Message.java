@@ -1,6 +1,7 @@
-package cn.wzpmc.mybot.pojo;
+package cn.wzpmc.mybot.interfaces;
 
 import cn.wzpmc.mybot.enums.MessageType;
+import cn.wzpmc.mybot.pojo.MessageSender;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
