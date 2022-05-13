@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class Message {
+public abstract class Message {
     private MessageType type;
     private String content;
     private MessageSender sender;
@@ -20,4 +20,10 @@ public class Message {
         this.content = content;
         this.sender = sender;
     }
+
+    /**
+     * 回复此消息
+     * @param content 内容
+     */
+    public abstract void reply(String content);
 }
