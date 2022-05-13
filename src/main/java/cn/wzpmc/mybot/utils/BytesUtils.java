@@ -16,7 +16,9 @@ public class BytesUtils {
             return charSequence.toString();
         }catch (IndexOutOfBoundsException e){
             e.printStackTrace();
-            System.out.println(byteBuf);
+            int i = byteBuf.readableBytes();
+            System.out.println(i);
+            System.out.println(remove);
             return "";
         }
     }

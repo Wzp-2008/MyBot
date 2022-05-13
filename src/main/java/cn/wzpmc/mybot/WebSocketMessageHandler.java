@@ -108,6 +108,9 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                 buffer = new StringBuffer();
                 buffer.append(fullJson);
                 return;
+            }catch (IndexOutOfBoundsException e){
+                System.out.println(fullJson);
+                return;
             }
             //事件类型
             String postType = data.getString("post_type");
