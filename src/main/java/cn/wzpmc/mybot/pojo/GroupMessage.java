@@ -5,6 +5,7 @@ import cn.wzpmc.mybot.api.MyBotApi;
 import cn.wzpmc.mybot.cq.At;
 import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
 import cn.wzpmc.mybot.enums.MessageType;
+import cn.wzpmc.mybot.interfaces.Message;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,6 +46,7 @@ public class GroupMessage extends Message {
      * @param message 要回复的内容
      * @return 消息id
      */
+    @Override
     public Integer reply(String message){
         MyBotApi api = this.getBot().getApi();
         At at = ((GroupUser) this.getSender()).getAt();

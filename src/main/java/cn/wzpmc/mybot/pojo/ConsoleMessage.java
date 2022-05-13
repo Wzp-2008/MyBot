@@ -15,10 +15,11 @@ public class ConsoleMessage extends Message {
     }
 
     @Override
-    public void reply(String content) {
+    public Integer reply(String content) {
         MessageSender sender = this.getSender();
         Console console = ((Console) sender);
         Logger logger = console.getLogger();
         logger.info(content);
+        return 0;
     }
 }

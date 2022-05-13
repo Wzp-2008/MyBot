@@ -26,5 +26,5 @@ public abstract class Message {
      * 回复此消息
      * @param content 内容
      */
-    public abstract void reply(String content);
+    public abstract Integer reply(String content);
 }
