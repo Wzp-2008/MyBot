@@ -3,14 +3,17 @@ package cn.wzpmc.mybot.enums;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/5/4
- * 消息发送者类型
+ * @date 2022/5/13
  */
-public enum CommandSenderType {
+public enum MessageType {
     /**
-     * 用户
+     * 群组
      */
-    user,
+    group,
+    /**
+     * 频道
+     */
+    channel,
     /**
      * 控制台
      */

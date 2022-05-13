@@ -1,7 +1,7 @@
 package cn.wzpmc.mybot.interfaces;
 
 import cn.wzpmc.mybot.pojo.Command;
-import cn.wzpmc.mybot.pojo.CommandSender;
+import cn.wzpmc.mybot.pojo.MessageSender;
 
 /**
  * @author wzp
@@ -15,5 +15,5 @@ public interface CommandExecutor {
      * @param commandSender 命令发送者
      * @return 指令是否执行成功
      */
-    boolean execute(Command command, CommandSender commandSender);
+    boolean execute(Command command, MessageSender commandSender);
 }

@@ -2,7 +2,7 @@ package cn.wzpmc.mybot.pojo;
 
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.cq.At;
-import cn.wzpmc.mybot.enums.CommandSenderType;
+import cn.wzpmc.mybot.enums.MessageSenderType;
 import lombok.ToString;
 
 /**
@@ -11,9 +11,9 @@ import lombok.ToString;
  * @date 2022/4/2
  */
 @ToString
-public class User extends CommandSender {
+public class User extends MessageSender {
     public User(long id,String nickname){
-        super(CommandSenderType.user,id,nickname);
+        super(MessageSenderType.user,id,nickname);
     }
     public At getAt(){
         return new At(this.getId());
