@@ -1,5 +1,6 @@
 package cn.wzpmc.mybot.pojo;
 
+import cn.wzpmc.mybot.interfaces.Message;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import lombok.Getter;
 import lombok.Setter;
