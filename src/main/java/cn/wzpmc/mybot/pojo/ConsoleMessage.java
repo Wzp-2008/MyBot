@@ -1,5 +1,6 @@
 package cn.wzpmc.mybot.pojo;
 
+import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.enums.MessageType;
 import cn.wzpmc.mybot.interfaces.Message;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ public class ConsoleMessage extends Message {
     }
 
     @Override
-    public Integer reply(String content) {
+    public Integer reply(String content, Bot bot) {
         MessageSender sender = this.getSender();
         Console console = ((Console) sender);
         Logger logger = console.getLogger();

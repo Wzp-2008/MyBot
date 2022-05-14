@@ -1,5 +1,6 @@
 package cn.wzpmc.mybot.interfaces;
 
+import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.enums.MessageType;
 import cn.wzpmc.mybot.pojo.MessageSender;
 import lombok.Data;
@@ -26,5 +27,5 @@ public abstract class Message {
      * 回复此消息
      * @param content 内容
      */
-    public abstract Integer reply(String content);
+    public abstract Integer reply(String content, Bot bot);
 }

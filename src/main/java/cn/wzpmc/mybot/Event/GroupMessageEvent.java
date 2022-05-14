@@ -1,6 +1,5 @@
 package cn.wzpmc.mybot.Event;
 
-import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.pojo.GroupMessage;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.*;
@@ -15,8 +14,8 @@ import lombok.*;
 public class GroupMessageEvent extends Event{
     private GroupMessage message;
 
-    public GroupMessageEvent(JSONObject object, Bot bot){
+    public GroupMessageEvent(JSONObject object){
         super("GroupMessageEvent");
-        this.message = new GroupMessage(object,bot);
+        this.message = new GroupMessage(object);
     }
 }

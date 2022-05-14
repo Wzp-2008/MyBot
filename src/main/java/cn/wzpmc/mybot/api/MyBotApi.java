@@ -10,9 +10,9 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author wzp
@@ -75,6 +75,7 @@ public class MyBotApi {
     }
     private JSONArray doPostWithArray(String function, JSONObject args) {
         JSONObject post = post(function, args);
+        System.out.println(post);
         return post.getJSONArray("data");
     }
     private JSONObject doPost(String function, JSONObject args) {
@@ -125,7 +126,6 @@ public class MyBotApi {
 
     /**
      * 获取登录号信息
-     *
      * @return 机器人用户
      */
     public GroupUser getGroupBotInfo() {
@@ -135,7 +135,6 @@ public class MyBotApi {
 
     /**
      * 获取频道系统内BOT的资料
-     *
      * @return 频道系统内BOT的资料
      */
     public ChannelUser getChannelBotInfo() {
@@ -193,7 +192,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("message_id", messageId);
         JSONObject r = doPost("/get_msg", jsonObject);
-        return new GroupMessage(r,this.bot);
+        return new GroupMessage(r);
     }
 
     /**
@@ -995,5 +994,138 @@ public class MyBotApi {
         jsonObject.fluentPut("user_id",userId);
         JSONObject result = doPost("/_get_vip_info", jsonObject);
         return result.toJavaObject(VipInfo.class);
+    }
+
+    /**
+     * 重载事件过滤器
+     * @param file 事件过滤器文件
+     */
+    public void reloadEventFilter(String file){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("file",file);
+        doPost("/reload_event_filter",jsonObject);
+    }
+
+    /**
+     * 下载文件到缓存目录
+     * 通过这个API下载的文件能直接放入CQ码作为图片或语音发送
+     *
+     * 调用后会阻塞直到下载完成后才会返回数据，请注意下载大文件时的超时
+     * @param url 链接地址
+     * @param threadCount 下载线程数
+     * @param headers 自定义请求头
+     * @return 下载文件的绝对路径
+     */
+    public String downloadFile(String url,Integer threadCount,JSONObject headers){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("url",url)
+                .fluentPut("thread_count",threadCount)
+                .fluentPut("headers",headers);
+        JSONObject result = doPost("/download_file", jsonObject);
+        return result.getString("file");
+    }
+    public ArrayList<Device> getOnlineClients(Boolean noCache){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("no_cache",noCache);
+        JSONObject result = doPost("/get_online_clients", jsonObject);
+        return new ArrayList<>(result.getJSONArray("clients").toJavaList(Device.class));
+    }
+
+    /**
+     * 获取群消息历史记录
+     * @param groupId 群号
+     * @param messageSeq 起始消息序号, 可通过 get_msg 获得
+     * @return 从起始序号开始的前19条消息
+     */
+    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId,Long messageSeq){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId)
+                .fluentPut("message_seq",messageSeq);
+        JSONObject result = doPost("/get_group_msg_history", jsonObject);
+        JSONArray messages = result.getJSONArray("messages");
+        ArrayList<GroupMessage> r = new ArrayList<>();
+        for (int i = 0; i < messages.size(); i++) {
+            JSONObject thisMessage = messages.getJSONObject(i);
+            r.add(new GroupMessage(thisMessage));
+        }
+        return r;
+    }
+    /**
+     * 获取群消息历史记录
+     * @param groupId 群号
+     * @return 从最新消息开始的前19条消息
+     */
+    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId){
+        return getGroupMsgHistory(groupId, null);
+    }
+
+    /**
+     * 设置精华消息
+     * @param messageId 消息ID
+     */
+    public void setEssenceMsg(Long messageId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("message_id",messageId);
+        doPost("/set_essence_msg",jsonObject);
+    }
+
+    /**
+     * 移出精华消息
+     * @param messageId 消息ID
+     */
+    public void deleteEssenceMsg(Long messageId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("message_id",messageId);
+        doPost("/delete_essence_msg",jsonObject);
+    }
+
+    /**
+     * 获取精华消息列表
+     * @param groupId 群号
+     * @return 精华消息列表
+     */
+    public ArrayList<EssenceMessage> getEssenceMsgList(Long groupId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("group_id",groupId);
+        JSONArray objects = doPostWithArray("/get_essence_msg_list", jsonObject);
+        return new ArrayList<>(objects.toJavaList(EssenceMessage.class));
+    }
+
+    /**
+     * 检查链接安全性
+     * @param url 需要检查的链接
+     * @return 安全等级, 1: 安全 2: 未知 3: 危险
+     */
+    public Integer checkUrlSafeLy(String url){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("url",url);
+        JSONObject result = doPost("/check_url_safely", jsonObject);
+        return result.getInteger("level");
+    }
+
+    /**
+     * 获取在线机型
+     * 有关例子可从这个{@link <a href="https://github.com/Mrs4s/go-cqhttp/pull/872#issuecomment-831180149">链接</a>}找到
+     * @param model 机型名称
+     * @return 在线机型
+     */
+    public ArrayList<Variant> getModelShow(String model){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("model",model);
+        JSONObject result = doPost("/_get_model_show", jsonObject);
+        JSONArray variants = result.getJSONArray("variants");
+        return new ArrayList<>(variants.toJavaList(Variant.class));
+    }
+
+    /**
+     * 设置在线机型
+     * @param model 机型名称
+     * @param modelShow -
+     */
+    public void setModelShow(String model,String modelShow){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.fluentPut("model",model)
+                .fluentPut("model_show",modelShow);
+        doPost("/_set_model_show",jsonObject);
     }
 }

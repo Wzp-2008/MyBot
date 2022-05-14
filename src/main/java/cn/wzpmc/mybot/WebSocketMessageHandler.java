@@ -121,7 +121,7 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                 //群组消息
                 if(GROUP.equals(messageType)){
                     //获取event
-                    GroupMessageEvent groupMessageEvent = new GroupMessageEvent(data,bot);
+                    GroupMessageEvent groupMessageEvent = new GroupMessageEvent(data);
                     GroupMessage gMessage = groupMessageEvent.getMessage();
                     String content = gMessage.getContent();
                     String s = bot.at.toString() + " /";
@@ -134,16 +134,16 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                         if (commandExecutor != null) {
                             boolean execute = commandExecutor.execute(command,gMessage.getSender());
                             if(!execute){
-                                gMessage.reply(config.getProperty("failed_run_message"));
+                                gMessage.reply(config.getProperty("failed_run_message"),bot);
                             }
                         }else{
-                            gMessage.reply(config.getProperty("not_found_command_message"));
+                            gMessage.reply(config.getProperty("not_found_command_message"),bot);
                         }
                     }else{
                         EventUtils.runEvent(groupMessageEvent);
                     }
                 }else if(PRIVATE.equals(messageType)){
-                    PrivateMessageEvent event = new PrivateMessageEvent(data,bot);
+                    PrivateMessageEvent event = new PrivateMessageEvent(data);
                     EventUtils.runEvent(event);
                 }
             }else if(META_EVENT.equals(postType)){

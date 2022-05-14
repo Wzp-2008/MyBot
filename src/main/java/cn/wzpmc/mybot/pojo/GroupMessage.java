@@ -7,6 +7,7 @@ import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
 import cn.wzpmc.mybot.enums.MessageType;
 import cn.wzpmc.mybot.interfaces.Message;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,21 +25,19 @@ import lombok.ToString;
 public class GroupMessage extends Message {
     private Integer id;
     private Anonymous anonymous;
-    private GroupMessageSubTypes subTypes;
     private Integer font;
-    private final Bot bot;
     private Long groupId;
-    public GroupMessage(JSONObject object,Bot bot){
+    private Long messageSeq;
+    public GroupMessage(JSONObject object){
         super(MessageType.group,null,null);
         this.id = object.getInteger("message_id");
         JSONObject sender = object.getJSONObject("sender");
         this.setSender(GroupUser.getGroupUser(sender));
         this.anonymous = object.getObject("anonymous",Anonymous.class);
         this.setContent(object.getString("message"));
-        this.subTypes = object.getObject("sub_type",GroupMessageSubTypes.class);
         this.font = object.getInteger("font");
         this.groupId = object.getLong("group_id");
-        this.bot = bot;
+        this.messageSeq = object.getLong("message_seq");
     }
 
     /**
@@ -47,8 +46,8 @@ public class GroupMessage extends Message {
      * @return 消息id
      */
     @Override
-    public Integer reply(String message){
-        MyBotApi api = this.getBot().getApi();
+    public Integer reply(String message,Bot bot){
+        MyBotApi api = bot.getApi();
         At at = ((GroupUser) this.getSender()).getAt();
         String s = at.toString();
         return api.sendGroupMessage(this.groupId, s + message);

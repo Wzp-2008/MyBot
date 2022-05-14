@@ -19,9 +19,9 @@ public class PrivateMessageEvent extends Event{
     private GroupMessage message;
     private Long time;
 
-    public PrivateMessageEvent(JSONObject object, Bot bot){
+    public PrivateMessageEvent(JSONObject object){
         super("GroupMessageEvent");
-        this.message = new GroupMessage(object,bot);
+        this.message = new GroupMessage(object);
         this.time = object.getLong("time");
     }
 }
