@@ -103,13 +103,10 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
             JSONObject data;
             try {
                 data = JSON.parseObject(fullJson);
-            }catch (JSONException e){
+            }catch (IndexOutOfBoundsException e){
                 unclosed = true;
                 buffer = new StringBuffer();
                 buffer.append(fullJson);
-                return;
-            }catch (IndexOutOfBoundsException e){
-                System.out.println(fullJson);
                 return;
             }
             //事件类型
