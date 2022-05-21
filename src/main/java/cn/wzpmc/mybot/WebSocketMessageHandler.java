@@ -181,7 +181,7 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
                     } else if (KICK_ME.equals(subType)) {
                         GroupMemberDeceasesKickMeEvent groupMemberDeceasesKickMeEvent = new GroupMemberDeceasesKickMeEvent(data);
                         EventUtils.runEvent(groupMemberDeceasesKickMeEvent);
-                    }
+                    }//TODO 实现群组封禁和解封
                 }
             }
             log.info("get JsonData = {}",data);
