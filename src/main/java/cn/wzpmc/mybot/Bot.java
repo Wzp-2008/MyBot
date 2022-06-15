@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/3/31
  * 机器人主类
  */
 public class Bot{

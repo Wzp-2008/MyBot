@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/10
  */
 @Data
 @NoArgsConstructor
-public abstract class Message {
+public abstract class BaseMessage {
     private MessageType type;
     private String content;
     private MessageSender sender;
-    public Message(MessageType type,String content,MessageSender sender){
+
+    public BaseMessage(MessageType type, String content, MessageSender sender) {
         this.type = type;
         this.content = content;
         this.sender = sender;
@@ -25,7 +25,10 @@ public abstract class Message {
 
     /**
      * 回复此消息
+     *
      * @param content 内容
+     * @param bot     传入一个机器人对象
+     * @return 消息id
      */
     public abstract Integer reply(String content, Bot bot);
 }

@@ -3,11 +3,9 @@ package cn.wzpmc.mybot.pojo;
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.api.MyBotApi;
 import cn.wzpmc.mybot.cq.At;
-import cn.wzpmc.mybot.enums.GroupMessageSubTypes;
 import cn.wzpmc.mybot.enums.MessageType;
-import cn.wzpmc.mybot.interfaces.Message;
+import cn.wzpmc.mybot.interfaces.BaseMessage;
 import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,24 +14,24 @@ import lombok.ToString;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/10
  */
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @Data
 @ToString
-public class GroupMessage extends Message {
+public class GroupMessage extends BaseMessage {
     private Integer id;
     private Anonymous anonymous;
     private Integer font;
     private Long groupId;
     private Long messageSeq;
-    public GroupMessage(JSONObject object){
-        super(MessageType.group,null,null);
+
+    public GroupMessage(JSONObject object) {
+        super(MessageType.group, null, null);
         this.id = object.getInteger("message_id");
         JSONObject sender = object.getJSONObject("sender");
         this.setSender(GroupUser.getGroupUser(sender));
-        this.anonymous = object.getObject("anonymous",Anonymous.class);
+        this.anonymous = object.getObject("anonymous", Anonymous.class);
         this.setContent(object.getString("message"));
         this.font = object.getInteger("font");
         this.groupId = object.getLong("group_id");

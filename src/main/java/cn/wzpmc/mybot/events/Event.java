@@ -1,11 +1,10 @@
-package cn.wzpmc.mybot.Event;
+package cn.wzpmc.mybot.events;
 
 import java.util.Objects;
 
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/2
  */
 public class Event {
     private String eventName;

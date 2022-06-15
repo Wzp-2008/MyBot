@@ -1,6 +1,6 @@
 package cn.wzpmc.mybot.pojo;
 
-import cn.wzpmc.mybot.interfaces.Message;
+import cn.wzpmc.mybot.interfaces.BaseMessage;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,17 +13,17 @@ import java.util.Objects;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/28
  */
 @ToString
 @Getter
 @Setter
-public class Command{
+public class Command {
     private final String head;
     private final ArrayList<String> body;
     private final MyBotPlugin plugin;
-    private final Message rawMessage;
-    public Command(String command,Message message){
+    private final BaseMessage rawMessage;
+
+    public Command(String command, BaseMessage message) {
         String[] s = command.split(" ");
         int len = s.length;
         this.head = s[0];
@@ -31,13 +31,15 @@ public class Command{
         this.plugin = null;
         this.rawMessage = message;
     }
-    public Command(String head,MyBotPlugin plugin){
+
+    public Command(String head, MyBotPlugin plugin) {
         this.head = head;
         this.body = new ArrayList<>();
         this.plugin = plugin;
         this.rawMessage = null;
     }
-    public Command(String head,ArrayList<String> body,MyBotPlugin plugin){
+
+    public Command(String head, ArrayList<String> body, MyBotPlugin plugin) {
         this.head = head;
         this.body = body;
         this.plugin = plugin;

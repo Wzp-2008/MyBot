@@ -6,7 +6,6 @@ import lombok.ToString;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/2
  */
 @ToString
 public class GroupUser extends User{

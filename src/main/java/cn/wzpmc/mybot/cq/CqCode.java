@@ -6,7 +6,6 @@ import java.util.Map;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/3/31
  */
 public class CqCode {
     private final String code;

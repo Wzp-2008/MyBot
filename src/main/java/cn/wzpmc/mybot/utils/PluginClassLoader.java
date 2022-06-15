@@ -10,7 +10,6 @@ import java.net.URLClassLoader;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/27
  * 插件类加载器
  */
 public class PluginClassLoader extends URLClassLoader {

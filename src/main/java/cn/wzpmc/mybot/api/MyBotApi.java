@@ -12,12 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/2
  */
 @Slf4j
 public class MyBotApi {
@@ -52,16 +50,6 @@ public class MyBotApi {
         }
         JSONObject jsonObject = JSON.parseObject(body);
         return jsonObject.getJSONObject("data");
-    }
-    private JSONArray doGetWithArray(String function) {
-        String url = this.getUrl(function);
-        HttpRequest httpRequest = HttpRequest.get(url);
-        String body;
-        try(HttpResponse execute = httpRequest.execute()){
-            body = execute.body();
-        }
-        JSONObject jsonObject = JSON.parseObject(body);
-        return jsonObject.getJSONArray("data");
     }
     private JSONObject post(String function,JSONObject args){
         String url = this.getUrl(function);
@@ -632,11 +620,19 @@ public class MyBotApi {
 
     /**
      * 获取好友列表
+     *
      * @return 所有的好友
      */
-    public ArrayList<FriendUser> getFriendList(){
+    public ArrayList<FriendUser> getFriendList() {
         ArrayList<FriendUser> users = new ArrayList<>();
-        JSONArray objects = doGetWithArray("/get_friend_list");
+        String url = this.getUrl("/get_friend_list");
+        HttpRequest httpRequest = HttpRequest.get(url);
+        String body;
+        try (HttpResponse execute = httpRequest.execute()) {
+            body = execute.body();
+        }
+        JSONObject jsonObject = JSON.parseObject(body);
+        JSONArray objects = jsonObject.getJSONArray("data");
         for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject1 = objects.getJSONObject(i);
             users.add(FriendUser.getFriendUser(jsonObject1));
@@ -716,11 +712,11 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId);
         JSONArray objects = doPostWithArray("/get_group_member_list", jsonObject);
-        ArrayList<GroupMemberInfo> R = new ArrayList<>();
+        ArrayList<GroupMemberInfo> result = new ArrayList<>();
         for (int i = 0; i < objects.size(); i++) {
-            R.add(objects.getJSONObject(i).toJavaObject(GroupMemberInfo.class));
+            result.add(objects.getJSONObject(i).toJavaObject(GroupMemberInfo.class));
         }
-        return R;
+        return result;
     }
 
     /**
@@ -1033,14 +1029,15 @@ public class MyBotApi {
 
     /**
      * 获取群消息历史记录
-     * @param groupId 群号
+     *
+     * @param groupId    群号
      * @param messageSeq 起始消息序号, 可通过 get_msg 获得
      * @return 从起始序号开始的前19条消息
      */
-    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId,Long messageSeq){
+    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId, Long messageSeq) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.fluentPut("group_id",groupId)
-                .fluentPut("message_seq",messageSeq);
+        jsonObject.fluentPut("group_id", groupId)
+                .fluentPut("message_seq", messageSeq);
         JSONObject result = doPost("/get_group_msg_history", jsonObject);
         JSONArray messages = result.getJSONArray("messages");
         ArrayList<GroupMessage> r = new ArrayList<>();
@@ -1050,12 +1047,14 @@ public class MyBotApi {
         }
         return r;
     }
+
     /**
      * 获取群消息历史记录
+     *
      * @param groupId 群号
      * @return 从最新消息开始的前19条消息
      */
-    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId){
+    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId) {
         return getGroupMsgHistory(groupId, null);
     }
 

@@ -1,5 +1,6 @@
-package cn.wzpmc.mybot.Event;
+package cn.wzpmc.mybot.events;
 
+import cn.wzpmc.mybot.pojo.GroupFileObject;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,22 +8,21 @@ import lombok.EqualsAndHashCode;
 /**
  * @author qicaijinghua_
  * @version 1.0.0
- * @date 2022/5/8
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GroupMemberIncreaseApproveEvent extends Event{
+public class GroupFileUploadEvent extends Event{
     private Long time;
     private Long selfId;
     private Long groupId;
-    private Long operatorId;
     private Long userId;
-    public GroupMemberIncreaseApproveEvent(JSONObject data){
-        super("GroupMemberIncreaseEvent");
+    private GroupFileObject file;
+    public GroupFileUploadEvent(JSONObject data){
+        super("GroupFileUploadEvent");
         this.time = data.getLong("time");
-        this.groupId = data.getLong("group_id");
         this.selfId = data.getLong("self_id");
-        this.operatorId = data.getLong("operator_id");
+        this.groupId = data.getLong("group_id");
         this.userId = data.getLong("user_id");
+        this.file = data.getJSONObject("file").toJavaObject(GroupFileObject.class);
     }
 }

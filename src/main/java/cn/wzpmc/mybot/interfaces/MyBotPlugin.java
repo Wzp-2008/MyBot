@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/3/31
  */
 @EqualsAndHashCode
 public abstract class MyBotPlugin {

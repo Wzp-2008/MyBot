@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/2
  */
 public class At extends CqCode{
     public static Pattern pattern = Pattern.compile("\\[CQ:at,qq=(.*)]");

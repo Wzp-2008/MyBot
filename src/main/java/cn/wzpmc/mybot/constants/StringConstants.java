@@ -3,7 +3,6 @@ package cn.wzpmc.mybot.constants;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/5/4
  * 字符串常量类
  */
 public class StringConstants {

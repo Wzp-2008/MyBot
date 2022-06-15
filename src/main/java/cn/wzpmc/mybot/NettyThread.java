@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 
 /**
  * @author wzp
- * @date 2022/5/4
  * @version 1.0.0
  */
 public class NettyThread extends Thread{

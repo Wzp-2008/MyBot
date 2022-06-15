@@ -1,4 +1,4 @@
-package cn.wzpmc.mybot.Event;
+package cn.wzpmc.mybot.events;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 /**
  * @author qicaijinghua_
  * @version 1.0.0
- * @date 2022/5/20
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

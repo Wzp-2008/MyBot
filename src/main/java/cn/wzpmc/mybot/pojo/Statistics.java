@@ -1,6 +1,5 @@
 package cn.wzpmc.mybot.pojo;
 
-import com.alibaba.fastjson2.annotation.JSONCreator;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/5/11
  */
 @Data
 @NoArgsConstructor
