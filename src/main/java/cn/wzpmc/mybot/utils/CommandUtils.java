@@ -1,8 +1,8 @@
 package cn.wzpmc.mybot.utils;
 
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
-import cn.wzpmc.mybot.pojo.Command;
-import cn.wzpmc.mybot.pojo.GroupMessage;
+import cn.wzpmc.mybot.pojo.messages.GroupMessage;
+import cn.wzpmc.mybot.pojo.utils.Command;
 import org.slf4j.Logger;
 
 import java.util.Map;

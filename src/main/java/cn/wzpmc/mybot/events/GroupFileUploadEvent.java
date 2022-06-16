@@ -1,6 +1,6 @@
 package cn.wzpmc.mybot.events;
 
-import cn.wzpmc.mybot.pojo.GroupFileObject;
+import cn.wzpmc.mybot.pojo.groupfiles.GroupFileObject;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

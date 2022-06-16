@@ -1,6 +1,6 @@
 package cn.wzpmc.mybot.events;
 
-import cn.wzpmc.mybot.pojo.GroupMessage;
+import cn.wzpmc.mybot.pojo.messages.GroupMessage;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

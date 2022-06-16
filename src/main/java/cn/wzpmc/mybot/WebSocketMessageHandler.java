@@ -1,7 +1,7 @@
 package cn.wzpmc.mybot;
 
 import cn.wzpmc.mybot.events.*;
-import cn.wzpmc.mybot.pojo.GroupMessage;
+import cn.wzpmc.mybot.pojo.messages.GroupMessage;
 import cn.wzpmc.mybot.utils.BytesUtils;
 import cn.wzpmc.mybot.utils.CommandUtils;
 import cn.wzpmc.mybot.utils.EventUtils;

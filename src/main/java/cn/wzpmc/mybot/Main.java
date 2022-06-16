@@ -3,8 +3,8 @@ package cn.wzpmc.mybot;
 
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import cn.wzpmc.mybot.pojo.Command;
-import cn.wzpmc.mybot.pojo.Console;
+import cn.wzpmc.mybot.pojo.users.Console;
+import cn.wzpmc.mybot.pojo.utils.Command;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;

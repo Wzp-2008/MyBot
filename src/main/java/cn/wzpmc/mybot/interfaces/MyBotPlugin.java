@@ -1,7 +1,7 @@
 package cn.wzpmc.mybot.interfaces;
 
 import cn.wzpmc.mybot.Bot;
-import cn.wzpmc.mybot.pojo.Command;
+import cn.wzpmc.mybot.pojo.utils.Command;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.EqualsAndHashCode;
