@@ -1,9 +1,7 @@
 package cn.wzpmc.mybot;
 
-import cn.wzpmc.mybot.events.*;
-import cn.wzpmc.mybot.pojo.messages.GroupMessage;
+import cn.wzpmc.mybot.pojo.utils.EventIdentifier;
 import cn.wzpmc.mybot.utils.BytesUtils;
-import cn.wzpmc.mybot.utils.CommandUtils;
 import cn.wzpmc.mybot.utils.EventUtils;
 import com.alibaba.fastjson2.JSONObject;
 import io.netty.buffer.ByteBuf;
@@ -13,11 +11,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Properties;
-
-import static cn.wzpmc.mybot.Main.bot;
-import static cn.wzpmc.mybot.constants.StringConstants.*;
 
 /**
  * @author 33572
@@ -76,79 +69,18 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
 
     /**
      * 当通道收到数据时调用
+     *
      * @param ctx 通道
      * @param msg 消息内容
-     * @throws Exception 当通道出现错误时抛出
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof ByteBuf) {
             JSONObject data = BytesUtils.getJsonFromByteBuf((ByteBuf) msg);
             if (data != null) {
                 //事件类型
-                String postType = data.getString("post_type");
-                Properties config = Main.getConfig();
-                if (MESSAGE.equals(postType)) {
-                    //消息类型
-                    String messageType = data.getString("message_type");
-                    //群组消息
-                    if (GROUP.equals(messageType)) {
-                        //获取event
-                        GroupMessageEvent groupMessageEvent = new GroupMessageEvent(data);
-                        GroupMessage gMessage = groupMessageEvent.getMessage();
-                        String content = gMessage.getContent();
-                        String s = bot.at.toString() + " /";
-                        boolean matches = content.contains(s);
-                        if (matches) {
-                            CommandUtils.runCommand(content, s, gMessage, log, config);
-                        } else {
-                            EventUtils.runEvent(groupMessageEvent);
-                        }
-                    } else if (PRIVATE.equals(messageType)) {
-                        PrivateMessageEvent event = new PrivateMessageEvent(data);
-                        EventUtils.runEvent(event);
-                    }
-                } else if (META_EVENT.equals(postType)) {
-                    String metaEventType = data.getString("meta_event_type");
-                    if (LIFECYCLE.equals(metaEventType)) {
-                        String subType = data.getString("sub_type");
-                        if (CONNECT.equals(subType)) {
-                            BotGetConnectEvent botGetConnectEvent = new BotGetConnectEvent(data);
-                            EventUtils.runEvent(botGetConnectEvent);
-                        }
-                    }
-                    if (HEARTBEAT.equals(metaEventType)) {
-                        ServerHeartbeatEvent event = new ServerHeartbeatEvent(data);
-                        EventUtils.runEvent(event);
-                    }
-                } else if (NOTICE.equals(postType)) {
-                    String noticeType = data.getString("notice_type");
-                    if (GROUP_UPLOAD.equals(noticeType)) {
-                        GroupFileUploadEvent groupFileUploadEvent = new GroupFileUploadEvent(data);
-                        EventUtils.runEvent(groupFileUploadEvent);
-                    } else if (GROUP_ADMIN.equals(noticeType)) {
-                        String subType = data.getString("sub_type");
-                        if (SET.equals(subType)) {
-                            GroupAdminSetEvent groupAdminSetEvent = new GroupAdminSetEvent(data);
-                            EventUtils.runEvent(groupAdminSetEvent);
-                        } else if (UNSET.equals(subType)) {
-                            GroupAdminUnSetEvent groupAdminUnSetEvent = new GroupAdminUnSetEvent(data);
-                            EventUtils.runEvent(groupAdminUnSetEvent);
-                        }
-                    } else if (GROUP_DECREASE.equals(noticeType)) {
-                        String subType = data.getString("sub_type");
-                        if (LEAVE.equals(subType)) {
-                            GroupMemberDecreasesLeaveEvent groupMemberDecreasesLeaveEvent = new GroupMemberDecreasesLeaveEvent(data);
-                            EventUtils.runEvent(groupMemberDecreasesLeaveEvent);
-                        } else if (KICK.equals(subType)) {
-                            GroupMemberDeceasesKickEvent groupMemberDeceasesKickEvent = new GroupMemberDeceasesKickEvent(data);
-                            EventUtils.runEvent(groupMemberDeceasesKickEvent);
-                        } else if (KICK_ME.equals(subType)) {
-                            GroupMemberDeceasesKickMeEvent groupMemberDeceasesKickMeEvent = new GroupMemberDeceasesKickMeEvent(data);
-                            EventUtils.runEvent(groupMemberDeceasesKickMeEvent);
-                        }
-                    }
-                }
+                EventIdentifier identifier = EventIdentifier.getInstanceFromJsonObject(data);
+                EventUtils.runEvent(identifier, data);
                 log.info("get JsonData = {}", data);
             }
         }

@@ -26,4 +26,28 @@ public class StringConstants {
     public static final String LEAVE = "leave";
     public static final String KICK = "kick";
     public static final String KICK_ME = "kick_me";
+    public static final String REQUEST = "request";
+    public static final String NORMAL = "normal";
+    public static final String ANONYMOUS = "anonymous";
+    public static final String GROUP_INCREASE = "group_increase";
+    public static final String APPROVE = "approve";
+    public static final String INVITE = "invite";
+    public static final String GROUP_BAN = "group_ban";
+    public static final String BAN = "ban";
+    public static final String LIFT_BAN = "lift_ban";
+    public static final String FRIEND_ADD = "friend_add";
+    public static final String GROUP_RECALL = "group_recall";
+    public static final String NOTIFY = "notify";
+    public static final String POKE = "poke";
+    public static final String LUCKY_KING = "lucky_king";
+    public static final String HONOR = "honor";
+    public static final String GROUP_CARD = "group_card";
+    public static final String OFFLINE_FILE = "offline_file";
+    public static final String FRIEND = "friend";
+    public static final String ADD = "add";
+    public static final String CLIENT_STATUS = "client_status";
+    public static final String ESSENCE = "essence";
+    public static final String DELETE = "delete";
+    public static final String FRIEND_RECALL = "friend_recall";
+
 }
