@@ -1,8 +1,23 @@
 package cn.wzpmc.mybot.utils;
 
-import cn.wzpmc.mybot.events.Event;
+import cn.wzpmc.mybot.entities.events.Event;
+import cn.wzpmc.mybot.entities.events.bot.BotGetConnectEvent;
+import cn.wzpmc.mybot.entities.events.bot.ServerHeartbeatEvent;
+import cn.wzpmc.mybot.entities.events.group.admin.GroupAdminSetEvent;
+import cn.wzpmc.mybot.entities.events.group.admin.GroupAdminUnSetEvent;
+import cn.wzpmc.mybot.entities.events.group.ban.GroupBanEvent;
+import cn.wzpmc.mybot.entities.events.group.ban.GroupLiftBanEvent;
+import cn.wzpmc.mybot.entities.events.group.decreases.GroupDeceasesKickEvent;
+import cn.wzpmc.mybot.entities.events.group.decreases.GroupDeceasesKickMeEvent;
+import cn.wzpmc.mybot.entities.events.group.decreases.GroupDecreasesLeaveEvent;
+import cn.wzpmc.mybot.entities.events.group.file.GroupFileUploadEvent;
+import cn.wzpmc.mybot.entities.events.group.increase.GroupIncreaseApproveEvent;
+import cn.wzpmc.mybot.entities.events.group.increase.GroupIncreaseInviteEvent;
+import cn.wzpmc.mybot.entities.events.group.message.GroupAnonymousMessageEvent;
+import cn.wzpmc.mybot.entities.events.group.message.GroupNormalMessageEvent;
+import cn.wzpmc.mybot.entities.events.group.message.GroupNoticeMessageEvent;
+import cn.wzpmc.mybot.entities.utils.EventIdentifier;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import cn.wzpmc.mybot.pojo.utils.EventIdentifier;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.SneakyThrows;
 
@@ -14,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.wzpmc.mybot.Main.bot;
 import static cn.wzpmc.mybot.constants.StringConstants.*;
-import static cn.wzpmc.mybot.pojo.utils.EventIdentifier.*;
+import static cn.wzpmc.mybot.entities.utils.EventIdentifier.*;
 
 /**
  * @author wzp
@@ -24,6 +39,8 @@ public class EventUtils {
     private static final HashMap<EventIdentifier, Class<? extends Event>> IDENTIFIER_CLASS_HASH_MAP = new HashMap<>();
 
     public static void registerAllEvent() {
+        EventIdentifier connect = getMeta(LIFECYCLE, CONNECT);
+        EventIdentifier heartbeat = getMeta(HEARTBEAT);
         EventIdentifier groupNormalMessage = getMessage(GROUP, NORMAL);
         EventIdentifier groupAnonymousMessage = getMessage(GROUP, ANONYMOUS);
         EventIdentifier groupNoticeMessage = getMessage(GROUP, NOTICE);
@@ -50,6 +67,21 @@ public class EventUtils {
         EventIdentifier otherClientStatusChange = getNotice(CLIENT_STATUS);
         EventIdentifier groupEssenceAdd = getNotice(ESSENCE, ADD);
         EventIdentifier groupEssenceDelete = getNotice(ESSENCE, DELETE);
+        groupAdminSet.register(GroupAdminSetEvent.class);
+        groupAdminUnset.register(GroupAdminUnSetEvent.class);
+        groupDecreaseKick.register(GroupDeceasesKickEvent.class);
+        groupDecreaseLeave.register(GroupDecreasesLeaveEvent.class);
+        groupDecreaseKickMe.register(GroupDeceasesKickMeEvent.class);
+        heartbeat.register(ServerHeartbeatEvent.class);
+        connect.register(BotGetConnectEvent.class);
+        groupNormalMessage.register(GroupNormalMessageEvent.class);
+        groupAnonymousMessage.register(GroupAnonymousMessageEvent.class);
+        groupNoticeMessage.register(GroupNoticeMessageEvent.class);
+        groupIncreaseApprove.register(GroupIncreaseApproveEvent.class);
+        groupIncreaseInvite.register(GroupIncreaseInviteEvent.class);
+        groupFileUpload.register(GroupFileUploadEvent.class);
+        groupBan.register(GroupBanEvent.class);
+        groupLiftBan.register(GroupLiftBanEvent.class);
 
     }
 

@@ -2,13 +2,13 @@ package cn.wzpmc.mybot;
 
 import cn.wzpmc.mybot.annotations.EventHandler;
 import cn.wzpmc.mybot.api.MyBotApi;
-import cn.wzpmc.mybot.cq.At;
+import cn.wzpmc.mybot.entities.cq.At;
+import cn.wzpmc.mybot.entities.users.ChannelUser;
+import cn.wzpmc.mybot.entities.users.GroupUser;
+import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.EventExecutor;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import cn.wzpmc.mybot.pojo.users.ChannelUser;
-import cn.wzpmc.mybot.pojo.users.GroupUser;
-import cn.wzpmc.mybot.pojo.utils.Command;
 import com.alibaba.fastjson2.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
 package cn.wzpmc.mybot;
 
-import cn.wzpmc.mybot.pojo.utils.EventIdentifier;
+import cn.wzpmc.mybot.entities.utils.EventIdentifier;
 import cn.wzpmc.mybot.utils.BytesUtils;
 import cn.wzpmc.mybot.utils.EventUtils;
 import com.alibaba.fastjson2.JSONObject;

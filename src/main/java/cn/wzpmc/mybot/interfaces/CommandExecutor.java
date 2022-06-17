@@ -1,7 +1,7 @@
 package cn.wzpmc.mybot.interfaces;
 
-import cn.wzpmc.mybot.pojo.users.MessageSender;
-import cn.wzpmc.mybot.pojo.utils.Command;
+import cn.wzpmc.mybot.entities.users.MessageSender;
+import cn.wzpmc.mybot.entities.utils.Command;
 
 /**
  * @author wzp

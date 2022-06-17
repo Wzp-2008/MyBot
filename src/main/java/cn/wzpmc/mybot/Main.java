@@ -1,10 +1,11 @@
 package cn.wzpmc.mybot;
 
 
+import cn.wzpmc.mybot.entities.users.Console;
+import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import cn.wzpmc.mybot.pojo.users.Console;
-import cn.wzpmc.mybot.pojo.utils.Command;
+import cn.wzpmc.mybot.utils.EventUtils;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
@@ -280,6 +281,7 @@ public class Main {
         ArrayList<Long> ops = getOps();
         bot = new Bot(log,http,ops);
         loadPlugins(bot);
+        EventUtils.registerAllEvent();
         nettyThread = new NettyThread(properties.getProperty("ws"));
         nettyThread.start();
         Runtime runtime = Runtime.getRuntime();
