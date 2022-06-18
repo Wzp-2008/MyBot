@@ -10,9 +10,11 @@ import cn.wzpmc.mybot.entities.utils.Command;
 public interface CommandExecutor {
     /**
      * 运行指令
-     * @param command 指令内容
-     * @param commandSender 命令发送者
-     * @return 指令是否执行成功
+     *
+     * @param args    指令的参数
+     * @param sender  指令发送者
+     * @param command 命令源
+     * @return 指令运行是否成功
      */
-    boolean execute(Command command, MessageSender commandSender);
+    boolean onCommand(String[] args, MessageSender sender, Command command);
 }

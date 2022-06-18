@@ -7,7 +7,7 @@ import cn.wzpmc.mybot.entities.users.ChannelUser;
 import cn.wzpmc.mybot.entities.users.PrivateUser;
 import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
-import cn.wzpmc.mybot.interfaces.EventExecutor;
+import cn.wzpmc.mybot.interfaces.Listener;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import com.alibaba.fastjson2.JSON;
 import org.slf4j.Logger;
@@ -70,12 +70,13 @@ public class Bot{
 
     /**
      * 注册一个事件
-     * @param plugin 插件
+     *
+     * @param plugin   插件
      * @param executor 指令执行器
      */
-    public void registerEvent(MyBotPlugin plugin, EventExecutor executor){
+    public void registerEvent(MyBotPlugin plugin, Listener executor) {
         ConcurrentHashMap<Class<?>, Method> eventsThis = events.getOrDefault(plugin, new ConcurrentHashMap<>(1));
-        Class<? extends EventExecutor> eventClass = executor.getClass();
+        Class<? extends Listener> eventClass = executor.getClass();
         //获取被注解EventHandler修饰的方法
         boolean flag = false;
         for (Method method : eventClass.getDeclaredMethods()) {

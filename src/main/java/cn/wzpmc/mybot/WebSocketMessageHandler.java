@@ -2,6 +2,7 @@ package cn.wzpmc.mybot;
 
 import cn.wzpmc.mybot.entities.utils.EventIdentifier;
 import cn.wzpmc.mybot.utils.BytesUtils;
+import cn.wzpmc.mybot.utils.CommandUtils;
 import cn.wzpmc.mybot.utils.EventUtils;
 import com.alibaba.fastjson2.JSONObject;
 import io.netty.buffer.ByteBuf;
@@ -11,6 +12,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static cn.wzpmc.mybot.Main.bot;
 
 /**
  * @author 33572
@@ -80,8 +83,13 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
             if (data != null) {
                 //事件类型
                 EventIdentifier identifier = EventIdentifier.getInstanceFromJsonObject(data);
-                log.info("get JsonData = {}", data);
-                EventUtils.runEvent(identifier, data);
+                String[] command = CommandUtils.isCommand(data, identifier, bot);
+                if (command == null) {
+                    EventUtils.runEvent(identifier, data);
+                } else {
+                    CommandUtils.handlerCommand(bot, identifier, command, data, log);
+                }
+                log.debug("get JsonData = {}", data);
             }
         }
     }

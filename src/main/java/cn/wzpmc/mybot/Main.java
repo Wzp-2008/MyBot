@@ -65,7 +65,7 @@ public class Main {
                 for (MyBotPlugin myBotPlugin : pluginName.keySet()) {
                     String name = pluginName.get(myBotPlugin);
                     try {
-                        boolean b = myBotPlugin.onLoad();
+                        boolean b = myBotPlugin.onEnable();
                         if (b) {
                             plugins.add(myBotPlugin);
                             log.info("插件 {} 成功加载！", name);
@@ -208,7 +208,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Console console = new Console(logger);
         while (running){
-            String command = scanner.next();
+            String command = scanner.nextLine();
             String[] s = command.split(" ");
             int len = s.length;
             if(len == 0){
@@ -220,21 +220,25 @@ public class Main {
                 Set<Command> commands = consoleCommands.keySet();
                 String head = "";
                 for (Command command1 : commands) {
-                    head = command1.getHead();
-                    if(a0.equals(head)){
+                    head = command1.getName();
+                    if (a0.equals(head)) {
                         runCommand = consoleCommands.get(command1);
                         break;
                     }
                 }
-                Command run = new Command(head,new ArrayList<>(Arrays.asList(s)),null);
-                if(runCommand != null){
-                    runCommand.execute(run,console);
-                }else if(STOP.equals(a0)){
+                Command run = new Command(head, null);
+                if (runCommand != null) {
+                    String[] args = Arrays.copyOfRange(s, 1, s.length);
+                    boolean b = runCommand.onCommand(args, console, run);
+                    if (!b) {
+                        log.error(getConfig().getProperty("failed_run_message"));
+                    }
+                } else if (STOP.equals(a0)) {
                     running = false;
                     log.info("停止");
                     Runtime.getRuntime().exit(0);
-                }else if(OP.equals(a0)){
-                    if(len == 2){
+                } else if (OP.equals(a0)) {
+                    if (len == 2) {
                         try {
                             Long qq = Long.valueOf(s[1]);
                             Bot.addOp(qq);

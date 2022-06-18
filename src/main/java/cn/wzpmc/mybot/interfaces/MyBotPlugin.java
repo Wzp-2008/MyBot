@@ -18,24 +18,6 @@ import java.nio.charset.StandardCharsets;
 @EqualsAndHashCode
 public abstract class MyBotPlugin {
     private JSONObject config = new JSONObject();
-    /**
-     * 当插件被加载时运行
-     * @return 此插件是否加载成功
-     */
-    public abstract boolean onLoad();
-
-    /**
-     * 获取Bot
-     * @return Bot
-     */
-    public Bot getBot(){
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        if(classLoader instanceof PluginClassLoader pluginClassLoader){
-            return pluginClassLoader.bot;
-        }else{
-            return null;
-        }
-    }
 
     /**
      * 获取插件
@@ -44,23 +26,51 @@ public abstract class MyBotPlugin {
      * @return 插件
      */
     public static <T extends MyBotPlugin> T getPlugin(Class<T> clazz) {
-        if(!MyBotPlugin.class.isAssignableFrom(clazz)){
+        if (!MyBotPlugin.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException(clazz + " does not extend " + MyBotPlugin.class);
         }
         ClassLoader classLoader = clazz.getClassLoader();
-        if(!(classLoader instanceof PluginClassLoader pluginClassLoader)){
+        if (!(classLoader instanceof PluginClassLoader pluginClassLoader)) {
             throw new IllegalArgumentException(clazz + " is not initialized by " + PluginClassLoader.class);
         }
         MyBotPlugin plugin = pluginClassLoader.plugin;
         return clazz.cast(plugin);
     }
+
+    /**
+     * 当插件被加载时运行
+     *
+     * @return 此插件是否加载成功
+     */
+    public abstract boolean onEnable();
+
+    /**
+     * 当插件被卸载时运行
+     */
+    public abstract void onDisable();
+
+    /**
+     * 获取Bot
+     *
+     * @return Bot
+     */
+    public Bot getBot() {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        if (classLoader instanceof PluginClassLoader pluginClassLoader) {
+            return pluginClassLoader.bot;
+        } else {
+            return null;
+        }
+    }
+
     /**
      * 获取一个指令
-     * @param head 指令的指令头
+     *
+     * @param name 指令的指令头
      * @return 指令
      */
-    public Command getCommand(String head){
-        return new Command(head,this);
+    public Command getCommand(String name) {
+        return new Command(name, this);
     }
 
     /**

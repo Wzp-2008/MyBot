@@ -1,4 +1,4 @@
-package cn.wzpmc.mybot.entities.events.group.bot;
+package cn.wzpmc.mybot.entities.events.bot;
 
 import cn.wzpmc.mybot.entities.events.Event;
 import com.alibaba.fastjson2.JSONObject;
