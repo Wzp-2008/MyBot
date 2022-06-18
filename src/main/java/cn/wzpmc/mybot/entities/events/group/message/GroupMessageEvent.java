@@ -1,7 +1,7 @@
 package cn.wzpmc.mybot.entities.events.group.message;
 
 import cn.wzpmc.mybot.entities.events.Event;
-import cn.wzpmc.mybot.entities.users.PrivateUser;
+import cn.wzpmc.mybot.entities.users.GroupUser;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +22,7 @@ public class GroupMessageEvent extends Event {
     private String message;
     private String rawMessage;
     private Integer font;
-    private PrivateUser sender;
+    private GroupUser sender;
     private Long groupId;
 
     public GroupMessageEvent(String eventName, JSONObject data) {
@@ -33,7 +33,7 @@ public class GroupMessageEvent extends Event {
         this.message = data.getString("message");
         this.rawMessage = data.getString("raw_message");
         this.font = data.getInteger("font");
-        this.sender = data.getJSONObject("sender").toJavaObject(PrivateUser.class);
+        this.sender = data.getJSONObject("sender").toJavaObject(GroupUser.class);
         this.groupId = data.getLong("group_id");
     }
 

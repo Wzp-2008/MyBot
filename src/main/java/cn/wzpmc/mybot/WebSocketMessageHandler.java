@@ -80,8 +80,8 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
             if (data != null) {
                 //事件类型
                 EventIdentifier identifier = EventIdentifier.getInstanceFromJsonObject(data);
-                EventUtils.runEvent(identifier, data);
                 log.info("get JsonData = {}", data);
+                EventUtils.runEvent(identifier, data);
             }
         }
     }
