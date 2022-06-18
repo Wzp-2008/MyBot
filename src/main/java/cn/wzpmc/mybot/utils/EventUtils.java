@@ -1,21 +1,39 @@
 package cn.wzpmc.mybot.utils;
 
 import cn.wzpmc.mybot.entities.events.Event;
-import cn.wzpmc.mybot.entities.events.bot.BotGetConnectEvent;
-import cn.wzpmc.mybot.entities.events.bot.ServerHeartbeatEvent;
+import cn.wzpmc.mybot.entities.events.friend.FriendAddEvent;
+import cn.wzpmc.mybot.entities.events.friend.FriendAddRequestEvent;
+import cn.wzpmc.mybot.entities.events.friend.FriendRecallEvent;
+import cn.wzpmc.mybot.entities.events.group.GroupCardUpdateEvent;
+import cn.wzpmc.mybot.entities.events.group.GroupHonorChangeEvent;
+import cn.wzpmc.mybot.entities.events.group.GroupLuckyKingEvent;
+import cn.wzpmc.mybot.entities.events.group.GroupRecallEvent;
 import cn.wzpmc.mybot.entities.events.group.admin.GroupAdminSetEvent;
 import cn.wzpmc.mybot.entities.events.group.admin.GroupAdminUnSetEvent;
 import cn.wzpmc.mybot.entities.events.group.ban.GroupBanEvent;
 import cn.wzpmc.mybot.entities.events.group.ban.GroupLiftBanEvent;
+import cn.wzpmc.mybot.entities.events.group.bot.BotGetConnectEvent;
+import cn.wzpmc.mybot.entities.events.group.bot.ServerHeartbeatEvent;
 import cn.wzpmc.mybot.entities.events.group.decreases.GroupDeceasesKickEvent;
 import cn.wzpmc.mybot.entities.events.group.decreases.GroupDeceasesKickMeEvent;
 import cn.wzpmc.mybot.entities.events.group.decreases.GroupDecreasesLeaveEvent;
+import cn.wzpmc.mybot.entities.events.group.essence.GroupEssenceAddEvent;
+import cn.wzpmc.mybot.entities.events.group.essence.GroupEssenceDeleteEvent;
 import cn.wzpmc.mybot.entities.events.group.file.GroupFileUploadEvent;
 import cn.wzpmc.mybot.entities.events.group.increase.GroupIncreaseApproveEvent;
 import cn.wzpmc.mybot.entities.events.group.increase.GroupIncreaseInviteEvent;
 import cn.wzpmc.mybot.entities.events.group.message.GroupAnonymousMessageEvent;
 import cn.wzpmc.mybot.entities.events.group.message.GroupNormalMessageEvent;
 import cn.wzpmc.mybot.entities.events.group.message.GroupNoticeMessageEvent;
+import cn.wzpmc.mybot.entities.events.group.request.GroupAddRequestEvent;
+import cn.wzpmc.mybot.entities.events.group.request.GroupInviteRequestEvent;
+import cn.wzpmc.mybot.entities.events.other.GetOfflineFileEvent;
+import cn.wzpmc.mybot.entities.events.other.OtherClientStatusChangeEvent;
+import cn.wzpmc.mybot.entities.events.other.PokeMessageEvent;
+import cn.wzpmc.mybot.entities.events.privatemessage.PrivateFriendMessageEvent;
+import cn.wzpmc.mybot.entities.events.privatemessage.PrivateGroupMessageEvent;
+import cn.wzpmc.mybot.entities.events.privatemessage.PrivateGroupSelfEvent;
+import cn.wzpmc.mybot.entities.events.privatemessage.PrivateOtherMessageEvent;
 import cn.wzpmc.mybot.entities.utils.EventIdentifier;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import com.alibaba.fastjson2.JSONObject;
@@ -41,6 +59,10 @@ public class EventUtils {
     public static void registerAllEvent() {
         EventIdentifier connect = getMeta(LIFECYCLE, CONNECT);
         EventIdentifier heartbeat = getMeta(HEARTBEAT);
+        EventIdentifier privateFriendMessage = getMessage(PRIVATE, FRIEND);
+        EventIdentifier privateGroupMessage = getMessage(PRIVATE, GROUP);
+        EventIdentifier privateGroupSelfMessage = getMessage(PRIVATE, GROUP_SELF);
+        EventIdentifier privateOtherMessage = getMessage(PRIVATE, OTHER);
         EventIdentifier groupNormalMessage = getMessage(GROUP, NORMAL);
         EventIdentifier groupAnonymousMessage = getMessage(GROUP, ANONYMOUS);
         EventIdentifier groupNoticeMessage = getMessage(GROUP, NOTICE);
@@ -52,21 +74,24 @@ public class EventUtils {
         EventIdentifier groupDecreaseKickMe = getNotice(GROUP_DECREASE, KICK_ME);
         EventIdentifier groupIncreaseApprove = getNotice(GROUP_INCREASE, APPROVE);
         EventIdentifier groupIncreaseInvite = getNotice(GROUP_INCREASE, INVITE);
+        EventIdentifier groupRecall = getNotice(GROUP_RECALL);
         EventIdentifier groupBan = getNotice(GROUP_BAN, BAN);
         EventIdentifier groupLiftBan = getNotice(GROUP_BAN, LIFT_BAN);
-        EventIdentifier friendAdd = getNotice(FRIEND_ADD);
-        EventIdentifier friendRecall = getNotice(FRIEND_RECALL);
-        EventIdentifier friendPoke = getNotice(NOTIFY, POKE);
         EventIdentifier groupLuckKing = getNotice(NOTIFY, LUCKY_KING);
         EventIdentifier groupHonorChange = getNotice(NOTIFY, HONOR);
         EventIdentifier groupCardUpdate = getNotice(GROUP_CARD);
-        EventIdentifier getOfflineFile = getNotice(OFFLINE_FILE);
-        EventIdentifier friendRequest = getRequest(FRIEND);
         EventIdentifier groupAddRequest = getRequest(GROUP, ADD);
         EventIdentifier groupInviteRequest = getRequest(GROUP, INVITE);
-        EventIdentifier otherClientStatusChange = getNotice(CLIENT_STATUS);
         EventIdentifier groupEssenceAdd = getNotice(ESSENCE, ADD);
         EventIdentifier groupEssenceDelete = getNotice(ESSENCE, DELETE);
+        EventIdentifier otherClientStatusChange = getNotice(CLIENT_STATUS);
+        EventIdentifier friendAdd = getNotice(FRIEND_ADD);
+        EventIdentifier friendRecall = getNotice(FRIEND_RECALL);
+        EventIdentifier pokeMessage = getNotice(NOTIFY, POKE);
+        EventIdentifier getOfflineFile = getNotice(OFFLINE_FILE);
+        EventIdentifier friendRequest = getRequest(FRIEND);
+
+
         groupAdminSet.register(GroupAdminSetEvent.class);
         groupAdminUnset.register(GroupAdminUnSetEvent.class);
         groupDecreaseKick.register(GroupDeceasesKickEvent.class);
@@ -82,7 +107,24 @@ public class EventUtils {
         groupFileUpload.register(GroupFileUploadEvent.class);
         groupBan.register(GroupBanEvent.class);
         groupLiftBan.register(GroupLiftBanEvent.class);
-
+        privateFriendMessage.register(PrivateFriendMessageEvent.class);
+        privateGroupMessage.register(PrivateGroupMessageEvent.class);
+        privateOtherMessage.register(PrivateOtherMessageEvent.class);
+        privateGroupSelfMessage.register(PrivateGroupSelfEvent.class);
+        groupEssenceAdd.register(GroupEssenceAddEvent.class);
+        groupEssenceDelete.register(GroupEssenceDeleteEvent.class);
+        otherClientStatusChange.register(OtherClientStatusChangeEvent.class);
+        groupAddRequest.register(GroupAddRequestEvent.class);
+        groupInviteRequest.register(GroupInviteRequestEvent.class);
+        groupRecall.register(GroupRecallEvent.class);
+        friendAdd.register(FriendAddEvent.class);
+        friendRecall.register(FriendRecallEvent.class);
+        pokeMessage.register(PokeMessageEvent.class);
+        groupHonorChange.register(GroupHonorChangeEvent.class);
+        groupLuckKing.register(GroupLuckyKingEvent.class);
+        groupCardUpdate.register(GroupCardUpdateEvent.class);
+        friendRequest.register(FriendAddRequestEvent.class);
+        getOfflineFile.register(GetOfflineFileEvent.class);
     }
 
     public static void registerIdentifier(EventIdentifier identifier, Class<? extends Event> clazz) {

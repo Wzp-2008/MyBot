@@ -4,7 +4,7 @@ import cn.wzpmc.mybot.annotations.EventHandler;
 import cn.wzpmc.mybot.api.MyBotApi;
 import cn.wzpmc.mybot.entities.cq.At;
 import cn.wzpmc.mybot.entities.users.ChannelUser;
-import cn.wzpmc.mybot.entities.users.GroupUser;
+import cn.wzpmc.mybot.entities.users.PrivateUser;
 import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.EventExecutor;
@@ -35,7 +35,7 @@ public class Bot{
     private final ConcurrentHashMap<Command, CommandExecutor> commands = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Command, CommandExecutor> consoleCommands = new ConcurrentHashMap<>();
     private final Logger logger;
-    private final GroupUser groupBot;
+    private final PrivateUser groupBot;
     private final ChannelUser channelBot;
     private final MyBotApi api;
     private final URL http;
@@ -150,14 +150,16 @@ public class Bot{
      * 获取所有注册的控制台命令
      * @return 所有控制台命令
      */
-    public Map<Command,CommandExecutor> getConsoleCommands() {
+    public Map<Command, CommandExecutor> getConsoleCommands() {
         return consoleCommands;
     }
+
     /**
      * 获取群中的机器人用户
+     *
      * @return 机器人用户
      */
-    public GroupUser getGroupBot(){
+    public PrivateUser getGroupBot() {
         return this.groupBot;
     }
 

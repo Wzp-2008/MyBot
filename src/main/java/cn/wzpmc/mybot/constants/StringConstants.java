@@ -49,5 +49,7 @@ public class StringConstants {
     public static final String ESSENCE = "essence";
     public static final String DELETE = "delete";
     public static final String FRIEND_RECALL = "friend_recall";
+    public static final String GROUP_SELF = "group_self";
+    public static final String OTHER = "other";
 
 }

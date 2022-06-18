@@ -1,4 +1,4 @@
-package cn.wzpmc.mybot.entities.events.bot;
+package cn.wzpmc.mybot.entities.events.group.bot;
 
 import cn.wzpmc.mybot.entities.events.Event;
 import cn.wzpmc.mybot.entities.infos.BotStatus;

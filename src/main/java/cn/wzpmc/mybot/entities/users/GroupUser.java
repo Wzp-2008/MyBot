@@ -1,29 +1,24 @@
 package cn.wzpmc.mybot.entities.users;
 
-import com.alibaba.fastjson2.JSONObject;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author wzp
  * @version 1.0.0
+ * Created On 2022/6/18 7:46
  */
-@ToString
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 public class GroupUser extends User {
-    String sex;
-    Integer age;
-
-    public GroupUser(long id, String nickname, String sex, Integer age) {
-        super(id, nickname);
-        this.sex = sex;
-        this.age = age;
-    }
-
-    public GroupUser(long id, String nickname) {
-        super(id, nickname);
-        this.sex = null;
-        this.age = null;
-    }
-    public static GroupUser getGroupUser(JSONObject jsonObject){
-        return new GroupUser(jsonObject.getLong("user_id"),jsonObject.getString("nickname"),jsonObject.getString("sex"),jsonObject.getInteger("age"));
-    }
+    private String sex;
+    private Integer age;
+    private String card;
+    private String area;
+    private String level;
+    private String role;
+    private String title;
 }

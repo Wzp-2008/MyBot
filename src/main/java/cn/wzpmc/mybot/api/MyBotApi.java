@@ -12,7 +12,7 @@ import cn.wzpmc.mybot.entities.messages.EssenceMessage;
 import cn.wzpmc.mybot.entities.messages.GroupMessage;
 import cn.wzpmc.mybot.entities.users.ChannelUser;
 import cn.wzpmc.mybot.entities.users.FriendUser;
-import cn.wzpmc.mybot.entities.users.GroupUser;
+import cn.wzpmc.mybot.entities.users.PrivateUser;
 import cn.wzpmc.mybot.entities.users.QiDianAccount;
 import cn.wzpmc.mybot.entities.utils.*;
 import cn.wzpmc.mybot.enums.GroupHonorType;
@@ -125,11 +125,12 @@ public class MyBotApi {
 
     /**
      * 获取登录号信息
+     *
      * @return 机器人用户
      */
-    public GroupUser getGroupBotInfo() {
+    public PrivateUser getGroupBotInfo() {
         JSONObject data = doGet("/get_login_info");
-        return new GroupUser(data.getInteger("user_id"), data.getString("nickname"));
+        return new PrivateUser(data.getInteger("user_id"), data.getString("nickname"));
     }
 
     /**
@@ -617,16 +618,17 @@ public class MyBotApi {
 
     /**
      * 获取陌生人信息
-     * @param userId QQ 号
+     *
+     * @param userId  QQ 号
      * @param noCache 是否不使用缓存（使用缓存可能更新不及时, 但响应更快）
      * @return 陌生人信息
      */
-    public GroupUser getStrangerInfo(Long userId,Boolean noCache){
+    public PrivateUser getStrangerInfo(Long userId, Boolean noCache) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.fluentPut("user_id",userId);
-        jsonObject.fluentPut("no_cache",noCache);
-        JSONObject result = doPost("/get_stranger_info",jsonObject);
-        return GroupUser.getGroupUser(result);
+        jsonObject.fluentPut("user_id", userId);
+        jsonObject.fluentPut("no_cache", noCache);
+        JSONObject result = doPost("/get_stranger_info", jsonObject);
+        return PrivateUser.getGroupUser(result);
     }
 
     /**
