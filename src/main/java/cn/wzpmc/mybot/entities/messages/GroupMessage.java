@@ -48,14 +48,16 @@ public class GroupMessage extends BaseMessage {
                         String message,
                         @JSONField(name = "raw_message") String rawMessage,
                         Integer font,
-                        GroupUser sender,
+                        JSONObject sender,
                         @JSONField(name = "group_id") Long groupId,
-                        Anonymous anonymous) {
-        super(MessageType.group, message, sender);
+                        JSONObject anonymous) {
+        super(MessageType.group, message, sender.toJavaObject(GroupUser.class));
         this.messageSeq = 0L;
         this.id = messageId;
         this.groupId = groupId;
-        this.anonymous = anonymous;
+        if (anonymous != null) {
+            this.anonymous = anonymous.toJavaObject(Anonymous.class);
+        }
         this.font = font;
     }
 
@@ -68,7 +70,7 @@ public class GroupMessage extends BaseMessage {
     @Override
     public Integer reply(String message, Bot bot) {
         MyBotApi api = bot.getApi();
-        At at = ((PrivateUser) this.getSender()).getAt();
+        At at = ((GroupUser) this.getSender()).getAt();
         String s = at.toString();
         return api.sendGroupMessage(this.groupId, s + message);
     }

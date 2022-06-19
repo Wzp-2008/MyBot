@@ -117,7 +117,9 @@ public class MyBotApi {
     public Integer sendPrivateMessage(Long userId, Long groupId, String message) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("user_id", userId);
-        jsonObject.fluentPut("group_id", groupId);
+        if (groupId != null) {
+            jsonObject.fluentPut("group_id", groupId);
+        }
         jsonObject.fluentPut("message", message);
         JSONObject r = doPost("/send_private_msg", jsonObject);
         return r.getInteger("message_id");

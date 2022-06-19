@@ -3,6 +3,7 @@ package cn.wzpmc.mybot.entities.messages;
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.entities.users.PrivateUser;
 import cn.wzpmc.mybot.enums.MessageType;
+import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.annotation.JSONCreator;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class PrivateMessage extends BaseMessage {
     private String rawMessage;
     private Integer font;
     private PrivateUser sender;
-    private Integer tempSource;
+    private Long tempSource;
 
     @JSONCreator
     public PrivateMessage(@JSONField(name = "message_id") Integer messageId,
@@ -32,21 +33,20 @@ public class PrivateMessage extends BaseMessage {
                           String message,
                           @JSONField(name = "raw_message") String rawMessage,
                           Integer font,
-                          PrivateUser sender,
-                          @JSONField(name = "temp_source") Integer tempSource) {
-        super(MessageType.privateMessage, message, sender);
+                          JSONObject sender,
+                          @JSONField(name = "temp_source") Long tempSource) {
+        super(MessageType.privateMessage, message, sender.toJavaObject(PrivateUser.class));
         this.messageId = messageId;
         this.userId = userId;
         this.message = message;
         this.rawMessage = rawMessage;
         this.font = font;
-        this.sender = sender;
         this.tempSource = tempSource;
 
     }
 
     @Override
     public Integer reply(String content, Bot bot) {
-        return bot.getApi().sendPrivateMessage(this.userId, Long.valueOf(this.tempSource), content);
+        return bot.getApi().sendPrivateMessage(this.userId, this.tempSource, content);
     }
 }
