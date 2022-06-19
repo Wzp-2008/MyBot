@@ -74,7 +74,6 @@ public class MyBotApi {
     }
     private JSONArray doPostWithArray(String function, JSONObject args) {
         JSONObject post = post(function, args);
-        System.out.println(post);
         return post.getJSONArray("data");
     }
     private JSONObject doPost(String function, JSONObject args) {
