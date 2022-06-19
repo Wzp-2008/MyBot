@@ -6,6 +6,9 @@ import cn.wzpmc.mybot.api.MyBotApi;
 import cn.wzpmc.mybot.entities.cq.At;
 import cn.wzpmc.mybot.entities.events.group.message.GroupNormalMessageEvent;
 import cn.wzpmc.mybot.entities.events.privatemessage.PrivateFriendMessageEvent;
+import cn.wzpmc.mybot.entities.messages.BaseMessage;
+import cn.wzpmc.mybot.entities.messages.GroupMessage;
+import cn.wzpmc.mybot.entities.messages.PrivateMessage;
 import cn.wzpmc.mybot.entities.users.MessageSender;
 import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.entities.utils.EventIdentifier;
@@ -93,13 +96,16 @@ public class CommandUtils {
             }
         } else {
             MessageSender sender = null;
+            BaseMessage rawMessage = new PrivateMessage();
             if (isPrivateFriendMessage) {
                 sender = privateFriendMessageEvent.getSender();
+                rawMessage = data.toJavaObject(PrivateMessage.class);
             }
             if (isGroupNormalMessage) {
                 sender = groupNormalMessageEvent.getSender();
+                rawMessage = data.toJavaObject(GroupMessage.class);
             }
-            boolean b = executor.onCommand(Arrays.copyOfRange(command, 1, command.length), sender, finalC);
+            boolean b = executor.onCommand(Arrays.copyOfRange(command, 1, command.length), sender, finalC, rawMessage);
             if (!b) {
                 String failedRunMessage = Main.getConfig().getProperty("failed_run_message");
                 if (isPrivateFriendMessage) {

@@ -1,6 +1,8 @@
 package cn.wzpmc.mybot.entities.users;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.annotation.JSONCreator;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +16,8 @@ public class PrivateUser extends User {
     private String sex;
     private Integer age;
 
-    public PrivateUser(long id, String nickname, String sex, Integer age) {
+    @JSONCreator
+    public PrivateUser(@JSONField(name = "user_id") long id, String nickname, String sex, Integer age) {
         super(id, nickname);
         this.sex = sex;
         this.age = age;

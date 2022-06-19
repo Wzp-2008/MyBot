@@ -1,6 +1,7 @@
 package cn.wzpmc.mybot;
 
 
+import cn.wzpmc.mybot.entities.messages.ConsoleMessage;
 import cn.wzpmc.mybot.entities.users.Console;
 import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
@@ -229,7 +230,7 @@ public class Main {
                 Command run = new Command(head, null);
                 if (runCommand != null) {
                     String[] args = Arrays.copyOfRange(s, 1, s.length);
-                    boolean b = runCommand.onCommand(args, console, run);
+                    boolean b = runCommand.onCommand(args, console, run, new ConsoleMessage(command, console));
                     if (!b) {
                         log.error(getConfig().getProperty("failed_run_message"));
                     }

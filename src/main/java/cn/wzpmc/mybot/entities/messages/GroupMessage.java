@@ -4,9 +4,12 @@ import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.api.MyBotApi;
 import cn.wzpmc.mybot.entities.cq.At;
 import cn.wzpmc.mybot.entities.infos.Anonymous;
+import cn.wzpmc.mybot.entities.users.GroupUser;
 import cn.wzpmc.mybot.entities.users.PrivateUser;
 import cn.wzpmc.mybot.enums.MessageType;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.annotation.JSONCreator;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,13 +42,31 @@ public class GroupMessage extends BaseMessage {
         this.messageSeq = object.getLong("message_seq");
     }
 
+    @JSONCreator
+    public GroupMessage(@JSONField(name = "message_id") Integer messageId,
+                        @JSONField(name = "user_id") Long userId,
+                        String message,
+                        @JSONField(name = "raw_message") String rawMessage,
+                        Integer font,
+                        GroupUser sender,
+                        @JSONField(name = "group_id") Long groupId,
+                        Anonymous anonymous) {
+        super(MessageType.group, message, sender);
+        this.messageSeq = 0L;
+        this.id = messageId;
+        this.groupId = groupId;
+        this.anonymous = anonymous;
+        this.font = font;
+    }
+
     /**
      * 回复这条消息
+     *
      * @param message 要回复的内容
      * @return 消息id
      */
     @Override
-    public Integer reply(String message,Bot bot){
+    public Integer reply(String message, Bot bot) {
         MyBotApi api = bot.getApi();
         At at = ((PrivateUser) this.getSender()).getAt();
         String s = at.toString();

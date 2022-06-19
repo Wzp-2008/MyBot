@@ -13,6 +13,7 @@ public enum MessageType {
      * 频道
      */
     channel,
+    privateMessage,
     /**
      * 控制台
      */
