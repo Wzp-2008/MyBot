@@ -1,10 +1,12 @@
 package cn.wzpmc.mybot;
 
 
+import cn.wzpmc.mybot.entities.messages.ConsoleMessage;
+import cn.wzpmc.mybot.entities.users.Console;
+import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import cn.wzpmc.mybot.pojo.Command;
-import cn.wzpmc.mybot.pojo.Console;
+import cn.wzpmc.mybot.utils.EventUtils;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
@@ -12,15 +14,18 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 import static cn.wzpmc.mybot.constants.StringConstants.*;
 
 /**
  * @author 33572
- * @date 2022/03/29 20:54
  * @version 1.0.0
  * 启动器
  */
@@ -61,7 +66,7 @@ public class Main {
                 for (MyBotPlugin myBotPlugin : pluginName.keySet()) {
                     String name = pluginName.get(myBotPlugin);
                     try {
-                        boolean b = myBotPlugin.onLoad();
+                        boolean b = myBotPlugin.onEnable();
                         if (b) {
                             plugins.add(myBotPlugin);
                             log.info("插件 {} 成功加载！", name);
@@ -204,7 +209,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Console console = new Console(logger);
         while (running){
-            String command = scanner.next();
+            String command = scanner.nextLine();
             String[] s = command.split(" ");
             int len = s.length;
             if(len == 0){
@@ -216,21 +221,25 @@ public class Main {
                 Set<Command> commands = consoleCommands.keySet();
                 String head = "";
                 for (Command command1 : commands) {
-                    head = command1.getHead();
-                    if(a0.equals(head)){
+                    head = command1.getName();
+                    if (a0.equals(head)) {
                         runCommand = consoleCommands.get(command1);
                         break;
                     }
                 }
-                Command run = new Command(head,new ArrayList<>(Arrays.asList(s)),null);
-                if(runCommand != null){
-                    runCommand.execute(run,console);
-                }else if(STOP.equals(a0)){
+                Command run = new Command(head, null);
+                if (runCommand != null) {
+                    String[] args = Arrays.copyOfRange(s, 1, s.length);
+                    boolean b = runCommand.onCommand(args, console, run, new ConsoleMessage(command, console));
+                    if (!b) {
+                        log.error(getConfig().getProperty("failed_run_message"));
+                    }
+                } else if (STOP.equals(a0)) {
                     running = false;
                     log.info("停止");
                     Runtime.getRuntime().exit(0);
-                }else if(OP.equals(a0)){
-                    if(len == 2){
+                } else if (OP.equals(a0)) {
+                    if (len == 2) {
                         try {
                             Long qq = Long.valueOf(s[1]);
                             Bot.addOp(qq);
@@ -277,6 +286,7 @@ public class Main {
         ArrayList<Long> ops = getOps();
         bot = new Bot(log,http,ops);
         loadPlugins(bot);
+        EventUtils.registerAllEvent();
         nettyThread = new NettyThread(properties.getProperty("ws"));
         nettyThread.start();
         Runtime runtime = Runtime.getRuntime();

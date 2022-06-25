@@ -2,12 +2,12 @@ package cn.wzpmc.mybot;
 
 import java.util.Map;
 
-import static cn.wzpmc.mybot.Main.*;
+import static cn.wzpmc.mybot.Main.nettyThread;
+import static cn.wzpmc.mybot.Main.running;
 
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/5/4
  */
 public class StopThread extends Thread{
     @Override

@@ -1,19 +1,22 @@
 package cn.wzpmc.mybot.interfaces;
 
-import cn.wzpmc.mybot.pojo.Command;
-import cn.wzpmc.mybot.pojo.MessageSender;
+import cn.wzpmc.mybot.entities.messages.BaseMessage;
+import cn.wzpmc.mybot.entities.users.MessageSender;
+import cn.wzpmc.mybot.entities.utils.Command;
 
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/3/31
  */
 public interface CommandExecutor {
     /**
      * 运行指令
-     * @param command 指令内容
-     * @param commandSender 命令发送者
-     * @return 指令是否执行成功
+     *
+     * @param args       指令的参数
+     * @param sender     指令发送者
+     * @param command    命令源
+     * @param rawMessage 原始消息
+     * @return 指令运行是否成功
      */
-    boolean execute(Command command, MessageSender commandSender);
+    boolean onCommand(String[] args, MessageSender sender, Command command, BaseMessage rawMessage);
 }

@@ -2,13 +2,13 @@ package cn.wzpmc.mybot;
 
 import cn.wzpmc.mybot.annotations.EventHandler;
 import cn.wzpmc.mybot.api.MyBotApi;
-import cn.wzpmc.mybot.cq.At;
+import cn.wzpmc.mybot.entities.cq.At;
+import cn.wzpmc.mybot.entities.users.ChannelUser;
+import cn.wzpmc.mybot.entities.users.PrivateUser;
+import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
-import cn.wzpmc.mybot.interfaces.EventExecutor;
+import cn.wzpmc.mybot.interfaces.Listener;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
-import cn.wzpmc.mybot.pojo.ChannelUser;
-import cn.wzpmc.mybot.pojo.Command;
-import cn.wzpmc.mybot.pojo.GroupUser;
 import com.alibaba.fastjson2.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/3/31
  * 机器人主类
  */
 public class Bot{
@@ -36,7 +35,7 @@ public class Bot{
     private final ConcurrentHashMap<Command, CommandExecutor> commands = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Command, CommandExecutor> consoleCommands = new ConcurrentHashMap<>();
     private final Logger logger;
-    private final GroupUser groupBot;
+    private final PrivateUser groupBot;
     private final ChannelUser channelBot;
     private final MyBotApi api;
     private final URL http;
@@ -71,12 +70,13 @@ public class Bot{
 
     /**
      * 注册一个事件
-     * @param plugin 插件
+     *
+     * @param plugin   插件
      * @param executor 指令执行器
      */
-    public void registerEvent(MyBotPlugin plugin, EventExecutor executor){
+    public void registerEvent(MyBotPlugin plugin, Listener executor) {
         ConcurrentHashMap<Class<?>, Method> eventsThis = events.getOrDefault(plugin, new ConcurrentHashMap<>(1));
-        Class<? extends EventExecutor> eventClass = executor.getClass();
+        Class<? extends Listener> eventClass = executor.getClass();
         //获取被注解EventHandler修饰的方法
         boolean flag = false;
         for (Method method : eventClass.getDeclaredMethods()) {
@@ -151,14 +151,16 @@ public class Bot{
      * 获取所有注册的控制台命令
      * @return 所有控制台命令
      */
-    public Map<Command,CommandExecutor> getConsoleCommands() {
+    public Map<Command, CommandExecutor> getConsoleCommands() {
         return consoleCommands;
     }
+
     /**
      * 获取群中的机器人用户
+     *
      * @return 机器人用户
      */
-    public GroupUser getGroupBot(){
+    public PrivateUser getGroupBot() {
         return this.groupBot;
     }
 

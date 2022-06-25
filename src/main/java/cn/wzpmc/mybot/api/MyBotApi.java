@@ -3,8 +3,19 @@ package cn.wzpmc.mybot.api;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.wzpmc.mybot.Bot;
+import cn.wzpmc.mybot.entities.groupfiles.GroupFileList;
+import cn.wzpmc.mybot.entities.groupfiles.GroupFileObject;
+import cn.wzpmc.mybot.entities.groupfiles.GroupFileSystemInfo;
+import cn.wzpmc.mybot.entities.groupfiles.GroupFolderObject;
+import cn.wzpmc.mybot.entities.infos.*;
+import cn.wzpmc.mybot.entities.messages.EssenceMessage;
+import cn.wzpmc.mybot.entities.messages.GroupMessage;
+import cn.wzpmc.mybot.entities.users.ChannelUser;
+import cn.wzpmc.mybot.entities.users.FriendUser;
+import cn.wzpmc.mybot.entities.users.PrivateUser;
+import cn.wzpmc.mybot.entities.users.QiDianAccount;
+import cn.wzpmc.mybot.entities.utils.*;
 import cn.wzpmc.mybot.enums.GroupHonorType;
-import cn.wzpmc.mybot.pojo.*;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -12,12 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author wzp
  * @version 1.0.0
- * @date 2022/4/2
  */
 @Slf4j
 public class MyBotApi {
@@ -53,16 +62,6 @@ public class MyBotApi {
         JSONObject jsonObject = JSON.parseObject(body);
         return jsonObject.getJSONObject("data");
     }
-    private JSONArray doGetWithArray(String function) {
-        String url = this.getUrl(function);
-        HttpRequest httpRequest = HttpRequest.get(url);
-        String body;
-        try(HttpResponse execute = httpRequest.execute()){
-            body = execute.body();
-        }
-        JSONObject jsonObject = JSON.parseObject(body);
-        return jsonObject.getJSONArray("data");
-    }
     private JSONObject post(String function,JSONObject args){
         String url = this.getUrl(function);
         String s = JSON.toJSONString(args);
@@ -75,7 +74,6 @@ public class MyBotApi {
     }
     private JSONArray doPostWithArray(String function, JSONObject args) {
         JSONObject post = post(function, args);
-        System.out.println(post);
         return post.getJSONArray("data");
     }
     private JSONObject doPost(String function, JSONObject args) {
@@ -118,7 +116,9 @@ public class MyBotApi {
     public Integer sendPrivateMessage(Long userId, Long groupId, String message) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("user_id", userId);
-        jsonObject.fluentPut("group_id", groupId);
+        if (groupId != null) {
+            jsonObject.fluentPut("group_id", groupId);
+        }
         jsonObject.fluentPut("message", message);
         JSONObject r = doPost("/send_private_msg", jsonObject);
         return r.getInteger("message_id");
@@ -126,11 +126,12 @@ public class MyBotApi {
 
     /**
      * 获取登录号信息
+     *
      * @return 机器人用户
      */
-    public GroupUser getGroupBotInfo() {
+    public PrivateUser getGroupBotInfo() {
         JSONObject data = doGet("/get_login_info");
-        return new GroupUser(data.getInteger("user_id"), data.getString("nickname"));
+        return new PrivateUser(data.getInteger("user_id"), data.getString("nickname"));
     }
 
     /**
@@ -618,25 +619,34 @@ public class MyBotApi {
 
     /**
      * 获取陌生人信息
-     * @param userId QQ 号
+     *
+     * @param userId  QQ 号
      * @param noCache 是否不使用缓存（使用缓存可能更新不及时, 但响应更快）
      * @return 陌生人信息
      */
-    public GroupUser getStrangerInfo(Long userId,Boolean noCache){
+    public PrivateUser getStrangerInfo(Long userId, Boolean noCache) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.fluentPut("user_id",userId);
-        jsonObject.fluentPut("no_cache",noCache);
-        JSONObject result = doPost("/get_stranger_info",jsonObject);
-        return GroupUser.getGroupUser(result);
+        jsonObject.fluentPut("user_id", userId);
+        jsonObject.fluentPut("no_cache", noCache);
+        JSONObject result = doPost("/get_stranger_info", jsonObject);
+        return PrivateUser.getGroupUser(result);
     }
 
     /**
      * 获取好友列表
+     *
      * @return 所有的好友
      */
-    public ArrayList<FriendUser> getFriendList(){
+    public ArrayList<FriendUser> getFriendList() {
         ArrayList<FriendUser> users = new ArrayList<>();
-        JSONArray objects = doGetWithArray("/get_friend_list");
+        String url = this.getUrl("/get_friend_list");
+        HttpRequest httpRequest = HttpRequest.get(url);
+        String body;
+        try (HttpResponse execute = httpRequest.execute()) {
+            body = execute.body();
+        }
+        JSONObject jsonObject = JSON.parseObject(body);
+        JSONArray objects = jsonObject.getJSONArray("data");
         for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject1 = objects.getJSONObject(i);
             users.add(FriendUser.getFriendUser(jsonObject1));
@@ -716,11 +726,11 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId);
         JSONArray objects = doPostWithArray("/get_group_member_list", jsonObject);
-        ArrayList<GroupMemberInfo> R = new ArrayList<>();
+        ArrayList<GroupMemberInfo> result = new ArrayList<>();
         for (int i = 0; i < objects.size(); i++) {
-            R.add(objects.getJSONObject(i).toJavaObject(GroupMemberInfo.class));
+            result.add(objects.getJSONObject(i).toJavaObject(GroupMemberInfo.class));
         }
-        return R;
+        return result;
     }
 
     /**
@@ -1033,14 +1043,15 @@ public class MyBotApi {
 
     /**
      * 获取群消息历史记录
-     * @param groupId 群号
+     *
+     * @param groupId    群号
      * @param messageSeq 起始消息序号, 可通过 get_msg 获得
      * @return 从起始序号开始的前19条消息
      */
-    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId,Long messageSeq){
+    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId, Long messageSeq) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.fluentPut("group_id",groupId)
-                .fluentPut("message_seq",messageSeq);
+        jsonObject.fluentPut("group_id", groupId)
+                .fluentPut("message_seq", messageSeq);
         JSONObject result = doPost("/get_group_msg_history", jsonObject);
         JSONArray messages = result.getJSONArray("messages");
         ArrayList<GroupMessage> r = new ArrayList<>();
@@ -1050,12 +1061,14 @@ public class MyBotApi {
         }
         return r;
     }
+
     /**
      * 获取群消息历史记录
+     *
      * @param groupId 群号
      * @return 从最新消息开始的前19条消息
      */
-    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId){
+    public ArrayList<GroupMessage> getGroupMsgHistory(Long groupId) {
         return getGroupMsgHistory(groupId, null);
     }
 
