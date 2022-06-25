@@ -983,9 +983,9 @@ public class MyBotApi {
     }
 
     /**
-     * 获取群 @全体成员 剩余次数
+     * 获取群 AT全体成员 剩余次数
      * @param groupId 群号
-     * @return @全体成员 剩余次数
+     * @return AT全体成员 剩余次数
      */
     public GroupAtAllRemain getGroupAtAllRemain(Long groupId){
         JSONObject jsonObject = new JSONObject();
@@ -1118,7 +1118,7 @@ public class MyBotApi {
 
     /**
      * 获取在线机型
-     * 有关例子可从这个{@link <a href="https://github.com/Mrs4s/go-cqhttp/pull/872#issuecomment-831180149">...</a>}找到
+     * 有关例子可从https://github.com/Mrs4s/go-cqhttp/pull/872#issuecomment-831180149这里找到
      * @param model 机型名称
      * @return 在线机型
      */
