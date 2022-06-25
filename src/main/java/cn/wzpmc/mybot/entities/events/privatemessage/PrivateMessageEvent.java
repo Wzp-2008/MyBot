@@ -30,6 +30,6 @@ public class PrivateMessageEvent extends Event {
         this.message = data.getString("message");
         this.rawMessage = data.getString("raw_message");
         this.font = data.getInteger("font");
-        this.sender = data.getJSONObject("sender").toJavaObject(PrivateUser.class);
+        this.sender = data.getJSONObject("sender").to(PrivateUser.class);
     }
 }

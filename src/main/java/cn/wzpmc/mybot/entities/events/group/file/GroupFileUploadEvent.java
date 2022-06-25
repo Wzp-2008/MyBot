@@ -21,6 +21,6 @@ public class GroupFileUploadEvent extends Event {
         super("GroupFileUploadEvent", data);
         this.groupId = data.getLong("group_id");
         this.userId = data.getLong("user_id");
-        this.file = data.getJSONObject("file").toJavaObject(GroupFileObject.class);
+        this.file = data.getJSONObject("file").to(GroupFileObject.class);
     }
 }

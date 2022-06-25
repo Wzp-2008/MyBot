@@ -19,7 +19,7 @@ public class OtherClientStatusChangeEvent extends Event {
 
     public OtherClientStatusChangeEvent(JSONObject data) {
         super("OtherClientStatusChangeEvent", data);
-        this.device = data.getJSONObject("device").toJavaObject(Device.class);
+        this.device = data.getJSONObject("device").to(Device.class);
         this.online = data.getBoolean("online");
     }
 }

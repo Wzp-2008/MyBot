@@ -18,6 +18,6 @@ public class ServerHeartbeatEvent extends Event {
 
     public ServerHeartbeatEvent(JSONObject data) {
         super("ServerHeartBeatEvent", data);
-        this.stat = data.getJSONObject("status").toJavaObject(BotStatus.class);
+        this.stat = data.getJSONObject("status").to(BotStatus.class);
     }
 }

@@ -35,7 +35,7 @@ public class PrivateMessage extends BaseMessage {
                           Integer font,
                           JSONObject sender,
                           @JSONField(name = "temp_source") Long tempSource) {
-        super(MessageType.privateMessage, message, sender.toJavaObject(PrivateUser.class));
+        super(MessageType.privateMessage, message, sender.to(PrivateUser.class));
         this.messageId = messageId;
         this.userId = userId;
         this.message = message;

@@ -13,7 +13,10 @@ import com.alibaba.fastjson2.JSONArray;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -29,7 +32,7 @@ import static cn.wzpmc.mybot.constants.StringConstants.*;
  * @version 1.0.0
  * 启动器
  */
-public class Main {
+public class Main{
     public static Bot bot;
     public static URL http;
     public static Runtime runtime = Runtime.getRuntime();
@@ -169,14 +172,39 @@ public class Main {
             URL url = new URL("file:///" + absolutePath);
             URL[] urls = {url};
             PluginClassLoader pluginClassLoader = new PluginClassLoader(urls);
-            InputStream pluginMetaDataInputStream = pluginClassLoader.getResourceAsStream("plugin.properties");
+            boolean oldPlugin = false;
+            InputStream pluginMetaDataInputStream = pluginClassLoader.getResourceAsStream("plugin.yml");
             Properties metadata = new Properties();
-            metadata.load(pluginMetaDataInputStream);
+            if (pluginMetaDataInputStream == null) {
+                //此插件使用了properties格式配置文件
+                pluginMetaDataInputStream = pluginClassLoader.getResourceAsStream("plugin.properties");
+                metadata.load(pluginMetaDataInputStream);
+                oldPlugin = true;
+            }else{
+                Yaml yaml = new Yaml();
+                yaml.loadAs(pluginMetaDataInputStream,Properties.class);
+            }
             assert pluginMetaDataInputStream != null;
             pluginMetaDataInputStream.close();
             HashMap<MyBotPlugin, String> plugin = new HashMap<>(1);
-            String pluginName = metadata.getProperty("pluginName");
-            String pluginMainClassPath = metadata.getProperty("pluginMainClass");
+            String pluginName = metadata.getProperty("name");
+
+            if (pluginName == null){
+                pluginName = metadata.getProperty("pluginName");
+                oldPlugin = true;
+            }
+            String pluginMainClassPath = metadata.getProperty("mainClass");
+            if (pluginMainClassPath == null){
+                pluginMainClassPath = metadata.getProperty("pluginMainClass");
+                oldPlugin = true;
+            }
+            if (pluginName == null || pluginMainClassPath == null){
+                log.error("插件的plugin.properties缺少mainClass属性或name属性");
+                return null;
+            }
+            if (oldPlugin){
+                log.warn("插件{}使用了老版本的plugin.properties，建议联系插件作者更换（此支持可能会在未来的更新中移除）！",pluginName);
+            }
             Class<?> pluginMainClass;
             try {
                 pluginMainClass = pluginClassLoader.loadClass(pluginMainClassPath);
@@ -294,8 +322,29 @@ public class Main {
         runtime.addShutdownHook(stopThread);
         consoleRun(log);
     }
-
+    public static void launch(){
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JFrame frame = new JFrame("MyBot");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JLabel label = new JLabel("text");
+        Button startButton = new Button("启动bot");
+        Button stopButton = new Button("关闭bot");
+        Container contentPane = frame.getContentPane();
+        contentPane.add(startButton);
+        contentPane.add(stopButton);
+        contentPane.add(label);
+        frame.pack();
+        frame.setVisible(true);
+    }
     public static void main(String[] args) {
-        start();
+        if (args.length != 0){
+            if (NOGUI.equals(args[0])){
+                start();
+            }else{
+                launch();
+            }
+        }else{
+            launch();
+        }
     }
 }

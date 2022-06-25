@@ -99,11 +99,11 @@ public class CommandUtils {
             BaseMessage rawMessage = new PrivateMessage();
             if (isPrivateFriendMessage) {
                 sender = privateFriendMessageEvent.getSender();
-                rawMessage = data.toJavaObject(PrivateMessage.class);
+                rawMessage = data.to(PrivateMessage.class);
             }
             if (isGroupNormalMessage) {
                 sender = groupNormalMessageEvent.getSender();
-                rawMessage = data.toJavaObject(GroupMessage.class);
+                rawMessage = data.to(GroupMessage.class);
             }
             boolean b = executor.onCommand(Arrays.copyOfRange(command, 1, command.length), sender, finalC, rawMessage);
             if (!b) {
