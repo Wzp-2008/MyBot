@@ -49,6 +49,6 @@ public class BotStatus {
         this.appGood = appGood;
         this.online = online;
         this.good = good;
-        this.stat = stat.toJavaObject(Statistics.class);
+        this.stat = stat.to(Statistics.class);
     }
 }

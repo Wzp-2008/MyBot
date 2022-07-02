@@ -17,6 +17,6 @@ public class GroupAnonymousMessageEvent extends GroupMessageEvent {
 
     public GroupAnonymousMessageEvent(JSONObject data) {
         super("GroupAnonymousMessageEvent", data);
-        this.anonymous = data.getJSONObject("anonymous").toJavaObject(Anonymous.class);
+        this.anonymous = data.getJSONObject("anonymous").to(Anonymous.class);
     }
 }

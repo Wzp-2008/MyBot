@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
  * @version 1.0.0
  */
 @EqualsAndHashCode
-public abstract class MyBotPlugin {
+public abstract class BaseMyBotPlugin {
     private JSONObject config = new JSONObject();
 
     /**
@@ -25,15 +25,15 @@ public abstract class MyBotPlugin {
      * @param <T> 插件主类的类型
      * @return 插件
      */
-    public static <T extends MyBotPlugin> T getPlugin(Class<T> clazz) {
-        if (!MyBotPlugin.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException(clazz + " does not extend " + MyBotPlugin.class);
+    public static <T extends BaseMyBotPlugin> T getPlugin(Class<T> clazz) {
+        if (!BaseMyBotPlugin.class.isAssignableFrom(clazz)) {
+            throw new IllegalArgumentException(clazz + " does not extend " + BaseMyBotPlugin.class);
         }
         ClassLoader classLoader = clazz.getClassLoader();
-        if (!(classLoader instanceof PluginClassLoader pluginClassLoader)) {
+        if (!(classLoader instanceof PluginClassLoader)) {
             throw new IllegalArgumentException(clazz + " is not initialized by " + PluginClassLoader.class);
         }
-        MyBotPlugin plugin = pluginClassLoader.plugin;
+        BaseMyBotPlugin plugin = ((PluginClassLoader) classLoader).plugin;
         return clazz.cast(plugin);
     }
 
@@ -56,8 +56,8 @@ public abstract class MyBotPlugin {
      */
     public Bot getBot() {
         ClassLoader classLoader = this.getClass().getClassLoader();
-        if (classLoader instanceof PluginClassLoader pluginClassLoader) {
-            return pluginClassLoader.bot;
+        if (classLoader instanceof PluginClassLoader) {
+            return ((PluginClassLoader)classLoader).bot;
         } else {
             return null;
         }

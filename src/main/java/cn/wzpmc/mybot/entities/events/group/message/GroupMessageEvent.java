@@ -33,7 +33,7 @@ public class GroupMessageEvent extends Event {
         this.message = data.getString("message");
         this.rawMessage = data.getString("raw_message");
         this.font = data.getInteger("font");
-        this.sender = data.getJSONObject("sender").toJavaObject(GroupUser.class);
+        this.sender = data.getJSONObject("sender").to(GroupUser.class);
         this.groupId = data.getLong("group_id");
     }
 

@@ -5,7 +5,7 @@ import cn.wzpmc.mybot.entities.messages.ConsoleMessage;
 import cn.wzpmc.mybot.entities.users.Console;
 import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
-import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.interfaces.BaseMyBotPlugin;
 import cn.wzpmc.mybot.utils.EventUtils;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson2.JSON;
@@ -13,7 +13,10 @@ import com.alibaba.fastjson2.JSONArray;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -29,11 +32,11 @@ import static cn.wzpmc.mybot.constants.StringConstants.*;
  * @version 1.0.0
  * 启动器
  */
-public class Main {
+public class Main{
     public static Bot bot;
     public static URL http;
     public static Runtime runtime = Runtime.getRuntime();
-    public static ArrayList<MyBotPlugin> plugins = new ArrayList<>();
+    public static ArrayList<BaseMyBotPlugin> plugins = new ArrayList<>();
     public static NettyThread nettyThread;
     private static final Logger log = LoggerFactory.getLogger("MyBot");
     public static boolean running = true;
@@ -54,7 +57,7 @@ public class Main {
                 log.info("插件文件夹创建成功");
             }
         }
-        HashMap<MyBotPlugin, String> pluginName;
+        HashMap<BaseMyBotPlugin, String> pluginName;
         for (File file : Objects.requireNonNull(pluginsFile.listFiles())) {
             if(!file.isFile() || !file.getName().contains(".jar")){
                 continue;
@@ -63,7 +66,7 @@ public class Main {
             if (pluginName == null){
                 log.error("插件 {} 加载失败",file.getName());
             }else{
-                for (MyBotPlugin myBotPlugin : pluginName.keySet()) {
+                for (BaseMyBotPlugin myBotPlugin : pluginName.keySet()) {
                     String name = pluginName.get(myBotPlugin);
                     try {
                         boolean b = myBotPlugin.onEnable();
@@ -163,20 +166,45 @@ public class Main {
      * @param bot 机器人对象
      * @return 这个插件
      */
-    public static HashMap<MyBotPlugin,String> loadPlugin(File file, Bot bot){
+    public static HashMap<BaseMyBotPlugin,String> loadPlugin(File file, Bot bot){
         try {
             String absolutePath = file.getAbsolutePath();
             URL url = new URL("file:///" + absolutePath);
             URL[] urls = {url};
             PluginClassLoader pluginClassLoader = new PluginClassLoader(urls);
-            InputStream pluginMetaDataInputStream = pluginClassLoader.getResourceAsStream("plugin.properties");
+            boolean oldPlugin = false;
+            InputStream pluginMetaDataInputStream = pluginClassLoader.getResourceAsStream("plugin.yml");
             Properties metadata = new Properties();
-            metadata.load(pluginMetaDataInputStream);
+            if (pluginMetaDataInputStream == null) {
+                //此插件使用了properties格式配置文件
+                pluginMetaDataInputStream = pluginClassLoader.getResourceAsStream("plugin.properties");
+                metadata.load(pluginMetaDataInputStream);
+                oldPlugin = true;
+            }else{
+                Yaml yaml = new Yaml();
+                yaml.loadAs(pluginMetaDataInputStream,Properties.class);
+            }
             assert pluginMetaDataInputStream != null;
             pluginMetaDataInputStream.close();
-            HashMap<MyBotPlugin, String> plugin = new HashMap<>(1);
-            String pluginName = metadata.getProperty("pluginName");
-            String pluginMainClassPath = metadata.getProperty("pluginMainClass");
+            HashMap<BaseMyBotPlugin, String> plugin = new HashMap<>(1);
+            String pluginName = metadata.getProperty("name");
+
+            if (pluginName == null){
+                pluginName = metadata.getProperty("pluginName");
+                oldPlugin = true;
+            }
+            String pluginMainClassPath = metadata.getProperty("mainClass");
+            if (pluginMainClassPath == null){
+                pluginMainClassPath = metadata.getProperty("pluginMainClass");
+                oldPlugin = true;
+            }
+            if (pluginName == null || pluginMainClassPath == null){
+                log.error("插件的plugin.properties缺少mainClass属性或name属性");
+                return null;
+            }
+            if (oldPlugin){
+                log.warn("插件{}使用了老版本的plugin.properties，建议联系插件作者更换（此支持可能会在未来的更新中移除）！",pluginName);
+            }
             Class<?> pluginMainClass;
             try {
                 pluginMainClass = pluginClassLoader.loadClass(pluginMainClassPath);
@@ -184,12 +212,12 @@ public class Main {
                 log.error("未找到插件 {} 的主类 {}", pluginName, pluginMainClassPath);
                 return null;
             }
-            boolean isMyBotPlugin = MyBotPlugin.class.isAssignableFrom(pluginMainClass);
+            boolean isMyBotPlugin = BaseMyBotPlugin.class.isAssignableFrom(pluginMainClass);
             if (!isMyBotPlugin) {
                 log.error("插件 {} 的主类 {} 未继承 MyBotPlugin", pluginName, pluginMainClassPath);
                 return null;
             }
-            MyBotPlugin o = (MyBotPlugin) pluginMainClass.getDeclaredConstructor().newInstance();
+            BaseMyBotPlugin o = (BaseMyBotPlugin) pluginMainClass.getDeclaredConstructor().newInstance();
             pluginClassLoader.plugin = o;
             pluginClassLoader.bot = bot;
             pluginClassLoader.pluginName = pluginName;
@@ -294,8 +322,29 @@ public class Main {
         runtime.addShutdownHook(stopThread);
         consoleRun(log);
     }
-
+    public static void launch(){
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JFrame frame = new JFrame("MyBot");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JLabel label = new JLabel("text");
+        Button startButton = new Button("启动bot");
+        Button stopButton = new Button("关闭bot");
+        Container contentPane = frame.getContentPane();
+        contentPane.add(startButton);
+        contentPane.add(stopButton);
+        contentPane.add(label);
+        frame.pack();
+        frame.setVisible(true);
+    }
     public static void main(String[] args) {
-        start();
+        if (args.length != 0){
+            if (NOGUI.equals(args[0])){
+                start();
+            }else{
+                launch();
+            }
+        }else{
+            launch();
+        }
     }
 }

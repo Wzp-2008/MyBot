@@ -8,7 +8,7 @@ import cn.wzpmc.mybot.entities.users.PrivateUser;
 import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.Listener;
-import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.interfaces.BaseMyBotPlugin;
 import com.alibaba.fastjson2.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 机器人主类
  */
 public class Bot{
-    private final ConcurrentHashMap<MyBotPlugin,ConcurrentHashMap<Class<?>,Method>> events = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<BaseMyBotPlugin,ConcurrentHashMap<Class<?>,Method>> events = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Command, CommandExecutor> commands = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Command, CommandExecutor> consoleCommands = new ConcurrentHashMap<>();
     private final Logger logger;
@@ -74,7 +74,7 @@ public class Bot{
      * @param plugin   插件
      * @param executor 指令执行器
      */
-    public void registerEvent(MyBotPlugin plugin, Listener executor) {
+    public void registerEvent(BaseMyBotPlugin plugin, Listener executor) {
         ConcurrentHashMap<Class<?>, Method> eventsThis = events.getOrDefault(plugin, new ConcurrentHashMap<>(1));
         Class<? extends Listener> eventClass = executor.getClass();
         //获取被注解EventHandler修饰的方法
@@ -135,7 +135,7 @@ public class Bot{
      * 获取所有注册的事件
      * @return 所有的事件
      */
-    public ConcurrentHashMap<MyBotPlugin, ConcurrentHashMap<Class<?>, Method>> getEvents(){
+    public ConcurrentHashMap<BaseMyBotPlugin, ConcurrentHashMap<Class<?>, Method>> getEvents(){
         return events;
     }
 

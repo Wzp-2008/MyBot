@@ -2,7 +2,7 @@ package cn.wzpmc.mybot.entities.utils;
 
 import cn.wzpmc.mybot.Bot;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
-import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.interfaces.BaseMyBotPlugin;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,10 +14,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class Command {
     private final String name;
-    private final MyBotPlugin plugin;
+    private final BaseMyBotPlugin plugin;
     private CommandExecutor executor;
 
-    public Command(String name, MyBotPlugin plugin) {
+    public Command(String name, BaseMyBotPlugin plugin) {
         this.name = name;
         this.plugin = plugin;
     }

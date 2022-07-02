@@ -1,7 +1,7 @@
 package cn.wzpmc.mybot.utils;
 
 import cn.wzpmc.mybot.Bot;
-import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.interfaces.BaseMyBotPlugin;
 import org.slf4j.Logger;
 
 import java.net.URL;
@@ -13,7 +13,7 @@ import java.net.URLClassLoader;
  * 插件类加载器
  */
 public class PluginClassLoader extends URLClassLoader {
-    public MyBotPlugin plugin;
+    public BaseMyBotPlugin plugin;
     public Bot bot;
     public String pluginName;
     public Logger logger;

@@ -217,7 +217,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("file", file);
         JSONObject r = doPost("/get_image", jsonObject);
-        return r.toJavaObject(ImageInfo.class);
+        return r.to(ImageInfo.class);
     }
 
     /**
@@ -673,7 +673,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId);
         JSONObject jsonObject1 = doPost("/get_group_info", jsonObject);
-        return jsonObject1.toJavaObject(GroupInfo.class);
+        return jsonObject1.to(GroupInfo.class);
     }
 
     /**
@@ -687,7 +687,7 @@ public class MyBotApi {
         jsonObject.fluentPut("group_id",groupId)
                 .fluentPut("no_cache",noCache);
         JSONObject jsonObject1 = doPost("/get_group_info", jsonObject);
-        return jsonObject1.toJavaObject(GroupInfo.class);
+        return jsonObject1.to(GroupInfo.class);
     }
 
     /**
@@ -700,7 +700,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId).fluentPut("user_id",userId);
         JSONObject jsonObject1 = doPost("/get_group_member_info", jsonObject);
-        return jsonObject1.toJavaObject(GroupMemberInfo.class);
+        return jsonObject1.to(GroupMemberInfo.class);
     }
 
     /**
@@ -714,7 +714,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId).fluentPut("user_id",userId).fluentPut("no_cache",noCache);
         JSONObject jsonObject1 = doPost("/get_group_member_info", jsonObject);
-        return jsonObject1.toJavaObject(GroupMemberInfo.class);
+        return jsonObject1.to(GroupMemberInfo.class);
     }
 
     /**
@@ -728,7 +728,7 @@ public class MyBotApi {
         JSONArray objects = doPostWithArray("/get_group_member_list", jsonObject);
         ArrayList<GroupMemberInfo> result = new ArrayList<>();
         for (int i = 0; i < objects.size(); i++) {
-            result.add(objects.getJSONObject(i).toJavaObject(GroupMemberInfo.class));
+            result.add(objects.getJSONObject(i).to(GroupMemberInfo.class));
         }
         return result;
     }
@@ -816,7 +816,7 @@ public class MyBotApi {
      * @return 版本信息
      */
     public VersionInfo getVersionInfo(){
-        return doGet("/get_version_info").toJavaObject(VersionInfo.class);
+        return doGet("/get_version_info").to(VersionInfo.class);
     }
 
     /**
@@ -897,8 +897,8 @@ public class MyBotApi {
             String text = textDetectionObject.getString("text");
             Integer confidence = textDetectionObject.getInteger("confidence");
             JSONArray coordinatesObject= textDetectionObject.getJSONArray("coordinates");
-            Pos pos1 = coordinatesObject.getJSONObject(0).toJavaObject(Pos.class);
-            Pos pos2 = coordinatesObject.getJSONObject(1).toJavaObject(Pos.class);
+            Pos pos1 = coordinatesObject.getJSONObject(0).to(Pos.class);
+            Pos pos2 = coordinatesObject.getJSONObject(1).to(Pos.class);
             Vec2 coordinates = new Vec2(pos1, pos2);
             TextDetection textDetection = new TextDetection(text, confidence, coordinates);
             textDetections.add(textDetection);
@@ -918,10 +918,10 @@ public class MyBotApi {
         ArrayList<InvitedRequest> invitedRequests = new ArrayList<>();
         ArrayList<JoinRequest> joinRequests = new ArrayList<>();
         for (int i = 0; i < invitedRequestsObject.size(); i++) {
-            invitedRequests.add(invitedRequestsObject.getJSONObject(i).toJavaObject(InvitedRequest.class));
+            invitedRequests.add(invitedRequestsObject.getJSONObject(i).to(InvitedRequest.class));
         }
         for (int i = 0; i < joinRequestsObject.size(); i++) {
-            joinRequests.add(joinRequestsObject.getJSONObject(i).toJavaObject(JoinRequest.class));
+            joinRequests.add(joinRequestsObject.getJSONObject(i).to(JoinRequest.class));
         }
         return new GroupSystemMsg(invitedRequests,joinRequests);
     }
@@ -947,7 +947,7 @@ public class MyBotApi {
     public GroupFileSystemInfo getGroupFileSystemInfo(Long groupId){
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId);
-        return doPost("/get_group_file_system_info", jsonObject).toJavaObject(GroupFileSystemInfo.class);
+        return doPost("/get_group_file_system_info", jsonObject).to(GroupFileSystemInfo.class);
     }
 
     /**
@@ -964,10 +964,10 @@ public class MyBotApi {
         ArrayList<GroupFileObject> files = new ArrayList<>();
         ArrayList<GroupFolderObject> folder = new ArrayList<>();
         for (int i = 0; i < filesObject.size(); i++) {
-            files.add(filesObject.getJSONObject(i).toJavaObject(GroupFileObject.class));
+            files.add(filesObject.getJSONObject(i).to(GroupFileObject.class));
         }
         for (int i = 0; i < foldersObject.size(); i++) {
-            folder.add(foldersObject.getJSONObject(i).toJavaObject(GroupFolderObject.class));
+            folder.add(foldersObject.getJSONObject(i).to(GroupFolderObject.class));
         }
         return new GroupFileList(files,folder);
     }
@@ -979,19 +979,19 @@ public class MyBotApi {
      */
     public BotStatus getStatus(){
         JSONObject result = doGet("/get_status");
-        return result.toJavaObject(BotStatus.class);
+        return result.to(BotStatus.class);
     }
 
     /**
-     * 获取群 @全体成员 剩余次数
+     * 获取群 AT全体成员 剩余次数
      * @param groupId 群号
-     * @return @全体成员 剩余次数
+     * @return AT全体成员 剩余次数
      */
     public GroupAtAllRemain getGroupAtAllRemain(Long groupId){
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId);
         JSONObject result = doPost("/get_group_at_all_remain", jsonObject);
-        return result.toJavaObject(GroupAtAllRemain.class);
+        return result.to(GroupAtAllRemain.class);
     }
 
     /**
@@ -1003,7 +1003,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("user_id",userId);
         JSONObject result = doPost("/_get_vip_info", jsonObject);
-        return result.toJavaObject(VipInfo.class);
+        return result.to(VipInfo.class);
     }
 
     /**
@@ -1038,7 +1038,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("no_cache",noCache);
         JSONObject result = doPost("/get_online_clients", jsonObject);
-        return new ArrayList<>(result.getJSONArray("clients").toJavaList(Device.class));
+        return new ArrayList<>(result.getJSONArray("clients").toList(Device.class));
     }
 
     /**
@@ -1101,7 +1101,7 @@ public class MyBotApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.fluentPut("group_id",groupId);
         JSONArray objects = doPostWithArray("/get_essence_msg_list", jsonObject);
-        return new ArrayList<>(objects.toJavaList(EssenceMessage.class));
+        return new ArrayList<>(objects.toList(EssenceMessage.class));
     }
 
     /**
@@ -1118,7 +1118,7 @@ public class MyBotApi {
 
     /**
      * 获取在线机型
-     * 有关例子可从这个{@link <a href="https://github.com/Mrs4s/go-cqhttp/pull/872#issuecomment-831180149">链接</a>}找到
+     * 有关例子可从https://github.com/Mrs4s/go-cqhttp/pull/872#issuecomment-831180149这里找到
      * @param model 机型名称
      * @return 在线机型
      */
@@ -1127,7 +1127,7 @@ public class MyBotApi {
         jsonObject.fluentPut("model",model);
         JSONObject result = doPost("/_get_model_show", jsonObject);
         JSONArray variants = result.getJSONArray("variants");
-        return new ArrayList<>(variants.toJavaList(Variant.class));
+        return new ArrayList<>(variants.toList(Variant.class));
     }
 
     /**

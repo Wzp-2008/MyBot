@@ -51,12 +51,12 @@ public class GroupMessage extends BaseMessage {
                         JSONObject sender,
                         @JSONField(name = "group_id") Long groupId,
                         JSONObject anonymous) {
-        super(MessageType.group, message, sender.toJavaObject(GroupUser.class));
+        super(MessageType.group, message, sender.to(GroupUser.class));
         this.messageSeq = 0L;
         this.id = messageId;
         this.groupId = groupId;
         if (anonymous != null) {
-            this.anonymous = anonymous.toJavaObject(Anonymous.class);
+            this.anonymous = anonymous.to(Anonymous.class);
         }
         this.font = font;
     }

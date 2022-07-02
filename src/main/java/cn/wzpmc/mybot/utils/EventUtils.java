@@ -38,7 +38,7 @@ import cn.wzpmc.mybot.entities.events.privatemessage.PrivateGroupMessageEvent;
 import cn.wzpmc.mybot.entities.events.privatemessage.PrivateGroupSelfEvent;
 import cn.wzpmc.mybot.entities.events.privatemessage.PrivateOtherMessageEvent;
 import cn.wzpmc.mybot.entities.utils.EventIdentifier;
-import cn.wzpmc.mybot.interfaces.MyBotPlugin;
+import cn.wzpmc.mybot.interfaces.BaseMyBotPlugin;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -156,9 +156,9 @@ public class EventUtils {
     }
 
     public static void runEvent(Event event) throws InvocationTargetException, IllegalAccessException {
-        ConcurrentHashMap<MyBotPlugin, ConcurrentHashMap<Class<?>, Method>> events = bot.getEvents();
-        ConcurrentHashMap.KeySetView<MyBotPlugin, ConcurrentHashMap<Class<?>, Method>> myBotPlugins = events.keySet();
-        for (MyBotPlugin myBotPlugin : myBotPlugins) {
+        ConcurrentHashMap<BaseMyBotPlugin, ConcurrentHashMap<Class<?>, Method>> events = bot.getEvents();
+        ConcurrentHashMap.KeySetView<BaseMyBotPlugin, ConcurrentHashMap<Class<?>, Method>> myBotPlugins = events.keySet();
+        for (BaseMyBotPlugin myBotPlugin : myBotPlugins) {
             ConcurrentHashMap<Class<?>, Method> eventWithMethod = events.get(myBotPlugin);
             Method method = eventWithMethod.get(event.getClass());
             if (method != null) {

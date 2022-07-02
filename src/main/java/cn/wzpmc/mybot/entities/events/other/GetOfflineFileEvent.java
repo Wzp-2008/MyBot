@@ -20,6 +20,6 @@ public class GetOfflineFileEvent extends Event {
     public GetOfflineFileEvent(JSONObject data) {
         super("GetOfflineFileEvent", data);
         this.userId = data.getLong("user_id");
-        this.file = data.getJSONObject("file").toJavaObject(OfflineFileObject.class);
+        this.file = data.getJSONObject("file").to(OfflineFileObject.class);
     }
 }
