@@ -3,6 +3,9 @@ package cn.wzpmc.mybot.utils;
 import cn.wzpmc.mybot.entities.events.Event;
 import cn.wzpmc.mybot.entities.events.bot.BotGetConnectEvent;
 import cn.wzpmc.mybot.entities.events.bot.ServerHeartbeatEvent;
+import cn.wzpmc.mybot.entities.events.channels.ChannelMessageEvent;
+import cn.wzpmc.mybot.entities.events.channels.ChannelMessageReactionsUpdatedEvent;
+import cn.wzpmc.mybot.entities.events.channels.ChannelUpdatedEvent;
 import cn.wzpmc.mybot.entities.events.friend.FriendAddEvent;
 import cn.wzpmc.mybot.entities.events.friend.FriendAddRequestEvent;
 import cn.wzpmc.mybot.entities.events.friend.FriendRecallEvent;
@@ -38,6 +41,8 @@ import cn.wzpmc.mybot.entities.utils.EventIdentifier;
 import cn.wzpmc.mybot.interfaces.MyBotPlugin;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -54,6 +59,7 @@ import static cn.wzpmc.mybot.entities.utils.EventIdentifier.*;
  * @version 1.0.0
  */
 public class EventUtils {
+    private static final Logger log = LoggerFactory.getLogger("EventHandler");
     private static final HashMap<EventIdentifier, Class<? extends Event>> IDENTIFIER_CLASS_HASH_MAP = new HashMap<>();
     public static EventIdentifier connect = getMeta(LIFECYCLE, CONNECT);
     public static EventIdentifier heartbeat = getMeta(HEARTBEAT);
@@ -88,6 +94,11 @@ public class EventUtils {
     public static EventIdentifier pokeMessage = getNotice(NOTIFY, POKE);
     public static EventIdentifier getOfflineFile = getNotice(OFFLINE_FILE);
     public static EventIdentifier friendRequest = getRequest(FRIEND);
+    public static EventIdentifier channelMessage = getMessage(GUILD, CHANNEL);
+    public static EventIdentifier channelMessageReactionsUpdate = getNotice(MESSAGE_REACTIONS_UPDATED);
+    public static EventIdentifier channelUpdate = getNotice(CHANNEL_UPDATE);
+    public static EventIdentifier channelCreated = getNotice(CHANNEL_CRATED);
+    public static EventIdentifier channelDestroyed = getNotice(CHANNEL_DESTROYED);
 
     public static void registerAllEvent() {
         groupAdminSet.register(GroupAdminSetEvent.class);
@@ -123,6 +134,9 @@ public class EventUtils {
         groupCardUpdate.register(GroupCardUpdateEvent.class);
         friendRequest.register(FriendAddRequestEvent.class);
         getOfflineFile.register(GetOfflineFileEvent.class);
+        channelMessage.register(ChannelMessageEvent.class);
+        channelMessageReactionsUpdate.register(ChannelMessageReactionsUpdatedEvent.class);
+        channelUpdate.register(ChannelUpdatedEvent.class);
     }
 
     public static void registerIdentifier(EventIdentifier identifier, Class<? extends Event> clazz) {
@@ -132,9 +146,13 @@ public class EventUtils {
     @SneakyThrows
     public static void runEvent(EventIdentifier identifier, JSONObject data) {
         Class<? extends Event> eventClass = IDENTIFIER_CLASS_HASH_MAP.get(identifier);
-        Constructor<? extends Event> constructor = eventClass.getConstructor(JSONObject.class);
-        Event event = constructor.newInstance(data);
-        runEvent(event);
+        if (eventClass != null) {
+            Constructor<? extends Event> constructor = eventClass.getConstructor(JSONObject.class);
+            Event event = constructor.newInstance(data);
+            runEvent(event);
+        } else {
+            log.warn("未知的事件，事件标识符为：{}", identifier);
+        }
     }
 
     public static void runEvent(Event event) throws InvocationTargetException, IllegalAccessException {

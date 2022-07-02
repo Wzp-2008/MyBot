@@ -51,5 +51,11 @@ public class StringConstants {
     public static final String FRIEND_RECALL = "friend_recall";
     public static final String GROUP_SELF = "group_self";
     public static final String OTHER = "other";
+    public static final String GUILD = "guild";
+    public static final String CHANNEL = "channel";
+    public static final String MESSAGE_REACTIONS_UPDATED = "message_reactions_updated";
+    public static final String CHANNEL_UPDATE = "channel_update";
+    public static final String CHANNEL_CRATED = "channel_created";
+    public static final String CHANNEL_DESTROYED = "channel_destroyed";
 
 }
