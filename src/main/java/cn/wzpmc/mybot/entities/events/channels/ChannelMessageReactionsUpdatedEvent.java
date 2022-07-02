@@ -27,6 +27,6 @@ public class ChannelMessageReactionsUpdatedEvent extends ChannelEvent {
         super("ChannelMessageReactionsUpdatedEvent", data);
         userId = data.getLong("user_id");
         messageId = data.getString("message_id");
-        currentReactions = data.getJSONArray("current_reactions").toJavaList(ReactionInfo.class);
+        currentReactions = data.getJSONArray("current_reactions").toList(ReactionInfo.class);
     }
 }

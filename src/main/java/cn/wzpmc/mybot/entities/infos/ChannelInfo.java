@@ -67,6 +67,6 @@ public class ChannelInfo {
         this.talkPermission = talkPermission;
         this.visibleType = visibleType;
         this.currentSlowMode = currentSlowMode;
-        this.slowModes = slowModes.toJavaList(SlowModeInfo.class);
+        this.slowModes = slowModes.toList(SlowModeInfo.class);
     }
 }

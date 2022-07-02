@@ -4,8 +4,8 @@ package cn.wzpmc.mybot;
 import cn.wzpmc.mybot.entities.messages.ConsoleMessage;
 import cn.wzpmc.mybot.entities.users.Console;
 import cn.wzpmc.mybot.entities.utils.Command;
-import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.interfaces.BaseMyBotPlugin;
+import cn.wzpmc.mybot.interfaces.CommandExecutor;
 import cn.wzpmc.mybot.utils.EventUtils;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson2.JSON;
@@ -337,14 +337,6 @@ public class Main{
         frame.setVisible(true);
     }
     public static void main(String[] args) {
-        if (args.length != 0){
-            if (NOGUI.equals(args[0])){
-                start();
-            }else{
-                launch();
-            }
-        }else{
-            launch();
-        }
+        start();
     }
 }
