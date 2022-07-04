@@ -3,9 +3,7 @@ package cn.wzpmc.mybot.utils;
 import cn.wzpmc.mybot.entities.events.Event;
 import cn.wzpmc.mybot.entities.events.bot.BotGetConnectEvent;
 import cn.wzpmc.mybot.entities.events.bot.ServerHeartbeatEvent;
-import cn.wzpmc.mybot.entities.events.channels.ChannelMessageEvent;
-import cn.wzpmc.mybot.entities.events.channels.ChannelMessageReactionsUpdatedEvent;
-import cn.wzpmc.mybot.entities.events.channels.ChannelUpdatedEvent;
+import cn.wzpmc.mybot.entities.events.channels.*;
 import cn.wzpmc.mybot.entities.events.friend.FriendAddEvent;
 import cn.wzpmc.mybot.entities.events.friend.FriendAddRequestEvent;
 import cn.wzpmc.mybot.entities.events.friend.FriendRecallEvent;
@@ -137,6 +135,8 @@ public class EventUtils {
         channelMessage.register(ChannelMessageEvent.class);
         channelMessageReactionsUpdate.register(ChannelMessageReactionsUpdatedEvent.class);
         channelUpdate.register(ChannelUpdatedEvent.class);
+        channelCreated.register(ChannelCreatedEvent.class);
+        channelDestroyed.register(ChannelDestroyedEvent.class);
     }
 
     public static void registerIdentifier(EventIdentifier identifier, Class<? extends Event> clazz) {
