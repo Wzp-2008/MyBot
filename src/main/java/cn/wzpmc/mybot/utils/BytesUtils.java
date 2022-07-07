@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
 import io.netty.buffer.ByteBuf;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
@@ -14,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class BytesUtils {
     private static boolean unclosed;
     private static StringBuffer buffer;
+    public static final Logger log = LoggerFactory.getLogger("ByteHandler");
 
     public static String getStringFromByteBuf(ByteBuf byteBuf, int remove) {
         //去除前四位字符
@@ -37,17 +40,16 @@ public class BytesUtils {
             String m = BytesUtils.getStringFromByteBuf(byteBuf, 0);
             buffer.append(m);
             fullJson = buffer.toString();
-            buffer = new StringBuffer();
-            unclosed = false;
         } else {
             fullJson = BytesUtils.getStringFromByteBuf(byteBuf, 4);
         }
         JSONObject data;
         try {
             data = JSON.parseObject(fullJson);
-        } catch (JSONException e) {
-            unclosed = true;
+            unclosed = false;
             buffer = new StringBuffer();
+        } catch (JSONException | ArrayIndexOutOfBoundsException e) {
+            unclosed = true;
             buffer.append(fullJson);
             return null;
         }
