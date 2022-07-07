@@ -182,7 +182,7 @@ public class Main{
                 oldPlugin = true;
             }else{
                 Yaml yaml = new Yaml();
-                yaml.loadAs(pluginMetaDataInputStream,Properties.class);
+                metadata = yaml.loadAs(pluginMetaDataInputStream, Properties.class);
             }
             assert pluginMetaDataInputStream != null;
             pluginMetaDataInputStream.close();
