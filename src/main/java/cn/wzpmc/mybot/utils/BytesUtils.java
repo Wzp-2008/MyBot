@@ -1,6 +1,7 @@
 package cn.wzpmc.mybot.utils;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
 import io.netty.buffer.ByteBuf;
 
@@ -44,7 +45,7 @@ public class BytesUtils {
         JSONObject data;
         try {
             data = JSON.parseObject(fullJson);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (JSONException e) {
             unclosed = true;
             buffer = new StringBuffer();
             buffer.append(fullJson);
