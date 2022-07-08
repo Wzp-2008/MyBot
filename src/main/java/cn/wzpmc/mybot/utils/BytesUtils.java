@@ -27,8 +27,7 @@ public class BytesUtils {
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
             int i = byteBuf.readableBytes();
-            System.out.println(i);
-            System.out.println(remove);
+            log.error("出现读取数组数据越界，数据量{}，移除量{}，数据：{}", i, remove, byteBuf.toString(StandardCharsets.UTF_8));
             return "";
         }
 
@@ -40,16 +39,17 @@ public class BytesUtils {
             String m = BytesUtils.getStringFromByteBuf(byteBuf, 0);
             buffer.append(m);
             fullJson = buffer.toString();
+            unclosed = false;
+            buffer = new StringBuffer();
         } else {
             fullJson = BytesUtils.getStringFromByteBuf(byteBuf, 4);
         }
         JSONObject data;
         try {
             data = JSON.parseObject(fullJson);
-            unclosed = false;
-            buffer = new StringBuffer();
         } catch (JSONException | ArrayIndexOutOfBoundsException e) {
             unclosed = true;
+            buffer = new StringBuffer();
             buffer.append(fullJson);
             return null;
         }
