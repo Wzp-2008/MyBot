@@ -17,6 +17,7 @@ public class BytesUtils {
     private static boolean unclosed;
     private static StringBuffer buffer;
     public static final Logger log = LoggerFactory.getLogger("ByteHandler");
+    public static int max_len = -1;
 
     public static String getStringFromByteBuf(ByteBuf byteBuf, int remove) {
         //去除前四位字符
@@ -38,6 +39,11 @@ public class BytesUtils {
         if (unclosed) {
             String m = BytesUtils.getStringFromByteBuf(byteBuf, 0);
             buffer.append(m);
+            if (buffer.length() >= max_len) {
+                buffer = new StringBuffer();
+                System.gc();
+                return null;
+            }
             fullJson = buffer.toString();
             unclosed = false;
             buffer = new StringBuffer();

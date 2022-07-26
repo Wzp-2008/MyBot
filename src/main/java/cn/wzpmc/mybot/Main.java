@@ -6,6 +6,7 @@ import cn.wzpmc.mybot.entities.users.Console;
 import cn.wzpmc.mybot.entities.utils.Command;
 import cn.wzpmc.mybot.interfaces.BaseMyBotPlugin;
 import cn.wzpmc.mybot.interfaces.CommandExecutor;
+import cn.wzpmc.mybot.utils.BytesUtils;
 import cn.wzpmc.mybot.utils.EventUtils;
 import cn.wzpmc.mybot.utils.PluginClassLoader;
 import com.alibaba.fastjson2.JSON;
@@ -151,7 +152,8 @@ public class Main{
             botProperties.setProperty("not_found_command_message","不正确的指令");
             botProperties.setProperty("failed_run_message","指令执行失败");
             botProperties.setProperty("ws","此处为你的ws连接地址");
-            botProperties.setProperty("http","此处为你的http连接地址");
+            botProperties.setProperty("http", "此处为你的http连接地址");
+            botProperties.setProperty("max_wait_bytes", String.valueOf(10000));
             FileWriter configFileWriter = new FileWriter(config);
             botProperties.store(configFileWriter,null);
             log.info("默认配置文件生成完成，保存在config.properties，请确认修改完成后再重启此服务端！");
@@ -311,6 +313,7 @@ public class Main{
         } catch (MalformedURLException e) {
             log.error("url转换失败，请确认你的配置文件中url参数是否错误！");
         }
+        BytesUtils.max_len = Integer.parseInt(String.valueOf(properties.getOrDefault("max_wait_bytes", "10000")));
         ArrayList<Long> ops = getOps();
         bot = new Bot(log,http,ops);
         loadPlugins(bot);
