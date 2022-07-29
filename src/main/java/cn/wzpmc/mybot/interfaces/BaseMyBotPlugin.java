@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
  */
 @EqualsAndHashCode
 public abstract class BaseMyBotPlugin {
-    private JSONObject config = new JSONObject();
 
     /**
      * 获取插件
@@ -111,7 +110,7 @@ public abstract class BaseMyBotPlugin {
             logger.error("创建默认配置文件失败！");
             return;
         }
-        this.config = object;
+        this.getClassLoader().config = object;
     }
 
     /**
@@ -127,7 +126,7 @@ public abstract class BaseMyBotPlugin {
      * @return Yaml配置文件
      */
     public JSONObject getConfig(){
-        return this.config;
+        return this.getClassLoader().config;
     }
 
     /**
