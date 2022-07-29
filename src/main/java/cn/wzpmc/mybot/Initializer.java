@@ -4,6 +4,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 
 /**
  * @author 33572
@@ -19,6 +20,7 @@ public class Initializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel channel){
         ChannelPipeline pipeline = channel.pipeline();
         pipeline.addLast(new HttpClientCodec())
+                .addLast(new HttpObjectAggregator(1024 * 1024))
                 .addLast("handler",handler);
     }
 }

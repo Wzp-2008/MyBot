@@ -1,14 +1,15 @@
 package cn.wzpmc.mybot;
 
 import cn.wzpmc.mybot.entities.utils.EventIdentifier;
-import cn.wzpmc.mybot.utils.BytesUtils;
 import cn.wzpmc.mybot.utils.CommandUtils;
 import cn.wzpmc.mybot.utils.EventUtils;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
         Channel channel = channelHandlerContext.channel();
         //进行websocket握手
         this.handshaker.handshake(channel);
-        log.info("成功建立websocket连接");
+        log.info("握手指令发出");
     }
 
     /**
@@ -78,8 +79,17 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
-        if (msg instanceof ByteBuf) {
-            JSONObject data = BytesUtils.getJsonFromByteBuf((ByteBuf) msg);
+        if (msg instanceof FullHttpResponse) {
+            if (!handshaker.isHandshakeComplete()) {
+                handshaker.finishHandshake(ctx.channel(), (FullHttpResponse) msg);
+                log.info("握手成功");
+                log.info("成功建立websocket连接");
+            }
+        }
+        if (msg instanceof TextWebSocketFrame) {
+            TextWebSocketFrame text = (TextWebSocketFrame) msg;
+            String json = text.text();
+            JSONObject data = JSON.parseObject(json);
             if (data != null) {
                 //事件类型
                 EventIdentifier identifier = EventIdentifier.getInstanceFromJsonObject(data);
