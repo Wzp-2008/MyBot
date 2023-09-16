@@ -25,36 +25,28 @@ import java.util.Map;
  * Created On 2022/6/19 0:18
  */
 public class CommandUtils {
-    public static String[] isCommand(JSONObject data, EventIdentifier identifier, Bot bot) {
-        boolean isGroupNormalMessage = identifier.equals(EventUtils.groupNormalMessage);
-        boolean isPrivateFriendMessage = identifier.equals(EventUtils.privateFriendMessage);
-        boolean isCommand;
-        String[] command = null;
-        GroupNormalMessageEvent groupNormalMessageEvent;
-        String rawCommand;
-        if (isGroupNormalMessage) {
-            At at = bot.at;
-            String atString = at.toString();
-            atString += " /";
-            groupNormalMessageEvent = new GroupNormalMessageEvent(data);
+    public static String[] parseCommand(JSONObject data, EventIdentifier identifier, Bot bot) {
+        String[] commandBody = null;
+        if (identifier.equals(EventUtils.groupNormalMessage)){
+            GroupNormalMessageEvent groupNormalMessageEvent = new GroupNormalMessageEvent(data);
             String message = groupNormalMessageEvent.getMessage();
-            isCommand = message.contains(atString);
-            if (isCommand) {
-                rawCommand = message.replace(atString, "");
-                command = rawCommand.split(" ");
+            String atString = bot.at.toString();
+            if (message.startsWith(atString)) {
+                message = message.replaceFirst(atString, "");
+                if (message.startsWith(" /")) {
+                    message = message.replaceFirst(" /", "");
+                    commandBody = message.split(" ");
+                }
             }
-        }
-        PrivateFriendMessageEvent privateFriendMessageEvent;
-        if (isPrivateFriendMessage) {
-            privateFriendMessageEvent = new PrivateFriendMessageEvent(data);
+        }else if (identifier.equals(EventUtils.privateFriendMessage)) {
+            PrivateFriendMessageEvent privateFriendMessageEvent = new PrivateFriendMessageEvent(data);
             String message = privateFriendMessageEvent.getMessage();
-            isCommand = message.contains("/");
-            if (isCommand) {
-                rawCommand = message.replace("/", "");
-                command = rawCommand.split(" ");
+            if (message.startsWith("/")) {
+                message = message.replaceFirst("/", "");
+                commandBody = message.split(" ");
             }
         }
-        return command;
+        return commandBody;
     }
 
     public static void handlerCommand(Bot bot, EventIdentifier identifier, String[] command, JSONObject data, Logger log) {

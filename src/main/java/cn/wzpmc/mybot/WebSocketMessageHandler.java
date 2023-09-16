@@ -93,7 +93,7 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<Object>
             if (data != null) {
                 //事件类型
                 EventIdentifier identifier = EventIdentifier.getInstanceFromJsonObject(data);
-                String[] command = CommandUtils.isCommand(data, identifier, bot);
+                String[] command = CommandUtils.parseCommand(data, identifier, bot);
                 if (command == null) {
                     EventUtils.runEvent(identifier, data);
                 } else {
