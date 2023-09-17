@@ -32,7 +32,7 @@ public class CommandUtils {
             String message = groupNormalMessageEvent.getMessage();
             String atString = bot.at.toString();
             if (message.startsWith(atString)) {
-                message = message.replaceFirst(atString, "");
+                message = message.replaceFirst("\\[CQ:at,qq=.*?]", "");
                 if (message.startsWith(" /")) {
                     message = message.replaceFirst(" /", "");
                     commandBody = message.split(" ");
@@ -52,18 +52,15 @@ public class CommandUtils {
     public static void handlerCommand(Bot bot, EventIdentifier identifier, String[] command, JSONObject data, Logger log) {
         boolean isGroupNormalMessage = identifier.equals(EventUtils.groupNormalMessage);
         boolean isPrivateFriendMessage = identifier.equals(EventUtils.privateFriendMessage);
+        String rawCommand = '/' + String.join(" ", command);
         GroupNormalMessageEvent groupNormalMessageEvent = null;
         PrivateFriendMessageEvent privateFriendMessageEvent = null;
-        String rawCommand = "";
+
         if (isGroupNormalMessage) {
             groupNormalMessageEvent = new GroupNormalMessageEvent(data);
-            At at = bot.at;
-            String atString = at.toString();
-            rawCommand = groupNormalMessageEvent.getMessage().replace(atString, "");
         }
         if (isPrivateFriendMessage) {
             privateFriendMessageEvent = new PrivateFriendMessageEvent(data);
-            rawCommand = privateFriendMessageEvent.getMessage().replace("/", "");
         }
         Map<Command, CommandExecutor> commands = bot.getCommands();
         boolean hasCommand = false;

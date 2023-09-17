@@ -19,6 +19,7 @@ import cn.wzpmc.mybot.enums.GroupHonorType;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
@@ -33,6 +34,7 @@ public class MyBotApi {
     private final String host;
     private final String port;
     private final String protocol;
+    @Getter
     private final Bot bot;
     public MyBotApi(Bot bot){
         this.bot = bot;
@@ -41,9 +43,7 @@ public class MyBotApi {
         this.port = String.valueOf(http.getPort());
         this.protocol = http.getProtocol();
     }
-    public Bot getBot(){
-        return this.bot;
-    }
+
     private String getUrl(String function) {
         char slash = '/';
         if (function.charAt(0) != slash) {
@@ -131,7 +131,7 @@ public class MyBotApi {
      */
     public PrivateUser getGroupBotInfo() {
         JSONObject data = doGet("/get_login_info");
-        return new PrivateUser(data.getInteger("user_id"), data.getString("nickname"));
+        return new PrivateUser(data.getLong("user_id"), data.getString("nickname"));
     }
 
     /**
