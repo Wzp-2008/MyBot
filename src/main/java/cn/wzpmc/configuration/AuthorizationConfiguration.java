@@ -1,7 +1,7 @@
 package cn.wzpmc.configuration;
 
 import cn.wzpmc.api.plugins.configuration.IAuthorizationConfiguration;
-import lombok.*;
+import lombok.Data;
 
 /**
  * 通信验证配置类

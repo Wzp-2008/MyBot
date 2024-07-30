@@ -1,7 +1,7 @@
 package cn.wzpmc.configuration;
 
 import cn.wzpmc.api.plugins.configuration.IFallbackConfiguration;
-import lombok.*;
+import lombok.Data;
 
 /**
  * 当失败时报错消息配置实现

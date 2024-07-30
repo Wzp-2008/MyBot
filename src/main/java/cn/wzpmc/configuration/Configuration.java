@@ -1,7 +1,7 @@
 package cn.wzpmc.configuration;
 
 import cn.wzpmc.api.plugins.configuration.IConfiguration;
-import lombok.*;
+import lombok.Data;
 
 /**
  * 配置类

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @since 2024/7/31 上午2:34
  */
 public class JsonMessage implements MessageComponent {
-    List<JsonMessagePart> messageParts = new ArrayList<>();
+    private final List<JsonMessagePart> messageParts = new ArrayList<>();
     @Override
     public String toMessageString() {
         return JSON.toJSONString(messageParts);
