@@ -18,12 +18,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSocketChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final ChannelHandler handler;
+    private final HandshakePacketHandler handshakePacketHandler;
     @Override
-    protected void initChannel(SocketChannel socketChannel) throws Exception {
+    protected void initChannel(SocketChannel socketChannel) {
         ChannelPipeline pipeline = socketChannel.pipeline();
         pipeline.addLast(new HttpClientCodec());
         pipeline.addLast(new ChunkedWriteHandler());
         pipeline.addLast(new HttpObjectAggregator(64 * 1024));
+        pipeline.addLast(handshakePacketHandler);
         pipeline.addLast(handler);
     }
 }

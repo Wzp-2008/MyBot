@@ -37,6 +37,6 @@ public class Main {
         WebSocketConnectionHandler webSocketConnectionHandler = new WebSocketConnectionHandler();
         ChannelFuture future = webSocketConnectionHandler.connect(uri);
         Channel channel = future.sync().channel();
-        log.info("连接服务器成功！");
+
     }
 }

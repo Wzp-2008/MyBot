@@ -12,7 +12,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
-import java.util.concurrent.Future;
 
 /**
  * 此类用于建立WebSocket连接
@@ -33,8 +32,9 @@ public class WebSocketConnectionHandler {
         log.info("正在连接websocket");
         Bootstrap bootstrap = new Bootstrap();
         WebSocketClientHandshaker clientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(websocket, WebSocketVersion.V13, null, false, new DefaultHttpHeaders());
-        PacketHandler handler = new PacketHandler(clientHandshaker);
-        bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new WebSocketChannelInitializer(handler));
+        HandshakePacketHandler handshakePacketHandler = new HandshakePacketHandler(clientHandshaker);
+        PacketHandler handler = new PacketHandler();
+        bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new WebSocketChannelInitializer(handler, handshakePacketHandler));
         return bootstrap.connect(websocket.getHost(), websocket.getPort());
     }
 
