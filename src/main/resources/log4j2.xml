@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Appenders>
+        <!-- 控制台输出 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%p] %c - %m%n"/>
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <!-- 文件输出 -->
+        <RollingFile name="File" fileName="./logs/latest.log"
+                     filePattern="./logs/bot-%d{yyyy-MM-dd-HH-mm-ss}.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%p] %c - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <!-- 按日期滚动日志 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy fileIndex="max" max="7"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- 根记录器配置 -->
+        <Root level="DEBUG">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,2 +1,2 @@
-rootProject.name = "MyBot"
-
+val projectName by extra("MyBot")
+rootProject.name = projectName

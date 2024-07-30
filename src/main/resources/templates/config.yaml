@@ -1,0 +1,7 @@
+websocket: "<Your WebSocket connection link, e.g: ws://127.0.0.1:3001/>"
+authorization:
+  enable: false
+  token: "<If you enable authorization, you should fill in this>"
+fallback:
+  command: "Command Not Found!"
+  errorUncaught: "Had an error while run command!"
