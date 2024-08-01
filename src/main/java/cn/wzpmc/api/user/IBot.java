@@ -25,4 +25,11 @@ public interface IBot extends CommandSender {
      * @return 指令管理器
      */
     ICommandManager getCommandManager();
+
+    /**
+     * 停止Bot运行
+     * @author wzp
+     * @since 2024/8/1 下午4:57 v0.0.2-dev
+     */
+    void stop();
 }

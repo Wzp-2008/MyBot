@@ -27,6 +27,7 @@ public class WebSocketConnectionHandler {
      * @author wzp
      * @since 2024/7/30 下午11:55 v0.0.1-dev
      * @param websocket websocket连接地址
+     * @return 一个ChannelFuture对象
      */
     public ChannelFuture connect(URI websocket){
         log.info("正在连接websocket");
@@ -44,6 +45,7 @@ public class WebSocketConnectionHandler {
      * @since 2024/7/31 上午2:04 v0.0.1-dev
      */
     public void kill(){
+        log.info("结束连接...");
         this.eventLoopGroup.shutdownGracefully();
     }
 }

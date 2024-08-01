@@ -37,7 +37,6 @@ public interface JsonMessagePart {
                 .append('(')
                 .append('\n');
         Map<String, String> data = this.getData();
-        int i = 0;
         data.forEach((key, value) -> stringBuilder.append('\t').append(key).append('=').append(value).append(',').append('\n'));
         int length = stringBuilder.length();
         stringBuilder.delete(length - 2, length - 1);
