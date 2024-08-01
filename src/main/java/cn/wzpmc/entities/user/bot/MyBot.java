@@ -9,7 +9,6 @@ import cn.wzpmc.configuration.Configuration;
 import cn.wzpmc.console.MyBotConsole;
 import cn.wzpmc.plugins.CommandManager;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
@@ -20,17 +19,20 @@ import lombok.extern.log4j.Log4j2;
  * @version 0.0.1-dev
  */
 @Log4j2
-@RequiredArgsConstructor
 @Getter
-public class MyBot implements IBot {
+public class MyBot extends IBot {
     private final Configuration configuration;
     @Setter
     private Long id;
     @Setter
-    private Long name;
+    private String name;
     private final CommandManager commandManager = new CommandManager(this);
     @Setter
     private MyBotConsole console = null;
+    public MyBot(Configuration configuration){
+        this.configuration = configuration;
+        this.permissions = Permissions.ADMIN;
+    }
 
     @Override
     public void sendMessage(MessageComponent messageComponent) {
@@ -40,11 +42,6 @@ public class MyBot implements IBot {
         if (messageComponent instanceof JsonMessage){
             log.info(((JsonMessage) messageComponent).toTextDisplay());
         }
-    }
-
-    @Override
-    public Permissions getPermission() {
-        return Permissions.ADMIN;
     }
 
     @Override

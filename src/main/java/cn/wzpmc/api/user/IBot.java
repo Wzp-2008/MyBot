@@ -9,14 +9,14 @@ import cn.wzpmc.api.plugins.configuration.IConfiguration;
  * @version 0.0.1-dev
  * @since 2024/7/31 上午2:31
  */
-public interface IBot extends CommandSender {
+public abstract class IBot extends CommandSender {
     /**
      * 获取配置文件
      * @author wzp
      * @since 2024/7/31 上午2:55 v0.0.1-dev
      * @return 配置文件
      */
-    IConfiguration getConfiguration();
+    public abstract IConfiguration getConfiguration();
 
     /**
      * 获取指令管理器
@@ -24,12 +24,12 @@ public interface IBot extends CommandSender {
      * @since 2024/7/31 上午3:42 v0.0.1-dev
      * @return 指令管理器
      */
-    ICommandManager getCommandManager();
+    public abstract ICommandManager getCommandManager();
 
     /**
      * 停止Bot运行
      * @author wzp
      * @since 2024/8/1 下午4:57 v0.0.2-dev
      */
-    void stop();
+    public abstract void stop();
 }

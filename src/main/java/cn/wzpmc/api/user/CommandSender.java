@@ -2,6 +2,9 @@ package cn.wzpmc.api.user;
 
 import cn.wzpmc.api.message.MessageComponent;
 import cn.wzpmc.api.user.permission.Permissions;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 消息发送者
@@ -9,37 +12,32 @@ import cn.wzpmc.api.user.permission.Permissions;
  * @version 0.0.1-dev
  * @since 2024/7/31 上午2:32
  */
-public interface CommandSender {
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public abstract class CommandSender {
     /**
-     * 获取用户ID
-     * @author wzp
+     * 用户ID
      * @since 2024/7/30 下午11:48 v0.0.1-dev
-     * @return 用户ID
      */
-    Long getId();
-
+    protected Long id;
     /**
-     * 获取用户名
-     * @author wzp
+     * 用户名
      * @since 2024/7/30 下午11:48 v0.0.1-dev
-     * @return 用户名
      */
-    Long getName();
+    protected String name;
+    /**
+     * 权限
+     * @since 2024/8/1 下午8:24 v0.0.2-dev
+     */
+    protected Permissions permissions;
     /**
      * 发送消息
      * @author wzp
      * @since 2024/7/31 上午2:42 v0.0.1-dev
      * @param messageComponent 消息组件
      */
-    void sendMessage(MessageComponent messageComponent);
-
-    /**
-     * 获取指令发送者的权限
-     * @author wzp
-     * @since 2024/8/1 下午4:50 v0.0.2-dev
-     * @return 权限
-     */
-    Permissions getPermission();
+    public abstract void sendMessage(MessageComponent messageComponent);
 
     /**
      * 指令发送者是否为管理员
@@ -47,7 +45,7 @@ public interface CommandSender {
      * @since 2024/8/1 下午4:50 v0.0.2-dev
      * @return 是否为管理员
      */
-    default boolean isAdmin(){
-        return Permissions.ADMIN.equals(this.getPermission());
+    public boolean isAdmin(){
+        return Permissions.ADMIN.equals(this.permissions);
     }
 }
