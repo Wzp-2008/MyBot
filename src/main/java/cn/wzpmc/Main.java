@@ -6,6 +6,7 @@ import cn.wzpmc.console.MyBotConsole;
 import cn.wzpmc.entities.user.bot.MyBot;
 import cn.wzpmc.network.WebSocketConnectionHandler;
 import cn.wzpmc.plugins.CommandManager;
+import cn.wzpmc.utils.JsonUtils;
 import cn.wzpmc.utils.TemplateFileUtils;
 import cn.wzpmc.utils.YamlUtils;
 import io.netty.channel.ChannelFuture;
@@ -23,6 +24,8 @@ public class Main {
     public static void main(String[] args) {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         System.setProperty("terminal.jline", "true");
+        JsonUtils.initReader();
+        JsonUtils.initWriter();
         log.info("启动MyBot...");
         File configurationFile = new File("config.yaml");
         if (TemplateFileUtils.saveDefaultConfig(Main.class.getClassLoader(), DEFAULT_CONFIGURATION_FILE_PATH, configurationFile)) {

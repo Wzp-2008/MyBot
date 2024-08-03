@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 指令管理器实现类
@@ -116,7 +117,7 @@ public class CommandManager implements ICommandManager, Completer, Highlighter {
             }
         }
         Suggestions suggestions = dispatcher.getCompletionSuggestions(dispatcher.parse(rawCommandLine, sender), cursor).get();
-        result.addAll(suggestions.getList().stream().map(Suggestion::getText).toList());
+        result.addAll(suggestions.getList().stream().map(Suggestion::getText).collect(Collectors.toList()));
         return result;
     }
 
@@ -124,7 +125,7 @@ public class CommandManager implements ICommandManager, Completer, Highlighter {
     public void complete(LineReader lineReader, ParsedLine parsedLine, List<Candidate> list) {
         String line = parsedLine.line();
         int cursor = parsedLine.cursor();
-        list.addAll(this.tabComplete(this.bot, line, cursor).stream().map(Candidate::new).toList());
+        list.addAll(this.tabComplete(this.bot, line, cursor).stream().map(Candidate::new).collect(Collectors.toList()));
     }
 
     @Override

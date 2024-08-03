@@ -1,7 +1,8 @@
 package cn.wzpmc.api.events.message;
 
 import cn.wzpmc.api.events.Event;
-import cn.wzpmc.api.message.MessageComponent;
+import cn.wzpmc.api.message.StringMessage;
+import cn.wzpmc.api.message.json.JsonMessage;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,13 +48,13 @@ public class MessageEvent<E, U> extends Event {
      * 消息详细内容
      * @since 2024/8/1 下午11:11 v0.0.2-dev
      */
-    private MessageComponent message;
+    private JsonMessage message;
     /**
      * 文本格式消息
      * @since 2024/8/1 下午11:11 v0.0.2-dev
      */
     @JSONField(name = "raw_message")
-    private String rawMessage;
+    private StringMessage rawMessage;
     /**
      * 消息使用字体
      * @since 2024/8/1 下午11:11 v0.0.2-dev
