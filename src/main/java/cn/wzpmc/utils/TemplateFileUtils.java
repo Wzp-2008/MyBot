@@ -40,4 +40,22 @@ public class TemplateFileUtils {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 创建默认文件夹，当其不存在时会被创建
+     * @author wzp
+     * @since 2024/8/4 下午2:36 v0.0.4-dev
+     * @param path 文件夹路径
+     * @return 是否创建
+     */
+    public static boolean createDefaultDirectory(File path){
+       log.debug("创建文件夹：{}", path.getAbsolutePath());
+       if (path.isDirectory()){
+           return false;
+       }
+        if (path.mkdir()) {
+            return true;
+        }
+        throw new RuntimeException(new IOException("Cannot create directory " + path.getAbsolutePath()));
+    }
 }

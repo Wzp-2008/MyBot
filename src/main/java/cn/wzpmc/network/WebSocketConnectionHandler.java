@@ -1,5 +1,6 @@
 package cn.wzpmc.network;
 
+import cn.wzpmc.api.user.IBot;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -9,6 +10,7 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
@@ -20,8 +22,10 @@ import java.net.URI;
  * @since 2024/7/30 下午11:54
  */
 @Log4j2
+@RequiredArgsConstructor
 public class WebSocketConnectionHandler {
     private final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+    private final IBot bot;
     /**
      * 建立连接
      * @author wzp
@@ -34,7 +38,7 @@ public class WebSocketConnectionHandler {
         Bootstrap bootstrap = new Bootstrap();
         WebSocketClientHandshaker clientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(websocket, WebSocketVersion.V13, null, false, new DefaultHttpHeaders());
         HandshakePacketHandler handshakePacketHandler = new HandshakePacketHandler(clientHandshaker);
-        PacketHandler handler = new PacketHandler();
+        PacketHandler handler = new PacketHandler(this.bot);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new WebSocketChannelInitializer(handler, handshakePacketHandler));
         return bootstrap.connect(websocket.getHost(), websocket.getPort());
     }

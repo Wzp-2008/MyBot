@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MyBot.iml" filepath="$PROJECT_DIR$/MyBot.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/MyBot.main.iml" filepath="$PROJECT_DIR$/.idea/modules/MyBot.main.iml" />
     </modules>
   </component>

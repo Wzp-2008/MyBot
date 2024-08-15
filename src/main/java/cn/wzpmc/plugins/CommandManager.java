@@ -171,12 +171,8 @@ public class CommandManager implements ICommandManager, Completer, Highlighter {
     }
 
     @Override
-    public void setErrorPattern(Pattern pattern) {
-
-    }
+    public void setErrorPattern(Pattern pattern) {}
 
     @Override
-    public void setErrorIndex(int i) {
-
-    }
+    public void setErrorIndex(int i) {}
 }

@@ -1,7 +1,10 @@
 package cn.wzpmc.api.user;
 
+import cn.wzpmc.api.events.Event;
 import cn.wzpmc.api.plugins.ICommandManager;
 import cn.wzpmc.api.plugins.configuration.IConfiguration;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * 机器人接口
@@ -32,4 +35,20 @@ public abstract class IBot extends CommandSender {
      * @since 2024/8/1 下午4:57 v0.0.2-dev
      */
     public abstract void stop();
+
+    /**
+     * 注册事件执行器
+     * @author wzp
+     * @since 2024/8/15 23:46 v0.0.4-dev
+     * @param handler 事件执行器
+     */
+    public abstract void registerEventHandler(Object handler);
+
+    /**
+     * 触发一个事件
+     * @author wzp
+     * @since 2024/8/16 00:49 v0.0.4-dev
+     * @param event 事件
+     */
+    public abstract void triggerEvent(Event event) throws InvocationTargetException, IllegalAccessException;
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * 插件类加载器实现
@@ -21,10 +22,20 @@ import java.net.URL;
 @ToString
 public class PluginClassLoader extends IPluginClassLoader {
     private final IBot bot;
-    @Setter
     private BasePlugin plugin;
+    private String name;
+    private String version;
     public PluginClassLoader(URL[] urls, IBot bot) {
         super(urls);
         this.bot = bot;
+    }
+    public void setPlugin(BasePlugin plugin, String name, String version){
+        if (Objects.isNull(this.plugin)){
+            this.plugin = plugin;
+            this.name = name;
+            this.version = version;
+            return;
+        }
+        throw new IllegalStateException("Cannot set plugin with a initialized class loader!!!");
     }
 }

@@ -32,4 +32,20 @@ public abstract class IPluginClassLoader extends URLClassLoader {
      * @return Bot对象
      */
     abstract public IBot getBot();
+
+    /**
+     * 获取插件名称
+     * @author wzp
+     * @since 2024/8/8 23:16 v0.0.4-dev
+     * @return 插件名称
+     */
+    abstract public String getName();
+
+    /**
+     * 获取插件版本
+     * @author wzp
+     * @since 2024/8/8 23:16 v0.0.4-dev
+     * @return 版本
+     */
+    abstract public String getVersion();
 }

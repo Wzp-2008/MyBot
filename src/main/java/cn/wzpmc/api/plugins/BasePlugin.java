@@ -1,6 +1,7 @@
 package cn.wzpmc.api.plugins;
 
 import cn.wzpmc.api.user.IBot;
+import org.apache.logging.log4j.Logger;
 
 /**
  * 插件基类
@@ -45,4 +46,8 @@ public interface BasePlugin {
      * @return 类加载器
      */
     IPluginClassLoader getClassLoader();
+
+    void onLoad();
+    void onUnload();
+    Logger getLogger();
 }
