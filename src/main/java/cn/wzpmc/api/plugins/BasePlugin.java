@@ -3,6 +3,9 @@ package cn.wzpmc.api.plugins;
 import cn.wzpmc.api.user.IBot;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.InputStream;
+
 /**
  * 插件基类
  * @author wzp
@@ -47,7 +50,57 @@ public interface BasePlugin {
      */
     IPluginClassLoader getClassLoader();
 
+    /**
+     * 当插件被加载时调用
+     * @author wzp
+     * @since 2024/8/16 13:14 v0.0.5-dev
+     */
     void onLoad();
+
+    /**
+     * 当插件被卸载时调用
+     * @author wzp
+     * @since 2024/8/16 13:14 v0.0.5-dev
+     */
     void onUnload();
+
+    /**
+     * 获取日志记录器
+     * @author wzp
+     * @since 2024/8/16 13:14 v0.0.5-dev
+     * @return 日志记录器
+     */
     Logger getLogger();
+
+    /**
+     * 从插件中读取资源
+     * @author wzp
+     * @since 2024/8/16 13:14 v0.0.5-dev
+     * @param name 资源路径
+     * @return 资源流
+     */
+    InputStream getResourceAsStream(String name);
+
+    /**
+     * 获取插件数据文件夹
+     * @author wzp
+     * @since 2024/8/16 13:16 v0.0.5-dev
+     * @return 插件数据文件夹
+     */
+    File getDataFolder();
+
+    /**
+     * 获取默认配置文件
+     * @author wzp
+     * @since 2024/8/16 13:16 v0.0.5-dev
+     * @return 获取默认配置文件
+     */
+    File getDefaultConfigFile();
+
+    /**
+     * 将插件默认配置文件保存到文件夹中
+     * @author wzp
+     * @since 2024/8/16 13:16 v0.0.5-dev
+     */
+    void saveDefaultConfig();
 }

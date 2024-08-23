@@ -17,10 +17,24 @@ import java.util.stream.Collectors;
 @Data
 public class JsonMessage implements MessageComponent {
     private final List<JsonMessagePart> messageParts = new ArrayList<>();
+
+    /**
+     * 将消息转为JSON文本
+     * @author wzp
+     * @since 2024/8/23 21:36 v0.0.5-dev
+     * @return json文本
+     */
     @Override
     public String toMessageString() {
         return JSON.toJSONString(messageParts);
     }
+
+    /**
+     * 将JSON消息转化为纯文本显示方式
+     * @author wzp
+     * @since 2024/8/23 21:35 v0.0.5-dev
+     * @return 文本
+     */
     public String toTextDisplay() {
         return this.messageParts.stream().map(JsonMessagePart::getTextDisplay).collect(Collectors.joining(""));
     }

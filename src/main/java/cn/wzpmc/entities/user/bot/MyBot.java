@@ -1,5 +1,6 @@
 package cn.wzpmc.entities.user.bot;
 
+import cn.wzpmc.api.api.IMainApi;
 import cn.wzpmc.api.events.Event;
 import cn.wzpmc.api.message.MessageComponent;
 import cn.wzpmc.api.message.StringMessage;
@@ -11,13 +12,16 @@ import cn.wzpmc.api.utils.IncreasbleHashMap;
 import cn.wzpmc.configuration.Configuration;
 import cn.wzpmc.console.MyBotConsole;
 import cn.wzpmc.entities.event.EventHandlerMethod;
+import cn.wzpmc.network.WebSocketConnectionHandler;
 import cn.wzpmc.plugins.CommandManager;
 import cn.wzpmc.plugins.PluginManager;
+import cn.wzpmc.plugins.api.MainApi;
 import cn.wzpmc.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -38,8 +42,12 @@ public class MyBot extends IBot {
     private final CommandManager commandManager = new CommandManager(this);
     private final PluginManager pluginManager = new PluginManager();
     private final IncreasbleHashMap<Class<? extends Event>, EventHandlerMethod> events = new IncreasbleHashMap<>();
+    private File pluginsFolder;
     @Setter
     private MyBotConsole console = null;
+    @Getter
+    private IMainApi mainApi;
+    private WebSocketConnectionHandler connectionHandler;
     public MyBot(Configuration configuration){
         this.configuration = configuration;
         this.permissions = Permissions.ADMIN;
@@ -73,8 +81,22 @@ public class MyBot extends IBot {
     @Override
     public void triggerEvent(Event event) throws InvocationTargetException, IllegalAccessException {
         List<EventHandlerMethod> eventHandlerMethods = this.events.get(event.getClass());
+        if (eventHandlerMethods == null){
+            return;
+        }
         for (EventHandlerMethod eventHandlerMethod : eventHandlerMethods) {
             eventHandlerMethod.getMethod().invoke(eventHandlerMethod.getObject(), event);
         }
+    }
+    public void setPluginsFolder(File pluginsFolder) {
+        if (this.pluginsFolder != null){
+            throw new IllegalStateException("This bot already initialized!");
+        }
+        this.pluginsFolder = pluginsFolder;
+    }
+
+    public void setConnectionHandler(WebSocketConnectionHandler connectionHandler) {
+        this.connectionHandler = connectionHandler;
+        this.mainApi = new MainApi(this, this.connectionHandler);
     }
 }

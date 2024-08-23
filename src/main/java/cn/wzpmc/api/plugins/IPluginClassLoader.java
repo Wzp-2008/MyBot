@@ -12,7 +12,12 @@ import java.net.URLClassLoader;
  * @since 2024/7/31 下午6:59
  */
 public abstract class IPluginClassLoader extends URLClassLoader {
-
+    /**
+     * 创建插件类加载器
+     * @author wzp
+     * @since 2024/8/23 21:41 v0.0.5-dev
+     * @param urls jar文件路径
+     */
     public IPluginClassLoader(URL[] urls) {
         super(urls);
     }

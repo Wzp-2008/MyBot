@@ -1,9 +1,11 @@
 package cn.wzpmc.api.user;
 
+import cn.wzpmc.api.api.IMainApi;
 import cn.wzpmc.api.events.Event;
 import cn.wzpmc.api.plugins.ICommandManager;
 import cn.wzpmc.api.plugins.configuration.IConfiguration;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -12,7 +14,13 @@ import java.lang.reflect.InvocationTargetException;
  * @version 0.0.1-dev
  * @since 2024/7/31 上午2:31
  */
-public abstract class IBot extends CommandSender {
+public abstract class IBot extends MessageSender implements CommandSender {
+    private static IBot instance = null;
+    protected IBot(){
+        if (IBot.instance == null){
+            IBot.instance = this;
+        }
+    }
     /**
      * 获取配置文件
      * @author wzp
@@ -49,6 +57,34 @@ public abstract class IBot extends CommandSender {
      * @author wzp
      * @since 2024/8/16 00:49 v0.0.4-dev
      * @param event 事件
+     * @throws InvocationTargetException 处理时出现错误
+     * @throws IllegalAccessException 处理时出现错误
      */
     public abstract void triggerEvent(Event event) throws InvocationTargetException, IllegalAccessException;
+
+    /**
+     * 获取插件文件夹
+     * @author wzp
+     * @since 2024/8/16 12:49 v0.0.5-dev
+     * @return 插件文件夹
+     */
+    public abstract File getPluginsFolder();
+
+    /**
+     * 获取api接口
+     * @author wzp
+     * @since 2024/8/16 17:34 v0.0.5-dev
+     * @return api接口
+     */
+    public abstract IMainApi getMainApi();
+
+    /**
+     * 获取bot实例
+     * @author wzp
+     * @since 2024/8/17 23:19 v0.0.5-dev
+     * @return 一个bot实例对象
+     */
+    public static IBot getInstance(){
+        return IBot.instance;
+    }
 }

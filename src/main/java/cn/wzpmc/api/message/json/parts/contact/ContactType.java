@@ -16,5 +16,5 @@ public enum ContactType {
      * 推荐群
      * @since 2024/8/2 下午11:36 v0.0.3-dev
      */
-    GROUP;
+    GROUP
 }

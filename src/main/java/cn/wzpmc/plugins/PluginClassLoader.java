@@ -5,7 +5,6 @@ import cn.wzpmc.api.plugins.IPluginClassLoader;
 import cn.wzpmc.api.user.IBot;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.net.URL;

@@ -1,7 +1,8 @@
 package cn.wzpmc.api.user.group;
 
-import cn.wzpmc.api.message.MessageComponent;
 import cn.wzpmc.api.user.IUser;
+import cn.wzpmc.api.user.Sex;
+import cn.wzpmc.api.user.permission.Permissions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,8 +44,12 @@ public class GroupUser extends IUser {
      * @since 2024/8/1 下午8:53 v0.0.2-dev
      */
     private String title;
-    @Override
-    public void sendMessage(MessageComponent messageComponent) {
-
+    public GroupUser(Long id, String name, Permissions permissions, String nickname, Sex sex, Integer age, String card, String area, String level, GroupUserRole role, String title) {
+        super(id, name, permissions, nickname, sex, age);
+        this.card = card;
+        this.area = area;
+        this.level = level;
+        this.role = role;
+        this.title = title;
     }
 }

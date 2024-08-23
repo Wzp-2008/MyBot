@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class IUser extends CommandSender {
+public abstract class IUser extends MessageSender {
     /**
      * 玩家昵称
      * @since 2024/8/1 下午8:34 v0.0.2-dev

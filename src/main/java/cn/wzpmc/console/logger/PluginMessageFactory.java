@@ -2,13 +2,15 @@ package cn.wzpmc.console.logger;
 
 import cn.wzpmc.api.plugins.BasePlugin;
 import cn.wzpmc.api.plugins.IPluginClassLoader;
-import org.apache.logging.log4j.message.*;
+import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.message.MessageFactory;
 
 import java.lang.reflect.InvocationTargetException;
 
 import static org.apache.logging.log4j.spi.AbstractLogger.DEFAULT_FLOW_MESSAGE_FACTORY_CLASS;
 
 /**
+ * 插件消息工厂
  * @author wzp
  * @version 0.0.4-dev
  * @since 2024/8/9 00:35
