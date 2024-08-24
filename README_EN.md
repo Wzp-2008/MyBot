@@ -27,10 +27,6 @@
 
 ---
 
-Yes, adding repository guidelines will help developers better integrate MyBot. If you are using custom Maven repositories, you can provide detailed repository setup instructions in the development guide. I can help you add this section. Here's the modified development guide:
-
----
-
 ## Development Guide
 
 ### Add Repositories
