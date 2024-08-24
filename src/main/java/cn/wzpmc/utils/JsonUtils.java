@@ -2,6 +2,7 @@ package cn.wzpmc.utils;
 
 import cn.wzpmc.api.api.ActionResponse;
 import cn.wzpmc.api.api.Actions;
+import cn.wzpmc.api.entities.HonorType;
 import cn.wzpmc.api.events.Event;
 import cn.wzpmc.api.events.message.MessageEvent;
 import cn.wzpmc.api.events.meta.MetaEvent;
@@ -10,13 +11,16 @@ import cn.wzpmc.api.events.notice.notify.NotifyEvent;
 import cn.wzpmc.api.events.request.RequestEvent;
 import cn.wzpmc.api.message.StringMessage;
 import cn.wzpmc.api.message.json.JsonMessage;
+import cn.wzpmc.api.user.IBot;
 import cn.wzpmc.api.user.IUser;
 import cn.wzpmc.utils.json.action.ActionReader;
 import cn.wzpmc.utils.json.action.ActionWriter;
 import cn.wzpmc.utils.json.event.*;
+import cn.wzpmc.utils.json.honor.HonorWriter;
 import cn.wzpmc.utils.json.message.JsonMessageReader;
 import cn.wzpmc.utils.json.message.JsonMessageWriter;
 import cn.wzpmc.utils.json.message.StringMessageReader;
+import cn.wzpmc.utils.json.user.IBotReader;
 import cn.wzpmc.utils.json.user.IUserReader;
 import com.alibaba.fastjson2.JSON;
 
@@ -35,6 +39,7 @@ public class JsonUtils {
     public static void initWriter() {
         JSON.register(JsonMessage.class, new JsonMessageWriter());
         JSON.register(Actions.class, new ActionWriter());
+        JSON.register(HonorType.class, new HonorWriter());
     }
 
     /**
@@ -53,6 +58,7 @@ public class JsonUtils {
         JSON.register(StringMessage.class, new StringMessageReader());
         JSON.register(ActionResponse.class, new ActionReader());
         JSON.register(IUser.class, new IUserReader());
+        JSON.register(IBot.class, new IBotReader());
     }
 
 }

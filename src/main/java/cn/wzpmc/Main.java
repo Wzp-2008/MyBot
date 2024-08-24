@@ -1,5 +1,7 @@
 package cn.wzpmc;
 
+import cn.wzpmc.api.api.IMainApi;
+import cn.wzpmc.api.api.actions.message.get.GetLoginInfoAction;
 import cn.wzpmc.api.events.message.group.GroupMessageEvent;
 import cn.wzpmc.api.events.message.priv.PrivateMessageEvent;
 import cn.wzpmc.api.message.StringMessage;
@@ -142,6 +144,10 @@ public class Main {
         loadPlugins(myBot);
         WebSocketConnectionHandler webSocketConnectionHandler = createConnection(myBot, uri);
         myBot.setConnectionHandler(webSocketConnectionHandler);
+        IMainApi mainApi = myBot.getMainApi();
+        System.out.println(mainApi.doApiCall(new GetLoginInfoAction()));
+        System.out.println(mainApi.doApiCall(new GetLoginInfoAction()));
+        System.out.println(mainApi.doApiCall(new GetLoginInfoAction()));
         startConsole(myBot, webSocketConnectionHandler);
     }
 }

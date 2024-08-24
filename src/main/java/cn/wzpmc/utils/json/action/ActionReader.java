@@ -4,6 +4,7 @@ import cn.wzpmc.api.api.Action;
 import cn.wzpmc.api.api.ActionResponse;
 import cn.wzpmc.api.api.Actions;
 import cn.wzpmc.entities.api.ApiResponseRequired;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
@@ -28,11 +29,15 @@ public class ActionReader implements ObjectReader<ActionResponse<?>> {
         Actions action = request.getAction();
         String status = jsonObject.getString("status");
         short retcode = jsonObject.getShort("retcode");
-        JSONObject data = jsonObject.getJSONObject("data");
         Object dataObj = null;
-        if (data != null){
-            dataObj = data.to(action.responseClass);
-
+        if (action.array){
+            JSONArray data = jsonObject.getJSONArray("data");
+            dataObj = data.toJavaList(action.responseClass);
+        } else {
+            JSONObject data = jsonObject.getJSONObject("data");
+            if (data != null){
+                dataObj = data.to(action.responseClass);
+            }
         }
         return new ActionResponse<>(status, retcode, dataObj, echo);
     }

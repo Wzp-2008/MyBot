@@ -11,10 +11,22 @@ public enum Permissions {
      * 普通用户
      * @since 2024/8/1 下午4:49 v0.0.2-dev
      */
-    USER,
+    MEMBER(0),
     /**
      * 管理员
      * @since 2024/8/1 下午4:49 v0.0.2-dev
      */
-    ADMIN
+    ADMIN(1),
+    /**
+     * 群主
+     * @since 2024/8/24 19:25 v0.0.6-dev
+     */
+    OWNER(2);
+    final int level;
+    Permissions(int level){
+        this.level = level;
+    }
+    public boolean isAdmin(){
+        return this.level > 0;
+    }
 }

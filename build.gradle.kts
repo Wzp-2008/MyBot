@@ -4,7 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCach
 val projectName = rootProject.name
 val groupName by extra("cn.wzpmc")
 val projectArtifactId by extra("my-bot")
-val projectVersion by extra("0.0.5-dev")
+val projectVersion by extra("1.0.0")
 
 plugins {
     id("java")

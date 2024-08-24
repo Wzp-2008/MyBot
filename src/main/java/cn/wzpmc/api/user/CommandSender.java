@@ -72,6 +72,6 @@ public interface CommandSender {
      * @return 是否为管理员
      */
     default boolean isAdmin(){
-        return Permissions.ADMIN.equals(this.getPermissions());
+        return this.getPermissions().isAdmin();
     }
 }

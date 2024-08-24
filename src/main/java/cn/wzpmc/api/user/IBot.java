@@ -4,6 +4,7 @@ import cn.wzpmc.api.api.IMainApi;
 import cn.wzpmc.api.events.Event;
 import cn.wzpmc.api.plugins.ICommandManager;
 import cn.wzpmc.api.plugins.configuration.IConfiguration;
+import lombok.Getter;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -14,8 +15,10 @@ import java.lang.reflect.InvocationTargetException;
  * @version 0.0.1-dev
  * @since 2024/7/31 上午2:31
  */
+@Getter
 public abstract class IBot extends MessageSender implements CommandSender {
     private static IBot instance = null;
+    private String nickname;
     protected IBot(){
         if (IBot.instance == null){
             IBot.instance = this;
@@ -86,5 +89,20 @@ public abstract class IBot extends MessageSender implements CommandSender {
      */
     public static IBot getInstance(){
         return IBot.instance;
+    }
+    public void setNickname(String nickname){
+        if (this.nickname == null){
+            this.nickname = nickname;
+            return;
+        }
+        throw new RuntimeException(new IllegalAccessException("Shouldn't set nickname after initialized"));
+    }
+    @Override
+    public void setId(Long id){
+        if (this.id == null){
+            this.id = id;
+            return;
+        }
+        throw new RuntimeException(new IllegalAccessException("Shouldn't set id after initialized"));
     }
 }

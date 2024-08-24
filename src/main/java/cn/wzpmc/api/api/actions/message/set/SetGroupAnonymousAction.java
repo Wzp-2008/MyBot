@@ -12,7 +12,7 @@ import lombok.Data;
  * @version 0.0.5-dev
  * @since 2024/8/23 20:55
  */
-public class SetGroupAnonymous extends Action<SetGroupAnonymous.Params, Void> {
+public class SetGroupAnonymousAction extends Action<SetGroupAnonymousAction.Params, Void> {
     /**
      * 群组匿名
      * @author wzp
@@ -20,7 +20,7 @@ public class SetGroupAnonymous extends Action<SetGroupAnonymous.Params, Void> {
      * @param groupId 群号
      * @param enable 是否允许匿名聊天
      */
-    public SetGroupAnonymous(Long groupId, Boolean enable) {
+    public SetGroupAnonymousAction(Long groupId, Boolean enable) {
         super.setAction(Actions.SET_GROUP_ANONYMOUS);
         super.setParams(new Params(groupId, enable));
     }
@@ -31,7 +31,7 @@ public class SetGroupAnonymous extends Action<SetGroupAnonymous.Params, Void> {
      * @since 2024/8/23 21:16 v0.0.5-dev
      * @param groupId 群号
      */
-    public SetGroupAnonymous(Long groupId) {
+    public SetGroupAnonymousAction(Long groupId) {
         this(groupId, true);
     }
     @Data
