@@ -2,14 +2,7 @@ package cn.wzpmc;
 
 import cn.wzpmc.api.api.IMainApi;
 import cn.wzpmc.api.api.actions.message.get.GetLoginInfoAction;
-import cn.wzpmc.api.events.message.group.GroupMessageEvent;
-import cn.wzpmc.api.events.message.priv.PrivateMessageEvent;
-import cn.wzpmc.api.message.StringMessage;
 import cn.wzpmc.api.plugins.BasePlugin;
-import cn.wzpmc.api.plugins.event.EventHandler;
-import cn.wzpmc.api.user.Friend;
-import cn.wzpmc.api.user.group.GroupCommandSender;
-import cn.wzpmc.api.user.group.GroupUser;
 import cn.wzpmc.commands.StopCommand;
 import cn.wzpmc.configuration.Configuration;
 import cn.wzpmc.console.MyBotConsole;
@@ -116,26 +109,6 @@ public class Main {
             return;
         }
         MyBot myBot = createBot(configuration);
-        myBot.registerEventHandler(new Object(){
-            @EventHandler
-            public void onGroupMessage(GroupMessageEvent event){
-                GroupUser sender = event.getSender();
-                System.out.println(sender.getId());
-                if (sender.getId().equals(3357223099L)) {
-                    System.out.println("send");
-                    GroupCommandSender.of(event).sendMessage(StringMessage.text("test"));
-                    System.out.println("called-group");
-                }
-            }
-            @EventHandler
-            public void onUserMessage(PrivateMessageEvent event){
-                Friend sender = event.getSender();
-                if (sender.getId().equals(3357223099L)){
-                    sender.sendMessage(StringMessage.text("test-user"));
-                    System.out.println("called-user");
-                }
-            }
-        });
         URI uri = getUriFromConfiguration(configuration);
         if (uri == null){
             log.error("无法解析websocket地址");
@@ -145,9 +118,8 @@ public class Main {
         WebSocketConnectionHandler webSocketConnectionHandler = createConnection(myBot, uri);
         myBot.setConnectionHandler(webSocketConnectionHandler);
         IMainApi mainApi = myBot.getMainApi();
-        System.out.println(mainApi.doApiCall(new GetLoginInfoAction()));
-        System.out.println(mainApi.doApiCall(new GetLoginInfoAction()));
-        System.out.println(mainApi.doApiCall(new GetLoginInfoAction()));
+        // 获取Bot消息
+        mainApi.doApiCall(new GetLoginInfoAction());
         startConsole(myBot, webSocketConnectionHandler);
     }
 }
