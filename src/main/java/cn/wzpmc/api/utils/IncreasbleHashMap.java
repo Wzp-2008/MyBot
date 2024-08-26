@@ -11,7 +11,7 @@ import java.util.List;
  * @version 0.0.4-dev
  * @since 2024/8/16 00:02
  */
-public class IncreasbleHashMap<K, V> extends HashMap<K, List<V>> implements IncreasbleMap<K, V>{
+public class IncreasbleHashMap<K, V> extends HashMap<K, List<V>> implements IncreasbleMap<K, V, List<V>>{
     @Override
     public void add(K key, V value) {
         List<V> newArrayList = super.getOrDefault(key, new ArrayList<>());
@@ -41,7 +41,7 @@ public class IncreasbleHashMap<K, V> extends HashMap<K, List<V>> implements Incr
     }
 
     @Override
-    public void addAll(IncreasbleMap<K, V> increasbleMap) {
+    public void addAll(IncreasbleMap<K, V, List<V>> increasbleMap) {
         for (Entry<K, List<V>> entry : increasbleMap.entrySet()) {
             this.addAll(entry.getKey(), entry.getValue());
         }

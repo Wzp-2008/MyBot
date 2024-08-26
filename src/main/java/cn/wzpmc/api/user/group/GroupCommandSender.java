@@ -12,6 +12,7 @@ import cn.wzpmc.api.user.CommandSender;
 import cn.wzpmc.api.user.IBot;
 import cn.wzpmc.api.user.Sex;
 import cn.wzpmc.api.user.permission.Permissions;
+import cn.wzpmc.entities.user.bot.MyBot;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,7 +43,7 @@ public class GroupCommandSender extends GroupUser implements CommandSender {
         JsonMessage jsonMessage = new JsonMessage();
         List<JsonMessagePart> messageParts = jsonMessage.getMessageParts();
         messageParts.add(new At(this.getId()));
-        messageParts.add(StringMessage.text(messageComponent.toMessageString()));
+        messageParts.add(StringMessage.text(" " + messageComponent.toMessageString()));
         SendGroupMessageAction sendGroupMessageAction = new SendGroupMessageAction(this.groupId, jsonMessage);
         mainApi.doApiCall(sendGroupMessageAction);
     }
@@ -68,6 +69,10 @@ public class GroupCommandSender extends GroupUser implements CommandSender {
         String level = sender.getLevel();
         GroupUserRole role = sender.getRole();
         String title = sender.getTitle();
+        IBot instance = MyBot.getInstance();
+        if (!permissions.isAdmin() && instance.isBotOp(eventGroupId, id)) {
+            permissions = Permissions.ADMIN;
+        }
         return new GroupCommandSender(id, name, permissions, nickname, sex, age, card, area, level, role, title, eventGroupId);
     }
 }

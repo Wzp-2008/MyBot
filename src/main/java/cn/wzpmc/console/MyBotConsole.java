@@ -1,10 +1,8 @@
 package cn.wzpmc.console;
 
-import cn.wzpmc.api.plugins.BasePlugin;
 import cn.wzpmc.entities.user.bot.MyBot;
 import cn.wzpmc.network.WebSocketConnectionHandler;
 import cn.wzpmc.plugins.CommandManager;
-import cn.wzpmc.plugins.PluginManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -46,8 +44,6 @@ public class MyBotConsole extends SimpleTerminalConsole {
 
     @Override
     public void shutdown() {
-        PluginManager pluginManager = this.bot.getPluginManager();
-        pluginManager.getPlugins().forEach(BasePlugin::onUnload);
         this.webSocketConnectionHandler.kill();
         running = false;
     }

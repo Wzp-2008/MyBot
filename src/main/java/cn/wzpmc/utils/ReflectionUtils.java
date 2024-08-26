@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
+import java.util.List;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -69,9 +70,9 @@ public class ReflectionUtils {
             return null;
         }
     }
-    public static IncreasbleMap<Class<? extends Event>, EventHandlerMethod> loadEvents(Object eventHandlerObject){
+    public static IncreasbleMap<Class<? extends Event>, EventHandlerMethod, List<EventHandlerMethod>> loadEvents(Object eventHandlerObject){
         Class<?> eventHandlerClass = eventHandlerObject.getClass();
-        IncreasbleMap<Class<? extends Event>, EventHandlerMethod> result = new IncreasbleHashMap<>();
+        IncreasbleMap<Class<? extends Event>, EventHandlerMethod, List<EventHandlerMethod>> result = new IncreasbleHashMap<>();
         for (Method declaredMethod : eventHandlerClass.getDeclaredMethods()) {
             declaredMethod.setAccessible(true);
             if (!declaredMethod.isAnnotationPresent(EventHandler.class)){

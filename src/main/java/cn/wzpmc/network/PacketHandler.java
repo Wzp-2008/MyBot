@@ -33,7 +33,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<TextWebSocketFram
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame webSocketFrame) {
         String text = webSocketFrame.text();
-        System.out.println(text);
+        // System.out.println(text);
         if (!JSON.isValidObject(text)){
             log.warn("收到了无法处理的WebSocket数据包：{}", text);
             return;
@@ -59,7 +59,8 @@ public class PacketHandler extends SimpleChannelInboundHandler<TextWebSocketFram
             try {
                 this.bot.triggerEvent(event);
             } catch (InvocationTargetException | IllegalAccessException e) {
-                log.error(new RuntimeException(e));
+                log.throwing(e);
+                throw new RuntimeException(e);
             }
         });
     }

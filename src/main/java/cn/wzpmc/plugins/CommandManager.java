@@ -13,6 +13,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
@@ -37,7 +38,9 @@ import java.util.stream.Collectors;
  */
 @Log4j2
 public class CommandManager implements ICommandManager, Completer, Highlighter {
+    @Getter
     private final CommandDispatcher<CommandSender> dispatcher = new CommandDispatcher<>();
+    @Getter
     private final ConcurrentHashMap<String, RawCommand> rawCommands = new ConcurrentHashMap<>();
     private static final int[] COLORS = {AttributedStyle.CYAN, AttributedStyle.YELLOW, AttributedStyle.GREEN, AttributedStyle.MAGENTA, AttributedStyle.BLUE};
     private final IBot bot;

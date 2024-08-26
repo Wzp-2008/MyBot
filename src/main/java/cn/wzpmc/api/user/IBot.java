@@ -1,6 +1,7 @@
 package cn.wzpmc.api.user;
 
 import cn.wzpmc.api.api.IMainApi;
+import cn.wzpmc.api.entities.Ops;
 import cn.wzpmc.api.events.Event;
 import cn.wzpmc.api.plugins.ICommandManager;
 import cn.wzpmc.api.plugins.configuration.IConfiguration;
@@ -104,5 +105,71 @@ public abstract class IBot extends MessageSender implements CommandSender {
             return;
         }
         throw new RuntimeException(new IllegalAccessException("Shouldn't set id after initialized"));
+    }
+
+    /**
+     * 获取OP列表
+     * @author wzp
+     * @since 2024/8/25 14:11 v1.0.0
+     * @return OP列表
+     */
+    abstract public Ops getOps();
+
+    /**
+     * 添加一个OP用户
+     * @author wzp
+     * @since 2024/8/25 14:12 v1.0.0
+     * @param userId 用户ID
+     */
+    abstract public void addOp(Long userId);
+
+    /**
+     * 为一个群添加OP用户
+     * @author wzp
+     * @since 2024/8/25 20:21 v1.0.0
+     * @param groupId 群ID
+     * @param userId 用户ID
+     */
+    abstract public void addOp(Long groupId, Long userId);
+
+    /**
+     * 移除一个用户的OP身份
+     * @author wzp
+     * @since 2024/8/25 20:23 v1.0.0
+     * @param userId 用户ID
+     * @return 是否移除
+     */
+    abstract public boolean removeOp(Long userId);
+    /**
+     * 移除一个用户在群内的OP身份
+     * @author wzp
+     * @since 2024/8/25 20:23 v1.0.0
+     * @param groupId 群ID
+     * @param userId 用户ID
+     * @return 是否移除
+     */
+    abstract public boolean removeOp(Long groupId, Long userId);
+
+    /**
+     * 检查用户是否为OP
+     * @author wzp
+     * @since 2024/8/25 14:10 v1.0.0
+     * @param userId 用户ID
+     * @return 是否为OP
+     */
+    public boolean isBotOp(Long userId){
+        return getOps().isAdmin(userId);
+    }
+
+    /**
+     * 检查用户在群内是否为OP
+     * @author wzp
+     * @since 2024/8/25 20:22 v1.0.0
+     * @param groupId 群ID
+     * @param userId 用户ID
+     * @return 是否为OP
+     */
+    public boolean isBotOp(Long groupId, Long userId) {
+        return this.getOps().isAdmin(groupId, userId);
     }
 }

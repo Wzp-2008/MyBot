@@ -1,7 +1,6 @@
 package cn.wzpmc.api.utils;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,8 +8,11 @@ import java.util.Map;
  * @author wzp
  * @version 0.0.4-dev
  * @since 2024/8/15 23:57
+ * @param <C> 集合类型
+ * @param <K> key类型
+ * @param <V> value类型
  */
-public interface IncreasbleMap<K, V> extends Map<K, List<V>> {
+public interface IncreasbleMap<K, V, C extends Collection<V>> extends Map<K, C> {
     /**
      * 向一个Key中添加元素
      * @author wzp
@@ -45,7 +47,7 @@ public interface IncreasbleMap<K, V> extends Map<K, List<V>> {
      * @since 2024/8/16 00:35 v0.0.4-dev
      * @param increasbleMap 另一个表
      */
-    void addAll(IncreasbleMap<K, V> increasbleMap);
+    void addAll(IncreasbleMap<K, V, C> increasbleMap);
 
     /**
      * 将所有value添加到此key中

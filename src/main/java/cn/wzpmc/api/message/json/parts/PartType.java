@@ -113,7 +113,12 @@ public enum PartType {
      * JSON消息
      * @since 2024/8/23 21:40 v0.0.5-dev
      */
-    JSON(CustomJSONMessage.class);
+    JSON(CustomJSONMessage.class),
+    /**
+     * Markdown消息
+     * @since 2024/8/25 15:20 v1.0.0
+     */
+    MARKDOWN(MarkdownMessage.class);
     public final Class<? extends JsonMessagePart> clazz;
     PartType(Class<? extends JsonMessagePart> clazz){
         this.clazz = clazz;
