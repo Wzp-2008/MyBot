@@ -1,6 +1,6 @@
 package cn.wzpmc.utils.json.user;
 
-import cn.wzpmc.api.user.IBot;
+import cn.wzpmc.user.IBot;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;
@@ -19,7 +19,7 @@ public class IBotReader implements ObjectReader<IBot> {
         Long userId = Long.parseLong(map.get("user_id").toString());
         String nickname = (String) map.get("nickname");
         IBot instance = IBot.getInstance();
-        if (instance.getNickname() == null && instance.getId() == null){
+        if (instance.getNickname() == null && instance.getId() == null) {
             instance.setId(userId);
             instance.setName(nickname);
         }
@@ -30,7 +30,7 @@ public class IBotReader implements ObjectReader<IBot> {
     public IBot readObject(JSONReader jsonReader, Type type, Object o, long l) {
         JSONObject jsonObject = jsonReader.readJSONObject();
         IBot instance = IBot.getInstance();
-        if (instance.getNickname() == null && instance.getId() == null){
+        if (instance.getNickname() == null && instance.getId() == null) {
             instance.setId(jsonObject.getLong("user_id"));
             instance.setName(jsonObject.getString("nickname"));
         }

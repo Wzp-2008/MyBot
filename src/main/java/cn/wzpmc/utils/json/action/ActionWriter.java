@@ -1,6 +1,6 @@
 package cn.wzpmc.utils.json.action;
 
-import cn.wzpmc.api.api.Actions;
+import cn.wzpmc.api.Actions;
 import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.writer.ObjectWriter;
 

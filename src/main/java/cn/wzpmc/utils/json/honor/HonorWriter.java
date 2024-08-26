@@ -1,6 +1,6 @@
 package cn.wzpmc.utils.json.honor;
 
-import cn.wzpmc.api.entities.HonorType;
+import cn.wzpmc.entities.HonorType;
 import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.writer.ObjectWriter;
 

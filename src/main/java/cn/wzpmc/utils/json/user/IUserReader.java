@@ -1,8 +1,8 @@
 package cn.wzpmc.utils.json.user;
 
-import cn.wzpmc.api.user.Friend;
-import cn.wzpmc.api.user.IUser;
-import cn.wzpmc.api.user.group.GroupUser;
+import cn.wzpmc.user.Friend;
+import cn.wzpmc.user.IUser;
+import cn.wzpmc.user.group.GroupUser;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;

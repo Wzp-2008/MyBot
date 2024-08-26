@@ -1,12 +1,10 @@
 package cn.wzpmc.utils;
 
-import cn.wzpmc.api.events.Event;
-import cn.wzpmc.api.plugins.BasePlugin;
-import cn.wzpmc.api.plugins.IPluginManager;
-import cn.wzpmc.api.plugins.event.EventHandler;
-import cn.wzpmc.api.utils.IncreasbleHashMap;
-import cn.wzpmc.api.utils.IncreasbleMap;
 import cn.wzpmc.entities.event.EventHandlerMethod;
+import cn.wzpmc.events.Event;
+import cn.wzpmc.plugins.BasePlugin;
+import cn.wzpmc.plugins.IPluginManager;
+import cn.wzpmc.plugins.event.EventHandler;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.Yaml;
@@ -24,17 +22,18 @@ import java.util.jar.JarFile;
 
 /**
  * 反射工具类
+ *
  * @author wzp
- * @since 2024/8/5 上午1:42
  * @version 0.0.4-dev
+ * @since 2024/8/5 上午1:42
  */
 @Log4j2
 public class ReflectionUtils {
-    public static BasePlugin load(URLClassLoader loader, File file, IPluginManager pluginManager){
+    public static BasePlugin load(URLClassLoader loader, File file, IPluginManager pluginManager) {
         String absolutePath = file.getAbsolutePath();
-        try(JarFile jarFile = new JarFile(file)){
+        try (JarFile jarFile = new JarFile(file)) {
             Optional<JarEntry> first = jarFile.stream().filter((e) -> "plugin.yml".equals(e.getName())).findFirst();
-            if (first.isEmpty()){
+            if (first.isEmpty()) {
                 log.error("cannot find plugin.yml in plugin {}", absolutePath);
                 return null;
             }
@@ -44,7 +43,7 @@ public class ReflectionUtils {
             String main = jsonObject.getString("main");
             String version = jsonObject.getString("version");
             String name = jsonObject.getString("name");
-            try{
+            try {
                 Class<?> aClass = loader.loadClass(main);
                 if (!BasePlugin.class.isAssignableFrom(aClass)) {
                     log.error("插件{}-{}的主类{}未继承cn.wzpmc.api.plugins.JavaPlugin", name, version, main);
@@ -60,7 +59,7 @@ public class ReflectionUtils {
                     log.error(e);
                     return null;
                 }
-            }catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 log.error("无法为插件{}-{}加载主类{}！", name, version, main);
                 return null;
             }
@@ -70,17 +69,18 @@ public class ReflectionUtils {
             return null;
         }
     }
-    public static IncreasbleMap<Class<? extends Event>, EventHandlerMethod, List<EventHandlerMethod>> loadEvents(Object eventHandlerObject){
+
+    public static IncreasbleMap<Class<? extends Event>, EventHandlerMethod, List<EventHandlerMethod>> loadEvents(Object eventHandlerObject) {
         Class<?> eventHandlerClass = eventHandlerObject.getClass();
         IncreasbleMap<Class<? extends Event>, EventHandlerMethod, List<EventHandlerMethod>> result = new IncreasbleHashMap<>();
         for (Method declaredMethod : eventHandlerClass.getDeclaredMethods()) {
             declaredMethod.setAccessible(true);
-            if (!declaredMethod.isAnnotationPresent(EventHandler.class)){
+            if (!declaredMethod.isAnnotationPresent(EventHandler.class)) {
                 continue;
             }
             if (declaredMethod.getParameterCount() == 1) {
                 Class<?> eventType = declaredMethod.getParameterTypes()[0];
-                if (Event.class.isAssignableFrom(eventType)){
+                if (Event.class.isAssignableFrom(eventType)) {
                     //noinspection unchecked
                     result.add((Class<? extends Event>) eventType, new EventHandlerMethod(eventHandlerObject, declaredMethod));
                     continue;

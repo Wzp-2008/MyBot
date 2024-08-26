@@ -1,7 +1,7 @@
 package cn.wzpmc.console.logger;
 
-import cn.wzpmc.api.plugins.BasePlugin;
-import cn.wzpmc.api.plugins.IPluginClassLoader;
+import cn.wzpmc.plugins.BasePlugin;
+import cn.wzpmc.plugins.IPluginClassLoader;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.MessageFactory;
 
@@ -11,21 +11,24 @@ import static org.apache.logging.log4j.spi.AbstractLogger.DEFAULT_FLOW_MESSAGE_F
 
 /**
  * 插件消息工厂
+ *
  * @author wzp
  * @version 0.0.4-dev
  * @since 2024/8/9 00:35
  */
 public class PluginMessageFactory implements MessageFactory {
-    private final String tag;
     private static final MessageFactory baseFactory;
 
     static {
         try {
             baseFactory = (MessageFactory) DEFAULT_FLOW_MESSAGE_FACTORY_CLASS.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
+
+    private final String tag;
 
     public PluginMessageFactory(BasePlugin plugin) {
         IPluginClassLoader classLoader = plugin.getClassLoader();

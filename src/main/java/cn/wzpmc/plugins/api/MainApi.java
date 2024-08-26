@@ -1,10 +1,10 @@
 package cn.wzpmc.plugins.api;
 
-import cn.wzpmc.api.api.Action;
-import cn.wzpmc.api.api.ActionResponse;
-import cn.wzpmc.api.api.IMainApi;
-import cn.wzpmc.api.user.IBot;
+import cn.wzpmc.api.Action;
+import cn.wzpmc.api.ActionResponse;
+import cn.wzpmc.api.IMainApi;
 import cn.wzpmc.network.WebSocketConnectionHandler;
+import cn.wzpmc.user.IBot;
 import lombok.RequiredArgsConstructor;
 
 /**

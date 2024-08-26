@@ -1,12 +1,12 @@
 package cn.wzpmc.builtin.commands;
 
-import cn.wzpmc.api.commands.BrigadierCommand;
-import cn.wzpmc.api.commands.RawCommand;
-import cn.wzpmc.api.message.StringMessage;
-import cn.wzpmc.api.user.CommandSender;
-import cn.wzpmc.api.user.IBot;
+import cn.wzpmc.commands.BrigadierCommand;
+import cn.wzpmc.commands.RawCommand;
 import cn.wzpmc.entities.user.bot.MyBot;
+import cn.wzpmc.message.StringMessage;
 import cn.wzpmc.plugins.CommandManager;
+import cn.wzpmc.user.CommandSender;
+import cn.wzpmc.user.IBot;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
@@ -22,6 +22,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2024/8/25 15:07
  */
 public class HelpCommand implements BrigadierCommand {
+    private static void handlerNode(Collection<CommandNode<CommandSender>> node, int tabCount, StringBuilder builder) {
+        for (CommandNode<CommandSender> commandSenderCommandNode : node) {
+            builder.append("\t".repeat(Math.max(0, tabCount)));
+            builder.append(commandSenderCommandNode.getUsageText());
+            builder.append('\n');
+            handlerNode(commandSenderCommandNode.getChildren(), tabCount + 1, builder);
+        }
+    }
+
     @Override
     public LiteralArgumentBuilder<CommandSender> getCommandNode() {
         return LiteralArgumentBuilder.<CommandSender>literal("help").executes(e -> {
@@ -46,13 +55,5 @@ public class HelpCommand implements BrigadierCommand {
             }
             return 0;
         });
-    }
-    private static void handlerNode(Collection<CommandNode<CommandSender>> node, int tabCount, StringBuilder builder){
-        for (CommandNode<CommandSender> commandSenderCommandNode : node) {
-            builder.append("\t".repeat(Math.max(0, tabCount)));
-            builder.append(commandSenderCommandNode.getUsageText());
-            builder.append('\n');
-            handlerNode(commandSenderCommandNode.getChildren(), tabCount + 1, builder);
-        }
     }
 }

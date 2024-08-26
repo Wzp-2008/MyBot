@@ -1,13 +1,13 @@
 package cn.wzpmc.builtin.commands;
 
-import cn.wzpmc.api.commands.BrigadierCommand;
-import cn.wzpmc.api.commands.arguments.UserIdArguments;
-import cn.wzpmc.api.entities.Ops;
-import cn.wzpmc.api.message.StringMessage;
-import cn.wzpmc.api.user.CommandSender;
-import cn.wzpmc.api.user.IBot;
-import cn.wzpmc.api.user.group.GroupCommandSender;
+import cn.wzpmc.commands.BrigadierCommand;
+import cn.wzpmc.commands.arguments.UserIdArguments;
+import cn.wzpmc.entities.Ops;
 import cn.wzpmc.entities.user.bot.MyBot;
+import cn.wzpmc.message.StringMessage;
+import cn.wzpmc.user.CommandSender;
+import cn.wzpmc.user.IBot;
+import cn.wzpmc.user.group.GroupCommandSender;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -21,9 +21,34 @@ import java.util.*;
  */
 public class OpCommand implements BrigadierCommand {
     private final IBot instance;
-    public OpCommand(){
+
+    public OpCommand() {
         this.instance = MyBot.getInstance();
     }
+
+    private static String getFullOpListString(Collection<Long> admins) {
+        return "总管理：" + '\n' +
+                getOpListString(admins);
+    }
+
+    private static String getGroupOpListString(Collection<Long> admins, Long groupId) {
+        return "群" + groupId + "的管理员：" + '\n' +
+                getOpListString(admins);
+    }
+
+    private static StringBuilder getOpListString(Collection<Long> admins) {
+        StringBuilder builder = new StringBuilder();
+        if (admins.isEmpty()) {
+            builder.append("无").append('\n');
+        }
+        for (Long admin : admins) {
+            builder.append('\t').append(admin).append('\n');
+        }
+        int lastLine = builder.lastIndexOf("\n");
+        builder.deleteCharAt(lastLine);
+        return builder;
+    }
+
     @Override
     public LiteralArgumentBuilder<CommandSender> getCommandNode() {
         return LiteralArgumentBuilder.
@@ -49,16 +74,16 @@ public class OpCommand implements BrigadierCommand {
                         fullAdmin = true;
                     }
                     StringBuilder builder = new StringBuilder();
-                    if (fullAdmin){
+                    if (fullAdmin) {
                         builder.append(getFullOpListString(fullAdmins)).append('\n');
                         for (Map.Entry<String, List<Long>> stringListEntry : groupAdmins.entrySet()) {
                             builder.append(getGroupOpListString(stringListEntry.getValue(), Long.valueOf(stringListEntry.getKey()))).append('\n');
                         }
                         builder.deleteCharAt(builder.lastIndexOf("\n"));
 
-                    }else if (groupAdmin) {
+                    } else if (groupAdmin) {
                         builder.append(getGroupOpListString(sendGroupAdmins, sendGroupId));
-                    }else {
+                    } else {
                         builder.append("权限不足！");
                     }
                     source.sendMessage(StringMessage.text(builder.toString()));
@@ -118,11 +143,11 @@ public class OpCommand implements BrigadierCommand {
                             Ops ops = instance.getOps();
                             CommandSender source = e.getSource();
                             Long targetId = e.getArgument("user", Long.class);
-                            if (source instanceof GroupCommandSender){
-                                if (ops.isAdmin(source.getId())){
+                            if (source instanceof GroupCommandSender) {
+                                if (ops.isAdmin(source.getId())) {
                                     instance.addOp(targetId);
                                     source.sendMessage(StringMessage.text("已为用户：" + targetId + "添加总OP权限"));
-                                }else{
+                                } else {
                                     Long groupId = ((GroupCommandSender) source).getGroupId();
                                     instance.addOp(groupId, targetId);
                                     source.sendMessage(StringMessage.text("已为用户：" + targetId + "添加群：" + groupId + "的OP权限"));
@@ -139,7 +164,7 @@ public class OpCommand implements BrigadierCommand {
                                             Long targetGroupId = e.getArgument("group", Long.class);
                                             Long targetId = e.getArgument("user", Long.class);
                                             CommandSender source = e.getSource();
-                                            if (source instanceof GroupCommandSender){
+                                            if (source instanceof GroupCommandSender) {
                                                 if (!instance.isBotOp(targetGroupId, source.getId())) {
                                                     source.sendMessage(StringMessage.text("权限不足！"));
                                                     return 0;
@@ -159,25 +184,5 @@ public class OpCommand implements BrigadierCommand {
                                 })
                         )
                 );
-    }
-    private static String getFullOpListString(Collection<Long> admins){
-        return "总管理：" + '\n' +
-                getOpListString(admins);
-    }
-    private static String getGroupOpListString(Collection<Long> admins, Long groupId){
-        return "群" + groupId + "的管理员：" + '\n' +
-                getOpListString(admins);
-    }
-    private static StringBuilder getOpListString(Collection<Long> admins) {
-        StringBuilder builder = new StringBuilder();
-        if (admins.isEmpty()){
-            builder.append("无").append('\n');
-        }
-        for (Long admin : admins) {
-            builder.append('\t').append(admin).append('\n');
-        }
-        int lastLine = builder.lastIndexOf("\n");
-        builder.deleteCharAt(lastLine);
-        return builder;
     }
 }

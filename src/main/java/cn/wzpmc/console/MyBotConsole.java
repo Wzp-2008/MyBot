@@ -12,6 +12,7 @@ import org.jline.reader.LineReaderBuilder;
 
 /**
  * 主控制台
+ *
  * @author wzp
  * @version 0.0.2-dev
  * @since 2024/7/31 下午9:47
@@ -19,12 +20,13 @@ import org.jline.reader.LineReaderBuilder;
 @Log4j2
 @RequiredArgsConstructor
 public class MyBotConsole extends SimpleTerminalConsole {
-    @Getter
-    private boolean running = true;
     private final MyBot bot;
     private final CommandManager commandManager;
     private final WebSocketConnectionHandler webSocketConnectionHandler;
-    public MyBotConsole(MyBot bot, WebSocketConnectionHandler webSocketConnectionHandler){
+    @Getter
+    private boolean running = true;
+
+    public MyBotConsole(MyBot bot, WebSocketConnectionHandler webSocketConnectionHandler) {
         this.bot = bot;
         this.commandManager = bot.getCommandManager();
         this.webSocketConnectionHandler = webSocketConnectionHandler;

@@ -1,13 +1,13 @@
 package cn.wzpmc.builtin.commands;
 
-import cn.wzpmc.api.commands.BrigadierCommand;
-import cn.wzpmc.api.commands.arguments.UserIdArguments;
-import cn.wzpmc.api.entities.Ops;
-import cn.wzpmc.api.message.StringMessage;
-import cn.wzpmc.api.user.CommandSender;
-import cn.wzpmc.api.user.IBot;
-import cn.wzpmc.api.user.group.GroupCommandSender;
+import cn.wzpmc.commands.BrigadierCommand;
+import cn.wzpmc.commands.arguments.UserIdArguments;
+import cn.wzpmc.entities.Ops;
 import cn.wzpmc.entities.user.bot.MyBot;
+import cn.wzpmc.message.StringMessage;
+import cn.wzpmc.user.CommandSender;
+import cn.wzpmc.user.IBot;
+import cn.wzpmc.user.group.GroupCommandSender;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -19,9 +19,11 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
  */
 public class DeOpCommand implements BrigadierCommand {
     private final IBot instance;
-    public DeOpCommand(){
+
+    public DeOpCommand() {
         this.instance = MyBot.getInstance();
     }
+
     @Override
     public LiteralArgumentBuilder<CommandSender> getCommandNode() {
         return LiteralArgumentBuilder.
@@ -32,11 +34,11 @@ public class DeOpCommand implements BrigadierCommand {
                             Ops ops = instance.getOps();
                             CommandSender source = e.getSource();
                             Long targetId = e.getArgument("user", Long.class);
-                            if (source instanceof GroupCommandSender){
-                                if (ops.isAdmin(source.getId())){
+                            if (source instanceof GroupCommandSender) {
+                                if (ops.isAdmin(source.getId())) {
                                     instance.removeOp(targetId);
                                     source.sendMessage(StringMessage.text("已为用户：" + targetId + "移除总OP权限"));
-                                }else{
+                                } else {
                                     Long groupId = ((GroupCommandSender) source).getGroupId();
                                     instance.removeOp(groupId, targetId);
                                     source.sendMessage(StringMessage.text("已为用户：" + targetId + "移除群：" + groupId + "的OP权限"));
@@ -53,7 +55,7 @@ public class DeOpCommand implements BrigadierCommand {
                                             Long targetGroupId = e.getArgument("group", Long.class);
                                             Long targetId = e.getArgument("user", Long.class);
                                             CommandSender source = e.getSource();
-                                            if (source instanceof GroupCommandSender){
+                                            if (source instanceof GroupCommandSender) {
                                                 if (!instance.isBotOp(targetGroupId, source.getId())) {
                                                     source.sendMessage(StringMessage.text("权限不足！"));
                                                     return 0;

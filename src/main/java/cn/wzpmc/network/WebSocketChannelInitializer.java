@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * WebSocket连接初始化
+ *
  * @author wzp
  * @version 0.0.1-dev
  * @since 2024/7/31 上午1:19
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class WebSocketChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final ChannelHandler handler;
     private final HandshakePacketHandler handshakePacketHandler;
+
     @Override
     protected void initChannel(SocketChannel socketChannel) {
         ChannelPipeline pipeline = socketChannel.pipeline();

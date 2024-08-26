@@ -1,8 +1,8 @@
 package cn.wzpmc.utils.json.action;
 
-import cn.wzpmc.api.api.Action;
-import cn.wzpmc.api.api.ActionResponse;
-import cn.wzpmc.api.api.Actions;
+import cn.wzpmc.api.Action;
+import cn.wzpmc.api.ActionResponse;
+import cn.wzpmc.api.Actions;
 import cn.wzpmc.entities.api.ApiResponseRequired;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ActionReader implements ObjectReader<ActionResponse<?>> {
     public static final ConcurrentHashMap<UUID, ApiResponseRequired<?, ?>> tasks = new ConcurrentHashMap<>();
+
     @Override
     public ActionResponse<?> readObject(JSONReader jsonReader, Type type, Object o, long l) {
         JSONObject jsonObject = jsonReader.readJSONObject();
@@ -30,12 +31,12 @@ public class ActionReader implements ObjectReader<ActionResponse<?>> {
         String status = jsonObject.getString("status");
         short retcode = jsonObject.getShort("retcode");
         Object dataObj = null;
-        if (action.array){
+        if (action.array) {
             JSONArray data = jsonObject.getJSONArray("data");
             dataObj = data.toJavaList(action.responseClass);
         } else {
             JSONObject data = jsonObject.getJSONObject("data");
-            if (data != null){
+            if (data != null) {
                 dataObj = data.to(action.responseClass);
             }
         }

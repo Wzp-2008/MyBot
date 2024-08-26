@@ -1,25 +1,25 @@
 package cn.wzpmc.entities.user.bot;
 
-import cn.wzpmc.api.api.ActionResponse;
-import cn.wzpmc.api.api.IMainApi;
-import cn.wzpmc.api.api.actions.message.get.GetGroupListAction;
-import cn.wzpmc.api.entities.GroupInformation;
-import cn.wzpmc.api.entities.Ops;
-import cn.wzpmc.api.events.Event;
-import cn.wzpmc.api.message.MessageComponent;
-import cn.wzpmc.api.message.StringMessage;
-import cn.wzpmc.api.message.json.JsonMessage;
-import cn.wzpmc.api.plugins.BasePlugin;
-import cn.wzpmc.api.user.IBot;
-import cn.wzpmc.api.user.permission.Permissions;
-import cn.wzpmc.api.utils.IncreasbleHashMap;
+import cn.wzpmc.api.ActionResponse;
+import cn.wzpmc.api.IMainApi;
+import cn.wzpmc.api.actions.message.get.GetGroupListAction;
 import cn.wzpmc.configuration.Configuration;
 import cn.wzpmc.console.MyBotConsole;
+import cn.wzpmc.entities.GroupInformation;
+import cn.wzpmc.entities.Ops;
 import cn.wzpmc.entities.event.EventHandlerMethod;
+import cn.wzpmc.events.Event;
+import cn.wzpmc.message.MessageComponent;
+import cn.wzpmc.message.StringMessage;
+import cn.wzpmc.message.json.JsonMessage;
 import cn.wzpmc.network.WebSocketConnectionHandler;
+import cn.wzpmc.plugins.BasePlugin;
 import cn.wzpmc.plugins.CommandManager;
 import cn.wzpmc.plugins.PluginManager;
 import cn.wzpmc.plugins.api.MainApi;
+import cn.wzpmc.user.IBot;
+import cn.wzpmc.user.permission.Permissions;
+import cn.wzpmc.utils.IncreasbleHashMap;
 import cn.wzpmc.utils.ReflectionUtils;
 import com.alibaba.fastjson2.JSON;
 import lombok.Getter;
@@ -39,31 +39,33 @@ import java.util.Set;
 
 /**
  * 机器人实现类
+ *
  * @author wzp
- * @since 2024/7/30 下午11:46
  * @version 0.0.1-dev
+ * @since 2024/7/30 下午11:46
  */
 @Log4j2
 @Getter
 public class MyBot extends IBot {
     private final Configuration configuration;
+    private final CommandManager commandManager = new CommandManager(this);
+    private final PluginManager pluginManager = new PluginManager();
+    private final IncreasbleHashMap<Class<? extends Event>, EventHandlerMethod> events = new IncreasbleHashMap<>();
+    @Getter
+    private final Ops ops;
+    private final File opFile;
     @Setter
     private Long id;
     @Setter
     private String name;
-    private final CommandManager commandManager = new CommandManager(this);
-    private final PluginManager pluginManager = new PluginManager();
-    private final IncreasbleHashMap<Class<? extends Event>, EventHandlerMethod> events = new IncreasbleHashMap<>();
     private File pluginsFolder;
     @Setter
     private MyBotConsole console = null;
     @Getter
     private IMainApi mainApi;
     private WebSocketConnectionHandler connectionHandler;
-    @Getter
-    private final Ops ops;
-    private final File opFile;
-    public MyBot(Configuration configuration){
+
+    public MyBot(Configuration configuration) {
         Ops opsTmp;
         this.configuration = configuration;
         this.permissions = Permissions.ADMIN;
@@ -75,18 +77,18 @@ public class MyBot extends IBot {
                     log.error("无法创建OP文件！");
                 }
             } catch (IOException e) {
-                log.error("创建OP文件失败！",e);
+                log.error("创建OP文件失败！", e);
                 throw new RuntimeException(e);
             }
         } else {
-            try(FileInputStream fis = new FileInputStream(this.opFile)) {
+            try (FileInputStream fis = new FileInputStream(this.opFile)) {
                 opsTmp = JSON.parseObject(fis, Ops.class);
             } catch (IOException e) {
                 log.error("读取OP文件失败！");
                 throw new RuntimeException(e);
             }
         }
-        if (opsTmp == null){
+        if (opsTmp == null) {
             opsTmp = new Ops();
         }
         this.ops = opsTmp;
@@ -94,10 +96,10 @@ public class MyBot extends IBot {
 
     @Override
     public void sendMessage(MessageComponent messageComponent) {
-        if (messageComponent instanceof StringMessage){
+        if (messageComponent instanceof StringMessage) {
             log.info(messageComponent.toMessageString());
         }
-        if (messageComponent instanceof JsonMessage){
+        if (messageComponent instanceof JsonMessage) {
             log.info(((JsonMessage) messageComponent).toTextDisplay());
         }
     }
@@ -121,15 +123,16 @@ public class MyBot extends IBot {
     @Override
     public void triggerEvent(Event event) throws InvocationTargetException, IllegalAccessException {
         List<EventHandlerMethod> eventHandlerMethods = this.events.get(event.getClass());
-        if (eventHandlerMethods == null){
+        if (eventHandlerMethods == null) {
             return;
         }
         for (EventHandlerMethod eventHandlerMethod : eventHandlerMethods) {
             eventHandlerMethod.getMethod().invoke(eventHandlerMethod.getObject(), event);
         }
     }
+
     public void setPluginsFolder(File pluginsFolder) {
-        if (this.pluginsFolder != null){
+        if (this.pluginsFolder != null) {
             throw new IllegalStateException("This bot already initialized!");
         }
         this.pluginsFolder = pluginsFolder;
@@ -175,7 +178,7 @@ public class MyBot extends IBot {
     public boolean removeOp(Long groupId, Long userId) {
         boolean groupAdmin = this.ops.isAdmin(groupId, userId);
         boolean admin = this.ops.isAdmin(userId);
-        if (!groupAdmin && !admin){
+        if (!groupAdmin && !admin) {
             return false;
         }
         Map<String, List<Long>> admins = this.ops.getGroupAdmins();
@@ -206,7 +209,7 @@ public class MyBot extends IBot {
     }
 
     private void flushOpsFile() {
-        try(FileOutputStream fos = new FileOutputStream(this.opFile)){
+        try (FileOutputStream fos = new FileOutputStream(this.opFile)) {
             JSON.writeTo(fos, this.ops);
         } catch (IOException e) {
             log.error("写入OP文件失败！", e);

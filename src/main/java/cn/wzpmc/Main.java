@@ -1,8 +1,7 @@
 package cn.wzpmc;
 
-import cn.wzpmc.api.api.IMainApi;
-import cn.wzpmc.api.api.actions.message.get.GetLoginInfoAction;
-import cn.wzpmc.api.plugins.BasePlugin;
+import cn.wzpmc.api.IMainApi;
+import cn.wzpmc.api.actions.message.get.GetLoginInfoAction;
 import cn.wzpmc.builtin.commands.DeOpCommand;
 import cn.wzpmc.builtin.commands.HelpCommand;
 import cn.wzpmc.builtin.commands.OpCommand;
@@ -12,6 +11,7 @@ import cn.wzpmc.configuration.Configuration;
 import cn.wzpmc.console.MyBotConsole;
 import cn.wzpmc.entities.user.bot.MyBot;
 import cn.wzpmc.network.WebSocketConnectionHandler;
+import cn.wzpmc.plugins.BasePlugin;
 import cn.wzpmc.plugins.CommandManager;
 import cn.wzpmc.plugins.PluginClassLoader;
 import cn.wzpmc.plugins.PluginManager;
@@ -32,14 +32,16 @@ import java.net.URL;
 public class Main {
     private static final String DEFAULT_CONFIGURATION_FILE_PATH = "templates/config.yaml";
 
-    public static void initializeJVM(){
+    public static void initializeJVM() {
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
         System.setProperty("terminal.jline", "true");
     }
-    public static void initializeJsonUtils(){
+
+    public static void initializeJsonUtils() {
         JsonUtils.initReader();
         JsonUtils.initWriter();
     }
+
     public static Configuration getConfiguration() {
         File configurationFile = new File("config.yaml");
         if (TemplateFileUtils.saveDefaultConfig(Main.class.getClassLoader(), DEFAULT_CONFIGURATION_FILE_PATH, configurationFile)) {
@@ -50,10 +52,12 @@ public class Main {
         log.debug("读取配置文件 {}", configurationFile.getAbsolutePath());
         return YamlUtils.readYamlFile(configurationFile, Configuration.class);
     }
-    public static MyBot createBot(Configuration configuration){
+
+    public static MyBot createBot(Configuration configuration) {
         return new MyBot(configuration);
     }
-    public static URI getUriFromConfiguration(Configuration configuration){
+
+    public static URI getUriFromConfiguration(Configuration configuration) {
         URI uri;
         try {
             uri = new URI(configuration.getWebsocket());
@@ -62,6 +66,7 @@ public class Main {
         }
         return uri;
     }
+
     public static void loadPlugins(MyBot myBot) throws MalformedURLException {
         File pluginsDir = new File("plugins");
         if (TemplateFileUtils.createDefaultDirectory(pluginsDir)) {
@@ -85,7 +90,7 @@ public class Main {
             URI fileURI = file.toURI();
             PluginClassLoader pluginClassLoader = new PluginClassLoader(new URL[]{fileURI.toURL()}, myBot);
             BasePlugin load = ReflectionUtils.load(pluginClassLoader, file, pluginManager);
-            if (load == null){
+            if (load == null) {
                 log.info("插件{}加载失败！", name);
                 continue;
             }
@@ -98,27 +103,30 @@ public class Main {
         commandManager.registerCommand(new HelpCommand());
         commandManager.registerCommand(new DeOpCommand());
     }
-    public static WebSocketConnectionHandler createConnection(MyBot myBot, URI uri){
+
+    public static WebSocketConnectionHandler createConnection(MyBot myBot, URI uri) {
         WebSocketConnectionHandler webSocketConnectionHandler = new WebSocketConnectionHandler(myBot);
         webSocketConnectionHandler.connect(uri);
         return webSocketConnectionHandler;
     }
-    public static void startConsole(MyBot myBot, WebSocketConnectionHandler webSocketConnectionHandler){
+
+    public static void startConsole(MyBot myBot, WebSocketConnectionHandler webSocketConnectionHandler) {
         MyBotConsole myBotConsole = new MyBotConsole(myBot, webSocketConnectionHandler);
         myBotConsole.start();
     }
+
     @SneakyThrows
     public static void main(String[] args) {
         initializeJVM();
         initializeJsonUtils();
         log.info("启动MyBot...");
         Configuration configuration = getConfiguration();
-        if (configuration == null){
+        if (configuration == null) {
             return;
         }
         MyBot myBot = createBot(configuration);
         URI uri = getUriFromConfiguration(configuration);
-        if (uri == null){
+        if (uri == null) {
             log.error("无法解析websocket地址");
             return;
         }

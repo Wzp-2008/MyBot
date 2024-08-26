@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * 握手包处理器
+ *
  * @author wzp
  * @version 0.0.1-dev
  * @since 2024/7/31 上午3:53
@@ -29,6 +30,7 @@ public class HandshakePacketHandler extends SimpleChannelInboundHandler<FullHttp
         this.handshaker.handshake(ctx.channel());
         log.debug("发送握手包");
     }
+
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpResponse fullHttpResponse) {
         if (!handshaker.isHandshakeComplete()) {

@@ -1,20 +1,20 @@
 package cn.wzpmc.utils;
 
-import cn.wzpmc.api.api.ActionResponse;
-import cn.wzpmc.api.api.Actions;
-import cn.wzpmc.api.entities.HonorType;
-import cn.wzpmc.api.events.Event;
-import cn.wzpmc.api.events.message.MessageEvent;
-import cn.wzpmc.api.events.meta.MetaEvent;
-import cn.wzpmc.api.events.notice.NoticeEvent;
-import cn.wzpmc.api.events.notice.notify.NotifyEvent;
-import cn.wzpmc.api.events.request.RequestEvent;
-import cn.wzpmc.api.message.StringMessage;
-import cn.wzpmc.api.message.json.JsonMessage;
-import cn.wzpmc.api.user.Friend;
-import cn.wzpmc.api.user.IBot;
-import cn.wzpmc.api.user.IUser;
-import cn.wzpmc.api.user.group.GroupUser;
+import cn.wzpmc.api.ActionResponse;
+import cn.wzpmc.api.Actions;
+import cn.wzpmc.entities.HonorType;
+import cn.wzpmc.events.Event;
+import cn.wzpmc.events.message.MessageEvent;
+import cn.wzpmc.events.meta.MetaEvent;
+import cn.wzpmc.events.notice.NoticeEvent;
+import cn.wzpmc.events.notice.notify.NotifyEvent;
+import cn.wzpmc.events.request.RequestEvent;
+import cn.wzpmc.message.StringMessage;
+import cn.wzpmc.message.json.JsonMessage;
+import cn.wzpmc.user.Friend;
+import cn.wzpmc.user.IBot;
+import cn.wzpmc.user.IUser;
+import cn.wzpmc.user.group.GroupUser;
 import cn.wzpmc.utils.json.action.ActionReader;
 import cn.wzpmc.utils.json.action.ActionWriter;
 import cn.wzpmc.utils.json.event.*;
@@ -30,6 +30,7 @@ import com.alibaba.fastjson2.JSON;
 
 /**
  * JSON相关工具类
+ *
  * @author wzp
  * @version 0.0.3-dev
  * @since 2024/8/2 下午2:04
@@ -37,6 +38,7 @@ import com.alibaba.fastjson2.JSON;
 public class JsonUtils {
     /**
      * 初始化JSON反序列化相关
+     *
      * @author wzp
      * @since 2024/8/23 21:50 v0.0.5-dev
      */
@@ -48,6 +50,7 @@ public class JsonUtils {
 
     /**
      * 初始化JSON序列化相关
+     *
      * @author wzp
      * @since 2024/8/23 21:50 v0.0.5-dev
      */

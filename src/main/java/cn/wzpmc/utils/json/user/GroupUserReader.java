@@ -1,9 +1,9 @@
 package cn.wzpmc.utils.json.user;
 
-import cn.wzpmc.api.user.IBot;
-import cn.wzpmc.api.user.group.GroupUser;
-import cn.wzpmc.api.user.permission.Permissions;
 import cn.wzpmc.entities.user.bot.MyBot;
+import cn.wzpmc.user.IBot;
+import cn.wzpmc.user.group.GroupUser;
+import cn.wzpmc.user.permission.Permissions;
 import com.alibaba.fastjson2.JSONFactory;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.reader.ObjectReader;

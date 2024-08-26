@@ -1,8 +1,8 @@
 package cn.wzpmc.network;
 
-import cn.wzpmc.api.api.Action;
-import cn.wzpmc.api.api.ActionResponse;
-import cn.wzpmc.api.user.IBot;
+import cn.wzpmc.api.Action;
+import cn.wzpmc.api.ActionResponse;
+import cn.wzpmc.user.IBot;
 import com.alibaba.fastjson2.JSON;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 此类用于建立WebSocket连接
+ *
  * @author wzp
  * @version 0.0.1-dev
  * @since 2024/7/30 下午11:54
@@ -35,13 +36,15 @@ public class WebSocketConnectionHandler {
     private ChannelFuture channelFuture;
     private PacketHandler packetHandler;
     private HandshakePacketHandler handshakePacketHandler;
+
     /**
      * 建立连接
+     *
+     * @param websocket websocket连接地址
      * @author wzp
      * @since 2024/7/30 下午11:55 v0.0.1-dev
-     * @param websocket websocket连接地址
      */
-    public void connect(URI websocket){
+    public void connect(URI websocket) {
         log.info("正在连接websocket");
         Bootstrap bootstrap = new Bootstrap();
         WebSocketClientHandshaker clientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(websocket, WebSocketVersion.V13, null, false, new DefaultHttpHeaders());
@@ -53,23 +56,25 @@ public class WebSocketConnectionHandler {
 
     /**
      * 强制结束通信
+     *
      * @author wzp
      * @since 2024/7/31 上午2:04 v0.0.1-dev
      */
-    public void kill(){
+    public void kill() {
         log.info("结束连接...");
         this.eventLoopGroup.shutdownGracefully();
     }
 
     /**
      * 发送请求
+     *
+     * @param request    请求
+     * @param <REQUEST>  请求体类型
+     * @param <RESPONSE> 返回类型
+     * @return 返回
+     * @throws InterruptedException 当请求进行时按下Ctrl+C时抛出
      * @author wzp
      * @since 2024/8/23 21:49 v0.0.5-dev
-     * @param request 请求
-     * @return 返回
-     * @param <REQUEST> 请求体类型
-     * @param <RESPONSE> 返回类型
-     * @throws InterruptedException 当请求进行时按下Ctrl+C时抛出
      */
     public <REQUEST, RESPONSE> ActionResponse<RESPONSE> sendRequest(Action<REQUEST, RESPONSE> request) throws InterruptedException {
         try {

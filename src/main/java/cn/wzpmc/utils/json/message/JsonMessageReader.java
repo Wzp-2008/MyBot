@@ -1,8 +1,8 @@
 package cn.wzpmc.utils.json.message;
 
-import cn.wzpmc.api.message.json.JsonMessage;
-import cn.wzpmc.api.message.json.JsonMessagePart;
-import cn.wzpmc.api.utils.CqCodeUtils;
+import cn.wzpmc.message.json.JsonMessage;
+import cn.wzpmc.message.json.JsonMessagePart;
+import cn.wzpmc.utils.CqCodeUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONReader;
@@ -15,9 +15,10 @@ import java.util.List;
 
 /**
  * json消息解析器
+ *
  * @author wzp
- * @since 2024/8/3 下午6:25
  * @version 0.0.3-dev
+ * @since 2024/8/3 下午6:25
  */
 @Log4j2
 public class JsonMessageReader implements ObjectReader<JsonMessage> {
