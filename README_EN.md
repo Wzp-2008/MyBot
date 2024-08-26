@@ -11,7 +11,7 @@
 2. Implementation of any OneBot11 protocol framework
 
 ### Steps to Use
-1. Go to [Github Release](https://github.com/Wzp-2008/MyBot/releases/latest) or [Gitea Release](https://wzpmc.cn:3000/wzp/MyBot/releases/latest) to download the latest version of the JAR package.
+1. Go to [GitHub Release](https://github.com/Wzp-2008/MyBot/releases/latest) or [Gitea Release](https://wzpmc.cn:3000/wzp/MyBot/releases/latest) to download the latest version of the JAR package.
 2. Place the downloaded JAR package in an empty folder.
 3. Start your OneBot instance.
 4. Start the MyBot server using the following command:
@@ -71,7 +71,7 @@ In your `pom.xml`, add the following dependency:
 ```xml
 <dependency>
     <groupId>cn.wzpmc</groupId>
-    <artifactId>my-bot</artifactId>
+    <artifactId>mybot-api</artifactId>
     <version>[LATEST-VERSION]</version>
 </dependency>
 ```
@@ -80,16 +80,16 @@ In your `pom.xml`, add the following dependency:
 
 ##### Groovy DSL
 ```groovy
-implementation 'cn.wzpmc:my-bot:[LATEST-VERSION]'
+implementation 'cn.wzpmc:mybot-api:[LATEST-VERSION]'
 ```
 
 ##### Kotlin DSL
 ```kotlin
-implementation("cn.wzpmc:my-bot:[LATEST-VERSION]")
+implementation("cn.wzpmc:mybot-api:[LATEST-VERSION]")
 ```
 
 ---
 
-With these settings, you'll be able to seamlessly integrate MyBot into your project and quickly build OneBot11-compatible bot applications. Enjoy!
+With these settings, you'll be able to seamlessly integrate MyBot-API into your project and quickly build OneBot11-compatible bot applications. Enjoy!
 
 ---

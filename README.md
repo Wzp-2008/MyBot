@@ -11,7 +11,7 @@
 2. 任意 OneBot11 协议框架的实现
 
 ### 使用步骤
-1. 前往 [Github Release](https://github.com/Wzp-2008/MyBot/releases/latest) 或 [Gitea Release](https://wzpmc.cn:3000/wzp/MyBot/releases/latest) 下载最新版本的 JAR 包。
+1. 前往 [GitHub Release](https://github.com/Wzp-2008/MyBot/releases/latest) 或 [Gitea Release](https://wzpmc.cn:3000/wzp/MyBot/releases/latest) 下载最新版本的 JAR 包。
 2. 将下载的 JAR 包放入一个空文件夹中。
 3. 启动你的 OneBot 实例。
 4. 通过以下命令启动 MyBot 服务端：
@@ -71,7 +71,7 @@ repositories {
 ```xml
 <dependency>
     <groupId>cn.wzpmc</groupId>
-    <artifactId>my-bot</artifactId>
+    <artifactId>mybot-api</artifactId>
     <version>[LATEST-VERSION]</version>
 </dependency>
 ```
@@ -80,16 +80,16 @@ repositories {
 
 ##### Groovy DSL
 ```groovy
-implementation 'cn.wzpmc:my-bot:[LATEST-VERSION]'
+implementation 'cn.wzpmc:mybot-api:[LATEST-VERSION]'
 ```
 
 ##### Kotlin DSL
 ```kotlin
-implementation("cn.wzpmc:my-bot:[LATEST-VERSION]")
+implementation("cn.wzpmc:mybot-api:[LATEST-VERSION]")
 ```
 
 ---
 
-如此设置之后，您将轻松地将 MyBot 集成到您的项目中，并快速构建与 OneBot11 兼容的机器人应用。Enjoy~
+如此设置之后，您将轻松地将 MyBot-API 集成到您的项目中，并快速构建与 OneBot11 兼容的机器人应用。Enjoy~
 
 ---
