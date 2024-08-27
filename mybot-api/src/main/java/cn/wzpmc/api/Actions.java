@@ -138,7 +138,7 @@ public enum Actions {
      *
      * @since 2024/8/24 20:02 v0.0.6-dev
      */
-    GET_FRIEND_LIST(MessageInformation.class, true),
+    GET_FRIEND_LIST(FriendInformation.class, true),
     /**
      * 获取群信息
      *
