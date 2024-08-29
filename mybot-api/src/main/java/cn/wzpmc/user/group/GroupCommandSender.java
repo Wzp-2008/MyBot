@@ -72,7 +72,14 @@ public class GroupCommandSender extends GroupUser implements CommandSender {
         JsonMessage jsonMessage = new JsonMessage();
         List<JsonMessagePart> messageParts = jsonMessage.getMessageParts();
         messageParts.add(new At(this.getId()));
-        messageParts.add(StringMessage.text(" " + messageComponent.toMessageString()));
+        messageParts.add(StringMessage.text(" "));
+        if (messageComponent instanceof StringMessage) {
+            messageParts.add((StringMessage) messageComponent);
+        }
+        if (messageComponent instanceof JsonMessage) {
+            List<JsonMessagePart> jsonMessageParts = ((JsonMessage) messageComponent).getMessageParts();
+            messageParts.addAll(jsonMessageParts);
+        }
         SendGroupMessageAction sendGroupMessageAction = new SendGroupMessageAction(this.groupId, jsonMessage);
         mainApi.doApiCall(sendGroupMessageAction);
     }

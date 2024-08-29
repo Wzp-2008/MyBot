@@ -25,6 +25,9 @@ public class StopCommand implements BrigadierCommand {
     public LiteralArgumentBuilder<CommandSender> getCommandNode() {
         return LiteralArgumentBuilder.<CommandSender>literal("stop")
                 .requires(e -> {
+                    if (e instanceof IBot) {
+                        return true;
+                    }
                     Ops ops = bot.getOps();
                     Set<Long> admins = ops.getAdmins();
                     return admins.contains(e.getId());

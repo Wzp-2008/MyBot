@@ -2,10 +2,7 @@ package cn.wzpmc;
 
 import cn.wzpmc.api.IMainApi;
 import cn.wzpmc.api.actions.message.get.GetLoginInfoAction;
-import cn.wzpmc.builtin.commands.DeOpCommand;
-import cn.wzpmc.builtin.commands.HelpCommand;
-import cn.wzpmc.builtin.commands.OpCommand;
-import cn.wzpmc.builtin.commands.StopCommand;
+import cn.wzpmc.builtin.commands.*;
 import cn.wzpmc.builtin.event.CommandEventHandler;
 import cn.wzpmc.configuration.Configuration;
 import cn.wzpmc.console.MyBotConsole;
@@ -96,12 +93,6 @@ public class Main {
             }
             load.onLoad();
         }
-        // 注册内置指令
-        CommandManager commandManager = myBot.getCommandManager();
-        commandManager.registerCommand(new StopCommand(myBot));
-        commandManager.registerCommand(new OpCommand());
-        commandManager.registerCommand(new HelpCommand());
-        commandManager.registerCommand(new DeOpCommand());
     }
 
     public static WebSocketConnectionHandler createConnection(MyBot myBot, URI uri) {
@@ -137,6 +128,14 @@ public class Main {
         // 获取Bot消息
         mainApi.doApiCall(new GetLoginInfoAction());
         myBot.registerEventHandler(new CommandEventHandler());
+        // 注册内置指令
+        CommandManager commandManager = myBot.getCommandManager();
+        commandManager.registerCommand(new StopCommand(myBot));
+        commandManager.registerCommand(new OpCommand());
+        commandManager.registerCommand(new HelpCommand());
+        commandManager.registerCommand(new DeOpCommand());
+        commandManager.registerCommand(new ListCommand());
+        commandManager.registerCommand(new SendCommand());
         startConsole(myBot, webSocketConnectionHandler);
     }
 }

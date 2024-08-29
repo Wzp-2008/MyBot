@@ -27,7 +27,14 @@ public enum NotifySubType {
      *
      * @since 2024/8/1 下午10:16 v0.0.2-dev
      */
-    HONOR(HonorNotifyEvent.class);
+    HONOR(HonorNotifyEvent.class),
+
+    /**
+     * 用户正在输入事件
+     *
+     * @since 2024/8/29 21:52 v1.0.2
+     */
+    INPUT_STATUS(InputStatusNotifyEvent.class);
     public final Class<? extends NotifyEvent> clazz;
 
     NotifySubType(Class<? extends NotifyEvent> clazz) {

@@ -3,7 +3,6 @@ package cn.wzpmc.api.actions.message.get;
 import cn.wzpmc.api.Action;
 import cn.wzpmc.api.Actions;
 import cn.wzpmc.entities.FriendInformation;
-import cn.wzpmc.entities.MessageInformation;
 
 import java.util.List;
 

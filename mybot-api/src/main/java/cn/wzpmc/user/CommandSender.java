@@ -84,4 +84,15 @@ public interface CommandSender {
     default boolean isAdmin() {
         return this.getPermissions().isAdmin();
     }
+
+    /**
+     * 检查指令发送者是否为完整权限管理员
+     *
+     * @return 是否为管理员
+     * @author wzp
+     * @since 2024/8/27 15:05 v1.0.2
+     */
+    default boolean isFullAdmin() {
+        return this instanceof IBot || IBot.getInstance().isBotOp(this.getId());
+    }
 }
