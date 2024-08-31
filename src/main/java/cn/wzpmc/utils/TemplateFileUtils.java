@@ -44,6 +44,29 @@ public class TemplateFileUtils {
     }
 
     /**
+     * 读取默认配置文件
+     *
+     * @param loader 读取默认配置所使用的类加载器
+     * @param path   默认配置的路径
+     * @param clazz  保存到的文件
+     * @param <T>    序列化的类型(需要空参构造方法)
+     * @return 是否写入
+     * @author wzp
+     * @since 2024/9/1 00:43 v1.0.3
+     */
+    public static <T> T readDefaultConfig(ClassLoader loader, String path, Class<T> clazz) {
+        try (InputStream sourceInputStream = loader.getResourceAsStream(path)) {
+            if (sourceInputStream == null) {
+                throw new RuntimeException(new FileNotFoundException("Didn't find " + path + " from class loader: " + loader.getName()));
+            }
+            return YamlUtils.readYamlStream(sourceInputStream, clazz);
+        } catch (IOException e) {
+            log.throwing(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 创建默认文件夹，当其不存在时会被创建
      *
      * @param path 文件夹路径

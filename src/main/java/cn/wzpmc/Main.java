@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
 @Log4j2
 public class Main {
@@ -43,13 +44,41 @@ public class Main {
 
     public static Configuration getConfiguration() {
         File configurationFile = new File("config.yaml");
-        if (TemplateFileUtils.saveDefaultConfig(Main.class.getClassLoader(), DEFAULT_CONFIGURATION_FILE_PATH, configurationFile)) {
+        ClassLoader classLoader = Main.class.getClassLoader();
+        if (TemplateFileUtils.saveDefaultConfig(classLoader, DEFAULT_CONFIGURATION_FILE_PATH, configurationFile)) {
             log.debug("创建日志文件成功！");
             log.info("首次启动，默认配置文件已创建，请填写后再次启动MyBot！");
             return null;
         }
         log.debug("读取配置文件 {}", configurationFile.getAbsolutePath());
-        return YamlUtils.readYamlFile(configurationFile, Configuration.class);
+        Configuration configuration = YamlUtils.readYamlFile(configurationFile, Configuration.class);
+        Configuration defaultConfiguration = TemplateFileUtils.readDefaultConfig(classLoader, DEFAULT_CONFIGURATION_FILE_PATH, Configuration.class);
+        // 配置文件自动更新 start
+        boolean isChanged = false;
+        // 1.0.3 配置文件更新 start
+        if (configuration.getFriend() == null) {
+            configuration.setFriend(defaultConfiguration.getFriend());
+            isChanged = true;
+        }
+        if (Objects.isNull(configuration.getFriend().isAutoAccept())) {
+            configuration.getFriend().setAutoAccept(defaultConfiguration.getFriend().getAutoAccept());
+            isChanged = true;
+        }
+        if (configuration.getGroup() == null) {
+            configuration.setGroup(defaultConfiguration.getGroup());
+            isChanged = true;
+        }
+        if (Objects.isNull(configuration.getGroup().isAutoAccept())) {
+            configuration.getGroup().setAutoAccept(defaultConfiguration.getGroup().getAutoAccept());
+            isChanged = true;
+        }
+        // end
+        if (isChanged) {
+            log.warn("已自动升级配置文件，请检查config.yml是否有错误的地方，有则请修改");
+            YamlUtils.writeYamlFile(configurationFile, configuration);
+        }
+        // 配置文件自动更新end
+        return configuration;
     }
 
     public static MyBot createBot(Configuration configuration) {

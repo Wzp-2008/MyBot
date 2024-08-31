@@ -13,5 +13,5 @@ public interface IFriendConfiguration {
      * @author wzp
      * @since 2024/8/30 15:41 v1.0.3
      */
-    boolean isAutoAccept();
+    Boolean isAutoAccept();
 }
