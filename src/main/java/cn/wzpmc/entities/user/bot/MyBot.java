@@ -110,11 +110,6 @@ public class MyBot extends IBot {
     }
 
     @Override
-    public boolean isGroupUser() {
-        return false;
-    }
-
-    @Override
     public boolean isConsole() {
         return true;
     }
