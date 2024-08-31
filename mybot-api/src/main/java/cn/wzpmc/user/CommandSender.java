@@ -95,4 +95,49 @@ public interface CommandSender {
     default boolean isFullAdmin() {
         return this instanceof IBot || IBot.getInstance().isBotOp(this.getId());
     }
+
+    /**
+     * 判断指令发送者是否为好友/控制台
+     *
+     * @return 是否为好友/控制台
+     * @author wzp
+     * @since 2024/8/31 21:55 v1.0.3
+     */
+    default boolean isPureUser() {
+        return isFriend() || isConsole();
+    }
+
+    /**
+     * 判断指令发送者是否为好友
+     *
+     * @return 是否为好友
+     * @author wzp
+     * @since 2024/8/31 21:58 v1.0.3
+     */
+    default boolean isFriend() {
+        return false;
+    }
+
+    /**
+     * 判断指令发送者是否为群用户
+     *
+     * @return 是否为群用户
+     * @author wzp
+     * @since 2024/8/31 21:55 v1.0.3
+     */
+    default boolean isGroupUser() {
+        return false;
+    }
+
+    /**
+     * 判断指令发送者是否为控制台
+     *
+     * @return 是否为控制台
+     * @author wzp
+     * @since 2024/8/31 21:55 v1.0.3
+     */
+    default boolean isConsole() {
+        return false;
+    }
+
 }

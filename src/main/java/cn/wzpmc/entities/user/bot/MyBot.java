@@ -105,6 +105,21 @@ public class MyBot extends IBot {
     }
 
     @Override
+    public boolean isFriend() {
+        return true;
+    }
+
+    @Override
+    public boolean isGroupUser() {
+        return false;
+    }
+
+    @Override
+    public boolean isConsole() {
+        return true;
+    }
+
+    @Override
     public void stop() {
         for (BasePlugin plugin : this.pluginManager.getPlugins()) {
             plugin.onUnload();

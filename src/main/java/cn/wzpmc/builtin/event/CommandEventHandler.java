@@ -9,6 +9,7 @@ import cn.wzpmc.plugins.event.EventHandler;
 import cn.wzpmc.user.Friend;
 import cn.wzpmc.user.IBot;
 import cn.wzpmc.user.group.GroupCommandSender;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.regex.Pattern;
 
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
  * @version 1.0.0
  * @since 2024/8/25 13:40
  */
+@Log4j2
 public class CommandEventHandler {
     @EventHandler
     public void onGroupMessage(GroupMessageEvent event) {
@@ -29,7 +31,9 @@ public class CommandEventHandler {
         Pattern compile = Pattern.compile("\\[CQ:at,qq=" + id + ".*?]\\s*?/.*");
         if (compile.asMatchPredicate().test(message)) {
             CommandManager commandManager = (CommandManager) instance.getCommandManager();
-            commandManager.execute(groupCommandSender, message.replaceFirst("\\[CQ:at,qq=[0-9]{10}.*?]\\s*?/", ""));
+            String commandRaw = message.replaceFirst("\\[CQ:at,qq=[0-9]{10}.*?]\\s*?/", "");
+            log.info("群{}中的用户{}使用了指令{}", groupCommandSender.getGroupId(), groupCommandSender.getId(), commandRaw);
+            commandManager.execute(groupCommandSender, commandRaw);
         }
     }
 
@@ -41,7 +45,9 @@ public class CommandEventHandler {
         String message = rawMessage.getMessage();
         if (message.startsWith("/")) {
             CommandManager commandManager = (CommandManager) instance.getCommandManager();
-            commandManager.execute(sender, message.replaceFirst("/", ""));
+            String commandRaw = message.replaceFirst("/", "");
+            log.info("用户{}使用了指令{}", sender.getId(), commandRaw);
+            commandManager.execute(sender, commandRaw);
         }
     }
 }

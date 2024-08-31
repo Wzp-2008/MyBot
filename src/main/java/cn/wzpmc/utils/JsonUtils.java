@@ -22,6 +22,7 @@ import cn.wzpmc.utils.json.honor.HonorWriter;
 import cn.wzpmc.utils.json.message.JsonMessageReader;
 import cn.wzpmc.utils.json.message.JsonMessageWriter;
 import cn.wzpmc.utils.json.message.StringMessageReader;
+import cn.wzpmc.utils.json.message.StringMessageWriter;
 import cn.wzpmc.utils.json.user.FriendUserReader;
 import cn.wzpmc.utils.json.user.GroupUserReader;
 import cn.wzpmc.utils.json.user.IBotReader;
@@ -46,6 +47,7 @@ public class JsonUtils {
         JSON.register(JsonMessage.class, new JsonMessageWriter());
         JSON.register(Actions.class, new ActionWriter());
         JSON.register(HonorType.class, new HonorWriter());
+        JSON.register(StringMessage.class, new StringMessageWriter());
     }
 
     /**

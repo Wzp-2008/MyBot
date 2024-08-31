@@ -38,4 +38,9 @@ public class Friend extends IUser implements CommandSender {
         IMainApi mainApi = instance.getMainApi();
         mainApi.doApiCall(new SendPrivateMessageAction(this.id, messageComponent));
     }
+
+    @Override
+    public boolean isFriend() {
+        return true;
+    }
 }

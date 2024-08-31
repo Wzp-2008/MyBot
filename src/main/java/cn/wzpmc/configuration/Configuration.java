@@ -30,4 +30,17 @@ public class Configuration implements IConfiguration {
      * @since 2024/7/30 下午11:49 v0.0.1-dev
      */
     private FallbackConfiguration fallback;
+    /**
+     * 好友配置
+     *
+     * @since 2024/8/30 15:43 v1.0.3
+     */
+    private FriendConfiguration friend;
+
+    /**
+     * 群聊相关配置
+     *
+     * @since 2024/8/31 23:57 v1.0.3
+     */
+    private GroupConfiguration group;
 }

@@ -1,6 +1,7 @@
 package cn.wzpmc.utils;
 
 import cn.wzpmc.message.json.JsonMessagePart;
+import cn.wzpmc.message.json.parts.At;
 import cn.wzpmc.message.json.parts.PartType;
 import cn.wzpmc.message.json.parts.music.MusicType;
 import cn.wzpmc.message.json.parts.node.CustomNode;
@@ -113,6 +114,13 @@ public class CqCodeUtils {
         PartType type = jsonObject.getObject("type", PartType.class);
         Class<? extends JsonMessagePart> clazz = type.clazz;
         JSONObject dataObject = jsonObject.getJSONObject("data");
+        if (type.equals(PartType.AT)) {
+            String string = dataObject.getString("qq");
+            if (string.equalsIgnoreCase("all")) {
+                return At.all();
+            }
+            return At.user(Long.parseLong(string));
+        }
         if (type.equals(PartType.POKE)) {
             Integer pokeType = dataObject.getInteger("type");
             Integer pokeId = dataObject.getInteger("id");

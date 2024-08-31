@@ -3,7 +3,9 @@ package cn.wzpmc;
 import cn.wzpmc.api.IMainApi;
 import cn.wzpmc.api.actions.message.get.GetLoginInfoAction;
 import cn.wzpmc.builtin.commands.*;
+import cn.wzpmc.builtin.event.AddGroupEventHandler;
 import cn.wzpmc.builtin.event.CommandEventHandler;
+import cn.wzpmc.builtin.event.FriendAddEventHandler;
 import cn.wzpmc.configuration.Configuration;
 import cn.wzpmc.console.MyBotConsole;
 import cn.wzpmc.entities.user.bot.MyBot;
@@ -128,6 +130,12 @@ public class Main {
         // 获取Bot消息
         mainApi.doApiCall(new GetLoginInfoAction());
         myBot.registerEventHandler(new CommandEventHandler());
+        if (myBot.getConfiguration().getFriend().isAutoAccept()) {
+            myBot.registerEventHandler(new FriendAddEventHandler());
+        }
+        if (myBot.getConfiguration().getGroup().isAutoAccept()) {
+            myBot.registerEventHandler(new AddGroupEventHandler());
+        }
         // 注册内置指令
         CommandManager commandManager = myBot.getCommandManager();
         commandManager.registerCommand(new StopCommand(myBot));

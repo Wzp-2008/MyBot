@@ -35,7 +35,7 @@ public class UserIdArguments implements ArgumentType<Long> {
             if (CqCodeUtils.isCQ(s)) {
                 JsonMessagePart jsonMessagePart = CqCodeUtils.parseToPart(s);
                 if (jsonMessagePart instanceof At) {
-                    return ((At) jsonMessagePart).getQq();
+                    return Long.parseLong(((At) jsonMessagePart).getQq());
                 }
                 throw new CqCodeException();
             }

@@ -5,3 +5,7 @@ authorization:
 fallback:
   command: "Command Not Found!"
   errorUncaught: "Had an error while run command!"
+friend:
+  autoAccept: true
+group:
+  autoAccept: true
