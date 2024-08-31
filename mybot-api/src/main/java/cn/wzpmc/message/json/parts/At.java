@@ -28,7 +28,7 @@ public class At implements JsonMessagePart {
     /**
      * 获取用于@全体成员的AT对象
      *
-     * @return @全体成员的At对象
+     * @return 全体成员的At对象
      * @author wzp
      * @since 2024/8/31 23:51 v1.0.3
      */
@@ -40,7 +40,7 @@ public class At implements JsonMessagePart {
      * 获取用于@用户的AT对象
      *
      * @param userId 用户ID
-     * @return @指定用户的At对象
+     * @return 指定用户的At对象
      * @author wzp
      * @since 2024/8/31 23:50 v1.0.3
      */
