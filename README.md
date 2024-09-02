@@ -39,7 +39,7 @@
 <repositories>
     <repository>
         <id>wzpmc-maven-releases</id>
-        <url>https://wzpmc.cn:90/repository/maven-releases</url>
+        <url>https://wzpmc.cn:90/repository/maven-public</url>
     </repository>
 </repositories>
 ```
@@ -50,7 +50,7 @@
 ```groovy
 repositories {
     maven {
-        url "https://wzpmc.cn:90/repository/maven-releases"
+        url "https://wzpmc.cn:90/repository/maven-public"
     }
 }
 ```
@@ -59,7 +59,7 @@ repositories {
 ```kotlin
 repositories {
     maven {
-        url = uri("https://wzpmc.cn:90/repository/maven-releases")
+        url = uri("https://wzpmc.cn:90/repository/maven-public")
     }
 }
 ```
