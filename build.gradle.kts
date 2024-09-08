@@ -7,11 +7,11 @@ val projectArtifactId: String by extra
 val projectVersion: String by extra
 
 plugins {
-    id("java")
+    id("java-library")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 allprojects {
-    apply(plugin = "java")
+    apply(plugin = "java-library")
     val groupName by extra("cn.wzpmc")
     val projectArtifactId by extra("my-bot")
     val projectVersion by extra("1.0.3")
@@ -24,11 +24,10 @@ allprojects {
         compileOnly("org.projectlombok:lombok:1.18.34")
         annotationProcessor("org.projectlombok:lombok:1.18.34")
         // https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2
-        implementation("com.alibaba.fastjson2:fastjson2:2.0.52")
-        implementation("com.mojang:brigadier:1.0.18")
+        api("com.alibaba.fastjson2:fastjson2:2.0.52")
+        api("com.mojang:brigadier:1.0.18")
         // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
-        implementation("org.apache.logging.log4j:log4j-api:2.23.1")
-
+        api("org.apache.logging.log4j:log4j-api:2.23.1")
         testImplementation(platform("org.junit:junit-bom:5.10.0"))
         testImplementation("org.junit.jupiter:junit-jupiter")
     }
@@ -48,12 +47,12 @@ dependencies {
         exclude(group = "org.apache.logging.log4j", module = "log4j-core")
         exclude(group = "org.apache.logging.log4j", module = "log4j-api")
     }
-    // https://mvnrepository.com/artifact/io.netty/netty-all
-    implementation("io.netty:netty-all:4.1.112.Final")
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     implementation("org.apache.logging.log4j:log4j-core:2.23.1")
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jul
     implementation("org.apache.logging.log4j:log4j-jul:2.23.1")
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    implementation("io.netty:netty-all:4.1.112.Final")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
     implementation("org.yaml:snakeyaml:2.2")
     // https://mvnrepository.com/artifact/org.jline/jline

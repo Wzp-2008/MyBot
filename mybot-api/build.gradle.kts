@@ -3,7 +3,6 @@ val groupName: String by extra
 val projectArtifactId = "mybot-api"
 val projectVersion: String by extra
 plugins {
-    id("java")
     id("maven-publish")
 }
 
