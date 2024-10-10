@@ -1,16 +1,15 @@
 package cn.wzpmc.plugins;
 
 import cn.wzpmc.user.IBot;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * Java插件基类
@@ -29,6 +28,11 @@ public abstract class JavaPlugin implements BasePlugin {
      * @since 2024/8/23 21:42 v0.0.5-dev
      */
     private Logger logger;
+    /**
+     * 配置文件缓存
+     * @since 2024/10/10 09:35 v1.0.3
+     */
+    private JSONObject config;
 
     @Override
     public IPluginClassLoader getClassLoader() {
@@ -89,6 +93,10 @@ public abstract class JavaPlugin implements BasePlugin {
     @Override
     public void saveDefaultConfig() {
         try (InputStream resourceAsStream = this.getResourceAsStream("config.yml")) {
+            if (resourceAsStream == null){
+                log.error("config.yml no found");
+                return;
+            }
             File defaultConfigFile = this.getDefaultConfigFile();
             try (FileOutputStream fileOutputStream = new FileOutputStream(defaultConfigFile)) {
                 resourceAsStream.transferTo(fileOutputStream);
@@ -96,5 +104,23 @@ public abstract class JavaPlugin implements BasePlugin {
         } catch (IOException e) {
             log.error(e);
         }
+    }
+    public void reloadConfig() {
+        File file = new File(this.getDataFolder(), "config.yml");
+        if (!file.exists()) {
+            saveDefaultConfig();
+        }
+        try(FileInputStream fis = new FileInputStream(file)) {
+            this.config = new Yaml().loadAs(fis, JSONObject.class);
+        } catch (IOException e) {
+            this.logger.error("加载配置文件时出错！");
+            this.logger.throwing(e);
+        }
+    }
+    public JSONObject getConfig() {
+        if (this.config == null) {
+            reloadConfig();
+        }
+        return this.config;
     }
 }

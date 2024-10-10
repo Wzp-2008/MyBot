@@ -1,6 +1,7 @@
 package cn.wzpmc.plugins;
 
 import cn.wzpmc.user.IBot;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -115,4 +116,19 @@ public interface BasePlugin {
      * @since 2024/8/16 13:16 v0.0.5-dev
      */
     void saveDefaultConfig();
+
+    /**
+     * 重载配置文件
+     * @author wzp
+     * @since 2024/10/10 09:36 v1.0.3
+     */
+    void reloadConfig();
+
+    /**
+     * 获取配置文件内容
+     * @author wzp
+     * @since 2024/10/10 09:37 v1.0.3
+     * @return 配置文件内容
+     */
+    JSONObject getConfig();
 }
