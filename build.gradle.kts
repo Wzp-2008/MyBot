@@ -31,7 +31,7 @@ allprojects {
         testImplementation(platform("org.junit:junit-bom:5.10.0"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-        implementation("org.yaml:snakeyaml:2.2")
+        api("org.yaml:snakeyaml:2.2")
     }
     tasks.compileJava {
         options.encoding = "UTF-8"
