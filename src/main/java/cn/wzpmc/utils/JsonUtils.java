@@ -7,6 +7,7 @@ import cn.wzpmc.events.Event;
 import cn.wzpmc.events.message.MessageEvent;
 import cn.wzpmc.events.meta.MetaEvent;
 import cn.wzpmc.events.notice.NoticeEvent;
+import cn.wzpmc.events.notice.essence.EssenceEvent;
 import cn.wzpmc.events.notice.notify.NotifyEvent;
 import cn.wzpmc.events.request.RequestEvent;
 import cn.wzpmc.message.StringMessage;
@@ -70,6 +71,7 @@ public class JsonUtils {
         JSON.register(IBot.class, new IBotReader());
         JSON.register(Friend.class, new FriendUserReader());
         JSON.register(GroupUser.class, new GroupUserReader());
+        JSON.register(EssenceEvent.class, new EssenceEventReader());
     }
 
 }

@@ -1,6 +1,7 @@
 package cn.wzpmc.events.notice;
 
 import cn.wzpmc.events.notice.admin.GroupAdminChangeEvent;
+import cn.wzpmc.events.notice.essence.EssenceEvent;
 import cn.wzpmc.events.notice.file.GroupFileUploadedEvent;
 import cn.wzpmc.events.notice.notify.NotifyEvent;
 import cn.wzpmc.events.notice.recall.GroupMessageRecallEvent;
@@ -70,7 +71,13 @@ public enum NoticeType {
      * @see NotifyEvent
      * @since 2024/8/1 下午10:22 v0.0.2-dev
      */
-    NOTIFY(NotifyEvent.class);
+    NOTIFY(NotifyEvent.class),
+    /**
+     * 精华消息事件
+     *
+     * @since 2024/9/16 21:25 v1.0.3
+     */
+    ESSENCE(EssenceEvent.class);
     public final Class<? extends NoticeEvent> clazz;
 
     NoticeType(Class<? extends NoticeEvent> clazz) {
