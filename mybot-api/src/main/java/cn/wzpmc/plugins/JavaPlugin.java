@@ -98,8 +98,10 @@ public abstract class JavaPlugin implements BasePlugin {
                 return;
             }
             File defaultConfigFile = this.getDefaultConfigFile();
-            try (FileOutputStream fileOutputStream = new FileOutputStream(defaultConfigFile)) {
-                resourceAsStream.transferTo(fileOutputStream);
+            if (!defaultConfigFile.exists()) {
+                try (FileOutputStream fileOutputStream = new FileOutputStream(defaultConfigFile)) {
+                    resourceAsStream.transferTo(fileOutputStream);
+                }
             }
         } catch (IOException e) {
             log.error(e);
