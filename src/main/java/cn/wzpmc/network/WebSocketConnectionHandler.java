@@ -47,7 +47,7 @@ public class WebSocketConnectionHandler {
     public void connect(URI websocket) {
         log.info("正在连接websocket");
         Bootstrap bootstrap = new Bootstrap();
-        WebSocketClientHandshaker clientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(websocket, WebSocketVersion.V13, null, false, new DefaultHttpHeaders());
+        WebSocketClientHandshaker clientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(websocket, WebSocketVersion.V13, null, false, new DefaultHttpHeaders(), 65536 * 100);
         this.handshakePacketHandler = new HandshakePacketHandler(clientHandshaker);
         this.packetHandler = new PacketHandler(this.bot);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new WebSocketChannelInitializer(this.packetHandler, this.handshakePacketHandler));
