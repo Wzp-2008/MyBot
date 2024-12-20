@@ -3,6 +3,7 @@ package cn.wzpmc.utils;
 import cn.wzpmc.message.json.JsonMessagePart;
 import cn.wzpmc.message.json.parts.At;
 import cn.wzpmc.message.json.parts.PartType;
+import cn.wzpmc.message.json.parts.UnknownPart;
 import cn.wzpmc.message.json.parts.music.MusicType;
 import cn.wzpmc.message.json.parts.node.CustomNode;
 import cn.wzpmc.message.json.parts.node.SingleNode;
@@ -111,9 +112,18 @@ public class CqCodeUtils {
      * @since 2024/8/26 14:40 v1.0.0
      */
     public static JsonMessagePart parsePart(JSONObject jsonObject) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-        PartType type = jsonObject.getObject("type", PartType.class);
+        PartType type = PartType.UNKNOWN;
+        PartType resolvedType = jsonObject.getObject("type", PartType.class);
+        if (resolvedType != null) {
+            type = resolvedType;
+        }
         Class<? extends JsonMessagePart> clazz = type.clazz;
         JSONObject dataObject = jsonObject.getJSONObject("data");
+        if (type.equals(PartType.UNKNOWN)) {
+            String stringType = jsonObject.getString("type");
+            log.warn("发现无法解析的json消息数据，数据类型：{}，数据内容：{}", stringType, dataObject);
+            return new UnknownPart(stringType, dataObject);
+        }
         if (type.equals(PartType.AT)) {
             String string = dataObject.getString("qq");
             if (string.equalsIgnoreCase("all")) {

@@ -140,7 +140,13 @@ public enum PartType {
      *
      * @since 2024/8/25 15:20 v1.0.0
      */
-    MARKDOWN(MarkdownMessage.class);
+    MARKDOWN(MarkdownMessage.class),
+    /**
+     * 未知消息类型
+     *
+     * @since 2024/11/17 17:23 v1.0.5
+     */
+    UNKNOWN(UnknownPart.class);
     public final Class<? extends JsonMessagePart> clazz;
 
     PartType(Class<? extends JsonMessagePart> clazz) {

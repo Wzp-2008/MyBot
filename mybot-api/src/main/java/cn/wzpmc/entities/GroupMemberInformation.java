@@ -6,8 +6,6 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * 群成员信息
  *
@@ -63,19 +61,19 @@ public class GroupMemberInformation {
      */
     private String area;
     /**
-     * 加群时间
+     * 加群时间时间戳
      *
      * @since 2024/8/24 19:30 v0.0.6-dev
      */
     @JSONField(name = "join_time")
-    private Date joinTime;
+    private Long joinTime;
     /**
-     * 最后发言时间
+     * 最后发言时间时间戳
      *
      * @since 2024/8/24 19:30 v0.0.6-dev
      */
     @JSONField(name = "last_sent_time")
-    private Date lastSentTime;
+    private Long lastSentTime;
     /**
      * 成员等级
      *
@@ -101,12 +99,12 @@ public class GroupMemberInformation {
      */
     private String title;
     /**
-     * 专属头衔过期时间
+     * 专属头衔过期时间时间戳
      *
      * @since 2024/8/24 19:30 v0.0.6-dev
      */
     @JSONField(name = "title_expire_time")
-    private Date titleExpireTime;
+    private Long titleExpireTime;
     /**
      * 是否允许修改群名片
      *
