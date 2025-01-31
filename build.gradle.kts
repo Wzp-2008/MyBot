@@ -14,7 +14,7 @@ allprojects {
     apply(plugin = "java-library")
     val groupName by extra("cn.wzpmc")
     val projectArtifactId by extra("my-bot")
-    val projectVersion by extra("1.0.6-SNAPSHOT")
+    val projectVersion by extra("1.0.6")
     repositories {
         mavenCentral()
         maven("https://libraries.minecraft.net")
