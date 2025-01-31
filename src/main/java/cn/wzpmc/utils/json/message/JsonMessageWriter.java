@@ -34,7 +34,7 @@ public class JsonMessageWriter implements ObjectWriter<JsonMessage> {
                     ObjectWriter<?> objectWriter = creator.createObjectWriter(StringMessage.class);
                     objectWriter.write(jsonWriter, messagePart);
                 } else {
-                    jsonWriter.writeAny(messagePart);
+                    new JsonMessagePartWriter().write(jsonWriter, messagePart);
                 }
                 if (i != size - 1) {
                     jsonWriter.writeComma();

@@ -21,6 +21,7 @@ public interface JsonMessagePart {
      * @author wzp
      * @since 2024/7/31 上午2:40 v0.0.1-dev
      */
+    @JSONField(serialize = false, deserialize = false)
     PartType getPartType();
 
     @JSONField(name = "type")

@@ -12,6 +12,7 @@ import cn.wzpmc.events.notice.notify.NotifyEvent;
 import cn.wzpmc.events.request.RequestEvent;
 import cn.wzpmc.message.StringMessage;
 import cn.wzpmc.message.json.JsonMessage;
+import cn.wzpmc.message.json.JsonMessagePart;
 import cn.wzpmc.user.Friend;
 import cn.wzpmc.user.IBot;
 import cn.wzpmc.user.IUser;
@@ -20,10 +21,7 @@ import cn.wzpmc.utils.json.action.ActionReader;
 import cn.wzpmc.utils.json.action.ActionWriter;
 import cn.wzpmc.utils.json.event.*;
 import cn.wzpmc.utils.json.honor.HonorWriter;
-import cn.wzpmc.utils.json.message.JsonMessageReader;
-import cn.wzpmc.utils.json.message.JsonMessageWriter;
-import cn.wzpmc.utils.json.message.StringMessageReader;
-import cn.wzpmc.utils.json.message.StringMessageWriter;
+import cn.wzpmc.utils.json.message.*;
 import cn.wzpmc.utils.json.user.FriendUserReader;
 import cn.wzpmc.utils.json.user.GroupUserReader;
 import cn.wzpmc.utils.json.user.IBotReader;
@@ -49,6 +47,7 @@ public class JsonUtils {
         JSON.register(Actions.class, new ActionWriter());
         JSON.register(HonorType.class, new HonorWriter());
         JSON.register(StringMessage.class, new StringMessageWriter());
+        JSON.register(JsonMessagePart.class, new JsonMessagePartWriter());
     }
 
     /**
