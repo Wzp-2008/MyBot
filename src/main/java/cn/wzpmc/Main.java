@@ -73,7 +73,7 @@ public class Main {
             isChanged = true;
         }
         // end
-        // 1.0.6 配置文件自动更新
+        // 1.0.7 配置文件自动更新
         if (configuration.getCommandPrefix() == null) {
             configuration.setCommandPrefix(defaultConfiguration.getCommandPrefix());
             isChanged = true;
