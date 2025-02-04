@@ -16,6 +16,14 @@ public interface IConfiguration {
     String getWebsocket();
 
     /**
+     *
+     * @author wzp
+     * @since 2025/2/4 13:44 v1.0.5
+     * @return 命令前缀
+     */
+    String getCommandPrefix();
+
+    /**
      * @return 通信验证
      * @author wzp
      * @since 2024/7/31 上午3:48 v0.0.1-dev

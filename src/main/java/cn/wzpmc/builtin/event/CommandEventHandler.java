@@ -26,12 +26,13 @@ public class CommandEventHandler {
     public void onGroupMessage(GroupMessageEvent event) {
         GroupCommandSender groupCommandSender = GroupCommandSender.of(event);
         IBot instance = MyBot.getInstance();
+        String commandPrefix = instance.getConfiguration().getCommandPrefix();
         Long id = instance.getId();
         String message = event.getRawMessage().getMessage();
-        Pattern compile = Pattern.compile("\\[CQ:at,qq=" + id + ".*?]\\s*?/.*");
+        Pattern compile = Pattern.compile("\\[CQ:at,qq=" + id + ".*?]\\s*?" + commandPrefix + ".*");
         if (compile.asMatchPredicate().test(message)) {
             CommandManager commandManager = (CommandManager) instance.getCommandManager();
-            String commandRaw = message.replaceFirst("\\[CQ:at,qq=[0-9]{10}.*?]\\s*?/", "");
+            String commandRaw = message.replaceFirst("\\[CQ:at,qq=[0-9]{10}.*?]\\s*?" + commandPrefix, "");
             log.info("群{}中的用户{}使用了指令{}", groupCommandSender.getGroupId(), groupCommandSender.getId(), commandRaw);
             commandManager.execute(groupCommandSender, commandRaw);
         }
@@ -43,9 +44,10 @@ public class CommandEventHandler {
         IBot instance = MyBot.getInstance();
         StringMessage rawMessage = event.getRawMessage();
         String message = rawMessage.getMessage();
-        if (message.startsWith("/")) {
+        String commandPrefix = instance.getConfiguration().getCommandPrefix();
+        if (message.startsWith(commandPrefix)) {
             CommandManager commandManager = (CommandManager) instance.getCommandManager();
-            String commandRaw = message.replaceFirst("/", "");
+            String commandRaw = message.replaceFirst(commandPrefix, "");
             log.info("用户{}使用了指令{}", sender.getId(), commandRaw);
             commandManager.execute(sender, commandRaw);
         }

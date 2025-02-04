@@ -18,6 +18,12 @@ public class Configuration implements IConfiguration {
      * @since 2024/7/30 下午11:48 v0.0.1-dev
      */
     private String websocket;
+
+    /**
+     * 命令前缀
+     * @since 2025/2/4 13:45 v1.0.5
+     */
+    private String commandPrefix;
     /**
      * 通信验证
      *

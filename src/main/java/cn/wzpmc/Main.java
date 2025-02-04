@@ -73,11 +73,18 @@ public class Main {
             isChanged = true;
         }
         // end
+        // 1.0.6 配置文件自动更新
+        if (configuration.getCommandPrefix() == null) {
+            configuration.setCommandPrefix(defaultConfiguration.getCommandPrefix());
+            isChanged = true;
+        }
         if (isChanged) {
             log.warn("已自动升级配置文件，请检查config.yml是否有错误的地方，有则请修改");
             YamlUtils.writeYamlFile(configurationFile, configuration);
         }
         // 配置文件自动更新end
+
+
         return configuration;
     }
 
