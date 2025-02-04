@@ -25,10 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class HelpCommand implements BrigadierCommand {
     private final CommandManager commandManager;
+    private final String commandPrefix;
 
     public HelpCommand() {
         IBot instance = MyBot.getInstance();
         this.commandManager = (CommandManager) instance.getCommandManager();
+        this.commandPrefix = instance.getConfiguration().getCommandPrefix();
     }
 
     private static void handlerNode(Collection<CommandNode<CommandSender>> node, int tabCount, StringBuilder builder) {
@@ -54,7 +56,7 @@ public class HelpCommand implements BrigadierCommand {
                     CommandSender source = e.getSource();
                     for (CommandNode<CommandSender> child : children) {
                         StringBuilder builder = new StringBuilder();
-                        builder.append('/');
+                        builder.append(commandPrefix);
                         builder.append(child.getUsageText());
                         builder.append('\n');
                         handlerNode(child.getChildren(), 1, builder);
@@ -63,7 +65,7 @@ public class HelpCommand implements BrigadierCommand {
                     }
                     ConcurrentHashMap<String, RawCommand> rawCommands = this.commandManager.getRawCommands();
                     for (Map.Entry<String, RawCommand> stringRawCommandEntry : rawCommands.entrySet()) {
-                        source.sendMessage(StringMessage.text("/" + stringRawCommandEntry.getKey()));
+                        source.sendMessage(StringMessage.text(commandPrefix + stringRawCommandEntry.getKey()));
                     }
                     return 0;
                 }).
@@ -78,7 +80,7 @@ public class HelpCommand implements BrigadierCommand {
                                     continue;
                                 }
                                 StringBuilder builder = new StringBuilder();
-                                builder.append('/');
+                                builder.append(commandPrefix);
                                 builder.append(child.getUsageText());
                                 builder.append('\n');
                                 handlerNode(child.getChildren(), 1, builder);
@@ -87,7 +89,7 @@ public class HelpCommand implements BrigadierCommand {
                             }
                             ConcurrentHashMap<String, RawCommand> rawCommands = this.commandManager.getRawCommands();
                             for (Map.Entry<String, RawCommand> stringRawCommandEntry : rawCommands.entrySet()) {
-                                source.sendMessage(StringMessage.text("/" + stringRawCommandEntry.getKey()));
+                                source.sendMessage(StringMessage.text(commandPrefix + stringRawCommandEntry.getKey()));
                             }
                             return 0;
                         })
