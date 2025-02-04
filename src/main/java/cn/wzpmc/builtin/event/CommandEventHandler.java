@@ -29,10 +29,11 @@ public class CommandEventHandler {
         String commandPrefix = instance.getConfiguration().getCommandPrefix();
         Long id = instance.getId();
         String message = event.getRawMessage().getMessage();
-        Pattern compile = Pattern.compile("\\[CQ:at,qq=" + id + ".*?]\\s*?" + commandPrefix + ".*");
+        String quotedPrefix = Pattern.quote(commandPrefix);
+        Pattern compile = Pattern.compile("\\[CQ:at,qq=" + id + ".*?]\\s*?" + quotedPrefix + ".*");
         if (compile.asMatchPredicate().test(message)) {
             CommandManager commandManager = (CommandManager) instance.getCommandManager();
-            String commandRaw = message.replaceFirst("\\[CQ:at,qq=[0-9]{10}.*?]\\s*?" + commandPrefix, "");
+            String commandRaw = message.replaceFirst("\\[CQ:at,qq=[0-9]{10}.*?]\\s*?" + quotedPrefix, "");
             log.info("群{}中的用户{}使用了指令{}", groupCommandSender.getGroupId(), groupCommandSender.getId(), commandRaw);
             commandManager.execute(groupCommandSender, commandRaw);
         }
