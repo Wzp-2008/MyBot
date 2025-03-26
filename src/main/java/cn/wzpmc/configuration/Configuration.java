@@ -12,12 +12,13 @@ import lombok.Data;
  */
 @Data
 public class Configuration implements IConfiguration {
+
     /**
-     * WebSocket连接URL
-     *
-     * @since 2024/7/30 下午11:48 v0.0.1-dev
+     * 网络相关配置
+     * @since 2025/3/26 17:32 v1.0.7
      */
-    private String websocket;
+    private NetworkConfiguration network;
+
 
     /**
      * 命令前缀

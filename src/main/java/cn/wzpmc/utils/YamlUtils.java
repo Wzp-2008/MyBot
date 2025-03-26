@@ -1,6 +1,7 @@
 package cn.wzpmc.utils;
 
 import cn.wzpmc.configuration.Configuration;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -30,7 +31,8 @@ public class YamlUtils {
      */
     public static <T> T readYamlStream(InputStream is, Class<T> clazz) {
         Yaml yaml = new Yaml();
-        return yaml.loadAs(is, clazz);
+        JSONObject json = yaml.loadAs(is, JSONObject.class);
+        return json.to(clazz);
     }
 
     /**

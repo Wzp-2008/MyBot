@@ -18,6 +18,7 @@ import cn.wzpmc.utils.JsonUtils;
 import cn.wzpmc.utils.ReflectionUtils;
 import cn.wzpmc.utils.TemplateFileUtils;
 import cn.wzpmc.utils.YamlUtils;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
@@ -52,6 +53,7 @@ public class Main {
         }
         log.debug("读取配置文件 {}", configurationFile.getAbsolutePath());
         Configuration configuration = YamlUtils.readYamlFile(configurationFile, Configuration.class);
+        JSONObject fullConfiguration = YamlUtils.readYamlFile(configurationFile, JSONObject.class);
         Configuration defaultConfiguration = TemplateFileUtils.readDefaultConfig(classLoader, DEFAULT_CONFIGURATION_FILE_PATH, Configuration.class);
         // 配置文件自动更新 start
         boolean isChanged = false;
@@ -78,6 +80,12 @@ public class Main {
             configuration.setCommandPrefix(defaultConfiguration.getCommandPrefix());
             isChanged = true;
         }
+        if (configuration.getNetwork() == null) {
+            configuration.setNetwork(defaultConfiguration.getNetwork());
+            configuration.getNetwork().setWebsocket(fullConfiguration.getString("websocket"));
+            isChanged = true;
+        }
+        // end
         if (isChanged) {
             log.warn("已自动升级配置文件，请检查config.yml是否有错误的地方，有则请修改");
             YamlUtils.writeYamlFile(configurationFile, configuration);
@@ -95,7 +103,7 @@ public class Main {
     public static URI getUriFromConfiguration(Configuration configuration) {
         URI uri;
         try {
-            uri = new URI(configuration.getWebsocket());
+            uri = new URI(configuration.getNetwork().getWebsocket());
         } catch (URISyntaxException e) {
             return null;
         }
@@ -134,8 +142,8 @@ public class Main {
     }
 
     public static WebSocketConnectionHandler createConnection(MyBot myBot, URI uri) {
-        WebSocketConnectionHandler webSocketConnectionHandler = new WebSocketConnectionHandler(myBot);
-        webSocketConnectionHandler.connect(uri);
+        WebSocketConnectionHandler webSocketConnectionHandler = new WebSocketConnectionHandler(myBot, uri);
+        webSocketConnectionHandler.connect();
         return webSocketConnectionHandler;
     }
 

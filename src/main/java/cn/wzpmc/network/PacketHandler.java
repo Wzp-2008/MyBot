@@ -32,6 +32,8 @@ import java.util.concurrent.Executors;
 public class PacketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     private final IBot bot;
     private final ExecutorService threadPool = Executors.newFixedThreadPool(4);
+    private final Runnable retryFunction;
+
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame webSocketFrame) {
@@ -104,5 +106,11 @@ public class PacketHandler extends SimpleChannelInboundHandler<TextWebSocketFram
      */
     public <REQUEST, RESPONSE> void registerResponse(UUID echo, CompletableFuture<ActionResponse<RESPONSE>> responsePromise, Action<REQUEST, RESPONSE> request) {
         ActionReader.tasks.put(echo, new ApiResponseRequired<>(responsePromise, request));
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        log.info("与服务器断开连接！");
+        retryFunction.run();
     }
 }

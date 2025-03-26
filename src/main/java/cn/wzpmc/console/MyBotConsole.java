@@ -1,8 +1,10 @@
 package cn.wzpmc.console;
 
+import cn.wzpmc.entities.api.ApiResponseRequired;
 import cn.wzpmc.entities.user.bot.MyBot;
 import cn.wzpmc.network.WebSocketConnectionHandler;
 import cn.wzpmc.plugins.CommandManager;
+import cn.wzpmc.utils.json.action.ActionReader;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,12 +49,16 @@ public class MyBotConsole extends SimpleTerminalConsole {
     @Override
     public void shutdown() {
         this.webSocketConnectionHandler.kill();
+        for (ApiResponseRequired<?, ?> value : ActionReader.tasks.values()) {
+            value.getFuture().complete(null);
+        }
         running = false;
     }
 
     @Override
     public void start() {
         this.bot.setConsole(this);
+        if (this.bot.isShutdown()) return;
         super.start();
     }
 }

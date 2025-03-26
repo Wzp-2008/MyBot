@@ -50,6 +50,8 @@ public class MyBot extends IBot {
     private final Configuration configuration;
     private final CommandManager commandManager = new CommandManager(this);
     private final PluginManager pluginManager = new PluginManager();
+    @Setter
+    private boolean shutdown = false;
     private final IncreasbleHashMap<Class<? extends Event>, EventHandlerMethod> events = new IncreasbleHashMap<>();
     @Getter
     private final Ops ops;

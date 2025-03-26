@@ -1,4 +1,8 @@
-websocket: "<Your WebSocket connection link, e.g: ws://127.0.0.1:3001/>"
+network:
+  websocket: "<Your WebSocket connection link, e.g: ws://127.0.0.1:3001/>"
+  retry: true
+  maxRetryCount: 3
+  retryInterval: 10000
 commandPrefix: "/"
 authorization:
   enable: false

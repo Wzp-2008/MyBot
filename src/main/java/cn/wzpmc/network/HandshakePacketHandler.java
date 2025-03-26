@@ -37,7 +37,6 @@ public class HandshakePacketHandler extends SimpleChannelInboundHandler<FullHttp
             handshaker.finishHandshake(channelHandlerContext.channel(), fullHttpResponse);
             this.handshakeFuture.complete(true);
             log.debug("握手成功");
-            log.info("连接服务器成功！");
         }
     }
 }

@@ -8,13 +8,13 @@ package cn.wzpmc.plugins.configuration;
  * @since 2024/7/31 上午3:42
  */
 public interface IConfiguration {
-    /**
-     * @return WebSocket连接URL
-     * @author wzp
-     * @since 2024/7/31 上午3:48 v0.0.1-dev
-     */
-    String getWebsocket();
 
+    /**
+     * @author wzp
+     * @since 2025/3/26 17:29 v1.0.7
+     * @return 网络相关配置
+     */
+    INetworkConfiguration getNetwork();
     /**
      *
      * @author wzp

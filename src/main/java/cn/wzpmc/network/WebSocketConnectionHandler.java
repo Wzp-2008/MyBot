@@ -2,7 +2,11 @@ package cn.wzpmc.network;
 
 import cn.wzpmc.api.Action;
 import cn.wzpmc.api.ActionResponse;
-import cn.wzpmc.user.IBot;
+import cn.wzpmc.console.MyBotConsole;
+import cn.wzpmc.entities.api.ApiResponseRequired;
+import cn.wzpmc.entities.user.bot.MyBot;
+import cn.wzpmc.plugins.configuration.INetworkConfiguration;
+import cn.wzpmc.utils.json.action.ActionReader;
 import com.alibaba.fastjson2.JSON;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -32,26 +36,70 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class WebSocketConnectionHandler {
     private final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
-    private final IBot bot;
+    private final MyBot bot;
+    /**
+     * websocket连接地址
+     * @since 2025/3/26 17:56 v1.0.7
+     */
+    private final URI websocket;
     private ChannelFuture channelFuture;
     private PacketHandler packetHandler;
     private HandshakePacketHandler handshakePacketHandler;
+    private int currentRetryCount = 0;
+
+
+    private void tryReconnect() {
+        INetworkConfiguration network = bot.getConfiguration().getNetwork();
+        if (!network.isRetry()) {
+            this.quit();
+            return;
+        }
+        Integer maxRetryCount = network.getMaxRetryCount();
+        if (maxRetryCount != 0 && currentRetryCount >= maxRetryCount) {
+            this.quit();
+            return;
+        }
+        this.currentRetryCount++;
+        log.info("尝试重连第{}次", currentRetryCount);
+        this.connect();
+    }
+
+    private void quit() {
+        for (ApiResponseRequired<?, ?> value : ActionReader.tasks.values()) {
+            value.getFuture().obtrudeException(new InterruptedException());
+        }
+        this.handshakePacketHandler.getHandshakeFuture().obtrudeException(new InterruptedException());
+        MyBotConsole console = bot.getConsole();
+        bot.setShutdown(true);
+        if (console == null) {
+            this.eventLoopGroup.shutdownGracefully();
+            return;
+        }
+        console.shutdown();
+    }
 
     /**
      * 建立连接
-     *
-     * @param websocket websocket连接地址
      * @author wzp
      * @since 2024/7/30 下午11:55 v0.0.1-dev
      */
-    public void connect(URI websocket) {
+    public void connect() {
         log.info("正在连接websocket");
         Bootstrap bootstrap = new Bootstrap();
         WebSocketClientHandshaker clientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(websocket, WebSocketVersion.V13, null, false, new DefaultHttpHeaders(), 65536 * 100);
         this.handshakePacketHandler = new HandshakePacketHandler(clientHandshaker);
-        this.packetHandler = new PacketHandler(this.bot);
+        this.packetHandler = new PacketHandler(this.bot, this::tryReconnect);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new WebSocketChannelInitializer(this.packetHandler, this.handshakePacketHandler));
         this.channelFuture = bootstrap.connect(websocket.getHost(), websocket.getPort());
+        this.channelFuture.addListener(future -> {
+            if (!future.isSuccess()) {
+                log.info("连接失败！");
+                this.tryReconnect();
+            } else {
+                log.info("连接成功！");
+                this.currentRetryCount = 0;
+            }
+        });
     }
 
     /**
@@ -81,6 +129,7 @@ public class WebSocketConnectionHandler {
             this.handshakePacketHandler.getHandshakeFuture().get();
         } catch (ExecutionException e) {
             log.error(e);
+            return null;
         }
         CompletableFuture<ActionResponse<RESPONSE>> responsePromise = new CompletableFuture<>();
         packetHandler.registerResponse(request.getEcho(), responsePromise, request);
