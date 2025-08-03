@@ -21,7 +21,7 @@ allprojects {
     }
     dependencies {
         // https://mvnrepository.com/artifact/org.projectlombok/lombok
-        compileOnly("org.projectlombok:lombok:1.18.34")
+        api("org.projectlombok:lombok:1.18.34")
         annotationProcessor("org.projectlombok:lombok:1.18.34")
         // https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2
         api("com.alibaba.fastjson2:fastjson2:2.0.52")
