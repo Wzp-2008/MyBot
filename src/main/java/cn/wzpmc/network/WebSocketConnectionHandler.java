@@ -22,8 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 /**
  * 此类用于建立WebSocket连接
@@ -36,6 +35,8 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class WebSocketConnectionHandler {
     private final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+    private final ScheduledExecutorService connectionScheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> resetScheduledFuture;
     private final MyBot bot;
     /**
      * websocket连接地址
@@ -49,6 +50,7 @@ public class WebSocketConnectionHandler {
 
 
     private void tryReconnect() {
+        this.resetScheduledFuture.cancel(false);
         INetworkConfiguration network = bot.getConfiguration().getNetwork();
         if (!network.isRetry()) {
             this.quit();
@@ -60,6 +62,12 @@ public class WebSocketConnectionHandler {
             return;
         }
         this.currentRetryCount++;
+        try {
+            Thread.sleep(network.getRetryInterval());
+        } catch (InterruptedException e) {
+            this.quit();
+            return;
+        }
         log.info("尝试重连第{}次", currentRetryCount);
         this.connect();
     }
@@ -97,7 +105,10 @@ public class WebSocketConnectionHandler {
                 this.tryReconnect();
             } else {
                 log.info("连接成功！");
-                this.currentRetryCount = 0;
+                this.resetScheduledFuture = connectionScheduler.schedule(() -> {
+                    this.currentRetryCount = 0;
+                    this.resetScheduledFuture = null;
+                }, 3, TimeUnit.SECONDS);
             }
         });
     }
