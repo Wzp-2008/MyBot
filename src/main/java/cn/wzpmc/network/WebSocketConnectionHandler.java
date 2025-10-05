@@ -50,7 +50,9 @@ public class WebSocketConnectionHandler {
 
 
     private void tryReconnect() {
-        this.resetScheduledFuture.cancel(false);
+        if (this.resetScheduledFuture != null) {
+            this.resetScheduledFuture.cancel(false);
+        }
         INetworkConfiguration network = bot.getConfiguration().getNetwork();
         if (!network.isRetry()) {
             this.quit();
