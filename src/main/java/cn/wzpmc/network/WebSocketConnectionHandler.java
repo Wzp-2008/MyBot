@@ -22,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * 此类用于建立WebSocket连接
@@ -90,6 +92,7 @@ public class WebSocketConnectionHandler {
             log.debug("try shutdown eventLoop");
             this.eventLoopGroup.shutdownGracefully();
             log.debug("eventLoop exited");
+            log.debug("threads: {}", new HashSet<>(Thread.getAllStackTraces().keySet()));
             System.exit(0);
         }
         log.debug("try shutdown console");
