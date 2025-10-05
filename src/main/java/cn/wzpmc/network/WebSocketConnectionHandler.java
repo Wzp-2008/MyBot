@@ -74,16 +74,26 @@ public class WebSocketConnectionHandler {
 
     private void quit() {
         for (ApiResponseRequired<?, ?> value : ActionReader.tasks.values()) {
+            log.debug("response required {} exit...", value);
             value.getFuture().obtrudeException(new InterruptedException());
+            log.debug("response required {} exited", value);
         }
+        log.debug("handshaker exit...");
         this.handshakePacketHandler.getHandshakeFuture().obtrudeException(new InterruptedException());
+        log.debug("handshaker exited");
         MyBotConsole console = bot.getConsole();
+        log.debug("try shutdown bot");
         bot.setShutdown(true);
         if (console == null) {
+            log.debug("try shutdown eventLoop");
             this.eventLoopGroup.shutdownGracefully();
+            log.debug("eventLoop exited");
             return;
         }
+        log.debug("try shutdown console");
         console.shutdown();
+        log.debug("console exited");
+        System.exit(0);
     }
 
     /**
