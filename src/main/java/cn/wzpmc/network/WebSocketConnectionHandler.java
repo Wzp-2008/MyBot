@@ -90,7 +90,7 @@ public class WebSocketConnectionHandler {
             log.debug("try shutdown eventLoop");
             this.eventLoopGroup.shutdownGracefully();
             log.debug("eventLoop exited");
-            return;
+            System.exit(0);
         }
         log.debug("try shutdown console");
         console.shutdown();
